@@ -8,6 +8,7 @@ const packageFolders = [
   'packages/editor'
 ]
 const version = '2.0.1'
+let originalPackageJsons = {}
 
 main().catch(error => {
   console.error('\x1b[31m%s\x1b[0m', error.message)
@@ -17,6 +18,7 @@ async function main() {
   await copyNpmrc()
   rewritePackageJsons()
   await npmPublish()
+  revertPackageJsons()
   await rmNpmrc()
 }
 
@@ -39,7 +41,8 @@ async function rmNpmrc() {
 function rewritePackageJsons() {
   packageFolders.forEach(folder => {
     const file = `${folder}/package.json`
-    const packageJson = JSON.parse(fs.readFileSync(file, 'utf8'))
+    originalPackageJsons[folder] = fs.readFileSync(file, 'utf8')
+    const packageJson = JSON.parse(originalPackageJsons[folder])
     packageJson.name = packageJson.name.replace('@wepublish/', '@dudagroup/')
     packageJson.repository.url = packageJson.repository.url.replace(
       'github.com/wepublish',
@@ -50,6 +53,13 @@ function rewritePackageJsons() {
     }
     packageJson.version = version
     fs.writeFileSync(file, JSON.stringify(packageJson, null, 2))
+  })
+}
+
+function revertPackageJsons() {
+  packageFolders.forEach(folder => {
+    const file = `${folder}/package.json`
+    fs.writeFileSync(file, originalPackageJsons[folder])
   })
 }
 
