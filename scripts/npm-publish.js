@@ -12,12 +12,17 @@ let originalPackageJsons = {}
 
 main().catch(error => {
   console.error('\x1b[31m%s\x1b[0m', error.message)
+  cleanup().catch(console.error)
 })
 
 async function main() {
   await copyNpmrc()
   rewritePackageJsons()
   await npmPublish()
+  await cleanup()
+}
+
+async function cleanup() {
   revertPackageJsons()
   await rmNpmrc()
 }
@@ -59,7 +64,9 @@ function rewritePackageJsons() {
 function revertPackageJsons() {
   packageFolders.forEach(folder => {
     const file = `${folder}/package.json`
-    fs.writeFileSync(file, originalPackageJsons[folder])
+    if (originalPackageJsons[folder]) {
+      fs.writeFileSync(file, originalPackageJsons[folder])
+    }
   })
 }
 
