@@ -9,7 +9,7 @@ const packageFolders = [
   'packages/api-media-karma',
   'packages/editor'
 ]
-const version = '2.0.1'
+let version = '2.0.0'
 let originalPackageJsons = {}
 
 main().catch(error => {
@@ -18,10 +18,20 @@ main().catch(error => {
 })
 
 async function main() {
+  setVersion()
   await copyNpmrc()
   rewritePackageJsons()
+  updateImports()
+  try {
+    npmInstallAndBuild()
+  } catch (error) {}
   await npmPublish()
   await cleanup()
+}
+
+function setVersion() {
+  const [v] = process.argv.slice(2)
+  version = v
 }
 
 async function cleanup() {
@@ -50,7 +60,7 @@ function rewritePackageJsons() {
     const file = `${folder}/package.json`
     originalPackageJsons[folder] = fs.readFileSync(file, 'utf8')
     const packageJson = JSON.parse(originalPackageJsons[folder])
-    packageJson.name = packageJson.name.replace('@wepublish/', '@dudagroup/')
+    packageJson.name = packageJson.name.replace('@dudagroup/', '@dudagroup/')
     packageJson.repository.url = packageJson.repository.url.replace(
       'github.com/wepublish',
       'github.com/dudagroup'
@@ -63,14 +73,22 @@ function rewritePackageJsons() {
   })
 }
 
+function replace(file) {
+  const content = fs.readFileSync(file, 'utf8')
+  if (content && content.includes('@wepublish')) {
+    const r = content.replace(/@wepublish/g, '@dudagroup')
+    fs.writeFileSync(file, r)
+  }
+}
+
 function updateImports() {
-  handleFilesrecursive('packages/api-db-mongodb/src', file => {
-    const content = fs.readFileSync(file, 'utf8')
-    if (content && content.includes('@wepublish/')) {
-      const r = content.replace('@wepublish/', '@dudagroup/')
-      fs.writeFileSync(file, r)
-    }
-  })
+  replace('package.json')
+  handleFilesrecursive('./packages', replace)
+}
+
+async function npmInstallAndBuild() {
+  await exec('make install')
+  await exec('make build')
 }
 
 function revertChanges() {
