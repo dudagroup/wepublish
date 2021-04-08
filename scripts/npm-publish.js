@@ -22,7 +22,7 @@ async function main() {
   rewritePackageJsons()
   updateImports()
   try {
-    npmInstallAndBuild()
+    await npmInstallAndBuild()
   } catch (error) {}
   await npmPublish()
   await cleanup()
@@ -99,6 +99,8 @@ function revertChanges() {
 
 async function npmPublish() {
   for (let path of packageFolders) {
+    console.log('***************************************************************************************************')
+    console.log('publish', path)
     await spawnProcess(`(cd ${path}; npm publish)`)
   }
 }
