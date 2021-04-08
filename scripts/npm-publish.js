@@ -24,8 +24,8 @@ async function main() {
   try {
     npmInstallAndBuild()
   } catch (error) {}
-  //await npmPublish()
-  //await cleanup()
+  await npmPublish()
+  await cleanup()
 }
 
 function setVersion() {
