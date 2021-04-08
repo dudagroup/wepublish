@@ -9,12 +9,11 @@ const packageFolders = [
   'packages/api-media-karma',
   'packages/editor'
 ]
-let version = '2.0.0'
+let version = ''
 let originalPackageJsons = {}
 
 main().catch(error => {
   console.error('\x1b[31m%s\x1b[0m', error.message)
-  cleanup().catch(console.error)
 })
 
 async function main() {
@@ -25,12 +24,15 @@ async function main() {
   try {
     npmInstallAndBuild()
   } catch (error) {}
-  await npmPublish()
-  await cleanup()
+  //await npmPublish()
+  //await cleanup()
 }
 
 function setVersion() {
   const [v] = process.argv.slice(2)
+  if (!v) {
+    throw new Error('Please provide a version like 2.0.0')
+  }
   version = v
 }
 
@@ -60,7 +62,7 @@ function rewritePackageJsons() {
     const file = `${folder}/package.json`
     originalPackageJsons[folder] = fs.readFileSync(file, 'utf8')
     const packageJson = JSON.parse(originalPackageJsons[folder])
-    packageJson.name = packageJson.name.replace('@dudagroup/', '@dudagroup/')
+    packageJson.name = packageJson.name.replace('@wepublish/', '@dudagroup/')
     packageJson.repository.url = packageJson.repository.url.replace(
       'github.com/wepublish',
       'github.com/dudagroup'
@@ -87,8 +89,8 @@ function updateImports() {
 }
 
 async function npmInstallAndBuild() {
-  await exec('make install')
-  await exec('make build')
+  await spawnProcess('make', ['install'])
+  await spawnProcess('make', ['build'])
 }
 
 function revertChanges() {
