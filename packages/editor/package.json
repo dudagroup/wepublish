@@ -24,7 +24,8 @@
   },
   "files": [
     "src",
-    "static"
+    "static",
+    "lib"
   ],
   "bin": {
     "wepublish-editor": "./dist/server/index.js"
