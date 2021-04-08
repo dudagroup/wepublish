@@ -22,6 +22,10 @@
     "url": "https://github.com/wepublish/wepublish.git",
     "directory": "packages/editor"
   },
+  "files": [
+    "src",
+    "static"
+  ],
   "bin": {
     "wepublish-editor": "./dist/server/index.js"
   },
