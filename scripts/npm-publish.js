@@ -1,5 +1,7 @@
 const fs = require('fs')
 const {exec, spawn} = require('child_process')
+const {resolve} = require('path')
+const {readdir} = require('fs').promises
 
 const packageFolders = [
   'packages/api-db-mongodb',
@@ -23,7 +25,7 @@ async function main() {
 }
 
 async function cleanup() {
-  revertPackageJsons()
+  revertChanges()
   await rmNpmrc()
 }
 
@@ -61,13 +63,18 @@ function rewritePackageJsons() {
   })
 }
 
-function revertPackageJsons() {
-  packageFolders.forEach(folder => {
-    const file = `${folder}/package.json`
-    if (originalPackageJsons[folder]) {
-      fs.writeFileSync(file, originalPackageJsons[folder])
+function updateImports() {
+  handleFilesrecursive('packages/api-db-mongodb/src', file => {
+    const content = fs.readFileSync(file, 'utf8')
+    if (content && content.includes('@wepublish/')) {
+      const r = content.replace('@wepublish/', '@dudagroup/')
+      fs.writeFileSync(file, r)
     }
   })
+}
+
+function revertChanges() {
+  return execCommand('git reset --hard')
 }
 
 async function npmPublish() {
@@ -120,4 +127,16 @@ function question(question) {
       resolve(answer)
     })
   })
+}
+
+async function handleFilesrecursive(dir, f) {
+  const dirents = await readdir(dir, {withFileTypes: true})
+  for (const dirent of dirents) {
+    const res = resolve(dir, dirent.name)
+    if (dirent.isDirectory()) {
+      handleFilesrecursive(res, f)
+    } else {
+      f(res)
+    }
+  }
 }
