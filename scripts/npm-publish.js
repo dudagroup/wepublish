@@ -89,8 +89,7 @@ function updateImports() {
 }
 
 async function npmInstallAndBuild() {
-  await spawnProcess('make', ['install'])
-  await spawnProcess('make', ['build'])
+  await spawnProcess('make', ['setup-dev-environment'])
 }
 
 function revertChanges() {
