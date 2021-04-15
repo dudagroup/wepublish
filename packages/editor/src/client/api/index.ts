@@ -380,7 +380,42 @@ export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
   myString?: Maybe<Scalars['String']>;
   myRichText?: Maybe<Scalars['RichText']>;
+  myInt?: Maybe<Scalars['Int']>;
+  myFloat?: Maybe<Scalars['Float']>;
+  myBoolean?: Maybe<Scalars['Boolean']>;
+  myEnum?: Maybe<_Cmp_ModelB_Record_Content_MyEnum>;
+  myList?: Maybe<Array<Maybe<Scalars['String']>>>;
+  myUnion?: Maybe<_Cmp_ModelB_Record_Content_MyUnion>;
   myRef?: Maybe<Ref_ModelA>;
+};
+
+export enum _Cmp_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmp_ModelB_Record_Content_MyUnion = _Cmp_ModelB_Record_Content_MyUnion_CaseA | _Cmp_ModelB_Record_Content_MyUnion_CaseB;
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseA';
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyUnion_CaseA_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseA_content';
+  foo?: Maybe<Scalars['Boolean']>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseB';
+  caseB?: Maybe<_Cmp_ModelB_Record_Content_MyUnion_CaseB_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseB_Content = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseB_content';
+  bar?: Maybe<Scalars['Float']>;
 };
 
 export type _Cmp_ModelBConnection = {
@@ -668,7 +703,33 @@ export type _Cmpi_ModelBUnpublishArgs = {
 export type _Cmpi_ModelB_Record_Content = {
   myString?: Maybe<Scalars['String']>;
   myRichText?: Maybe<Scalars['RichText']>;
+  myInt?: Maybe<Scalars['Int']>;
+  myFloat?: Maybe<Scalars['Float']>;
+  myBoolean?: Maybe<Scalars['Boolean']>;
+  myEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyEnum>;
+  myList?: Maybe<Array<Maybe<Scalars['String']>>>;
+  myUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion>;
   myRef?: Maybe<Ref_Input>;
+};
+
+export enum _Cmpi_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmpi_ModelB_Record_Content_MyUnion = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseA>;
+  caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseB>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
+  foo?: Maybe<Scalars['Boolean']>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
+  bar?: Maybe<Scalars['Float']>;
 };
 
 export type _Cmpi_ModelB_Record_Create = {

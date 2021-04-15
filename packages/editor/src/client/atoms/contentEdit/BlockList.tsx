@@ -8,15 +8,17 @@ import {
   ContentEditActionEnum,
   generateEmptyContent
 } from '../../routes/contentEditor'
+import {LanguageContext} from './BlockObject'
 
 interface BlockListProps {
   readonly schemaPath: SchemaPath
   readonly dispatch: React.Dispatch<ContentEditAction>
   readonly value: unknown[]
   readonly model: ContentModelSchemaFieldList
+  readonly languageContext: LanguageContext
 }
 
-export function BlockList({dispatch, model, value, schemaPath}: BlockListProps) {
+export function BlockList({dispatch, model, languageContext, value, schemaPath}: BlockListProps) {
   const childSchemaPath = [...schemaPath]
 
   const content = value.map((item, index, array) => {
@@ -90,6 +92,7 @@ export function BlockList({dispatch, model, value, schemaPath}: BlockListProps) 
           schemaPath={[...childSchemaPath, index]}
           dispatch={dispatch}
           model={model.contentType}
+          languageContext={languageContext}
           content={item}></BlockAbstract>
       </List.Item>
     )

@@ -1,5 +1,5 @@
-import React from 'react'
-import BlockObject from './BlockObject'
+import React, {memo} from 'react'
+import BlockObject, {LanguageContext} from './BlockObject'
 import BlockString from './BlockString'
 import BlockEnum from './BlockEnum'
 import BlockFloat from './BlockFloat'
@@ -29,6 +29,7 @@ interface BlockAbstractProps {
   readonly dispatch: React.Dispatch<any>
   readonly content: any | null
   readonly model: ContentModelSchemaFieldBase | null
+  readonly languageContext: LanguageContext
 }
 
 function BlockAbstract(props: BlockAbstractProps) {
@@ -44,6 +45,7 @@ function BlockAbstract(props: BlockAbstractProps) {
         schemaPath={updatePath}
         dispatch={props.dispatch}
         model={props.model as ContentModelSchemaFieldObject}
+        languageContext={props.languageContext}
         record={props.content}></BlockObject>
     )
   } else if (props.model.type === ContentModelSchemaTypes.string) {
@@ -100,6 +102,7 @@ function BlockAbstract(props: BlockAbstractProps) {
         schemaPath={updatePath}
         dispatch={props.dispatch}
         model={props.model as ContentModelSchemaFieldList}
+        languageContext={props.languageContext}
         value={props.content}></BlockList>
     )
   } else if (props.model.type === ContentModelSchemaTypes.union) {
@@ -108,6 +111,7 @@ function BlockAbstract(props: BlockAbstractProps) {
         schemaPath={updatePath}
         dispatch={props.dispatch}
         model={props.model as ContentModelSchemaFieldUnion}
+        languageContext={props.languageContext}
         value={props.content}></BlockUnion>
     )
   } else if (props.model.type === ContentModelSchemaTypes.reference) {
@@ -124,12 +128,9 @@ function BlockAbstract(props: BlockAbstractProps) {
     return block
   }
 
-  return (
-    <div>
-      {/** TODO some instructions */}
-      {block}
-    </div>
-  )
+  return <>{block}</>
 }
 
-export default BlockAbstract
+export default memo(BlockAbstract, (a, b) => {
+  return Object.is(a.content, b.content)
+})

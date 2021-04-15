@@ -8,15 +8,17 @@ import {
   generateEmptyContent
 } from '../../routes/contentEditor'
 import BlockAbstract from './BlockAbstract'
+import {LanguageContext} from './BlockObject'
 
 interface BlockUnionProp {
   readonly schemaPath: SchemaPath
   readonly dispatch: React.Dispatch<ContentEditAction>
   readonly value: {[key: string]: unknown}
   readonly model: ContentModelSchemaFieldUnion
+  readonly languageContext: LanguageContext
 }
 
-export function BlockUnion({value, model, dispatch, schemaPath}: BlockUnionProp) {
+export function BlockUnion({value, model, dispatch, languageContext, schemaPath}: BlockUnionProp) {
   if (!(value && Object.entries(value).length === 1)) {
     return null
   }
@@ -55,6 +57,7 @@ export function BlockUnion({value, model, dispatch, schemaPath}: BlockUnionProp)
           schemaPath={updatePath}
           dispatch={dispatch}
           model={model.cases[currentCase]}
+          languageContext={languageContext}
           content={val}></BlockAbstract>
       }
     </div>

@@ -26,7 +26,6 @@ import {
 } from '../utils/queryUtils'
 import {EditorConfig} from '../interfaces/extensionConfig'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
-import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {
   ContentModelSchemaFieldBase,
   ContentModelSchemaFieldEnum,
@@ -37,6 +36,7 @@ import {
 } from '../interfaces/contentModelSchema'
 import update, {CustomCommands} from 'immutability-helper'
 import {SchemaPath} from '../interfaces/utilTypes'
+import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -171,11 +171,13 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
     title: '',
     shared: false
   })
-  const [customMetadata, setCustomMetadata] = useState<any>(contentConfig.defaultMeta ?? undefined)
 
-  const isNew = id === undefined
-  function setContentData(value: unknown) {
-    dispatcher({
+  const intitialCustomMetadata =
+    contentConfig.defaultContent ??
+    generateEmptyRootContent(contentConfig.schema.meta, editorConfig.lang)
+  const [customMetadata, customMetadataDispatcher] = useReducer(reducer, intitialCustomMetadata)
+  function setCustomMetadata(value: unknown) {
+    customMetadataDispatcher({
       type: ContentEditActionEnum.setInitialState,
       value
     })
@@ -186,8 +188,16 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
     generateEmptyRootContent(contentConfig.schema.content, editorConfig.lang)
   const [contentData, dispatcher] = useReducer(reducer, intitialContent)
 
+  function setContentData(value: unknown) {
+    dispatcher({
+      type: ContentEditActionEnum.setInitialState,
+      value
+    })
+  }
+
   const contentdId = id || createData?.content[type].create.id
 
+  const isNew = id === undefined
   const {data, loading: isLoading} = useQuery(getReadQuery(editorConfig, contentConfig), {
     skip: isNew || createData != null,
     errorPolicy: 'all',
@@ -326,7 +336,8 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
     content = (
       <GenericContentView
         record={contentData}
-        model={contentConfig.schema.content}
+        fields={contentConfig.schema.content}
+        languagesConfig={editorConfig.lang}
         dispatch={dispatcher}></GenericContentView>
     )
   }
@@ -349,6 +360,10 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
     metadataView = (
       <ContentMetadataPanel
         defaultMetadata={metadata}
+        customMetaFields={contentConfig.schema.meta}
+        customMetadata={customMetadata}
+        customMetadataDispatcher={customMetadataDispatcher}
+        languagesConfig={editorConfig.lang}
         onChangeDefaultMetadata={(value: any) => {
           setMetadata(value)
           setChanged(true)
