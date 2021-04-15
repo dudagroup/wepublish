@@ -21,7 +21,7 @@ function BlockEnum({value, dispatch, model, schemaPath}: BlockEnumProps) {
 
   return (
     <SelectPicker
-      cleanable={false}
+      cleanable={!model.required}
       data={data}
       value={value}
       onChange={val => {

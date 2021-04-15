@@ -48,7 +48,10 @@ function BlockAbstract(props: BlockAbstractProps) {
         languageContext={props.languageContext}
         record={props.content}></BlockObject>
     )
-  } else if (props.model.type === ContentModelSchemaTypes.string) {
+  } else if (
+    props.model.type === ContentModelSchemaTypes.string ||
+    props.model.type === ContentModelSchemaTypes.id
+  ) {
     block = (
       <BlockString
         schemaPath={updatePath}

@@ -3,6 +3,7 @@ import {InputNumber} from 'rsuite'
 import {ContentModelSchemaFieldInt} from '../../interfaces/contentModelSchema'
 import {SchemaPath} from '../../interfaces/utilTypes'
 import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
+import {isNullOrUndefined} from '../../utility'
 
 interface BlockIntProps {
   readonly schemaPath: SchemaPath
@@ -15,6 +16,7 @@ function BlockInt({value, schemaPath, dispatch}: BlockIntProps) {
   return (
     <InputNumber
       value={value}
+      disabled={isNullOrUndefined(value)}
       step={1}
       onChange={val =>
         dispatch({

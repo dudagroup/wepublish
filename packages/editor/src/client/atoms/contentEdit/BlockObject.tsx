@@ -4,10 +4,11 @@ import {
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup, Toggle} from 'rsuite'
+import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
 import {SchemaPath} from '../../interfaces/utilTypes'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
+import {ContentEditAction} from '../../routes/contentEditor'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -15,67 +16,69 @@ export interface LanguageContext {
   readonly langLane2: string
 }
 
-export function BlockObject(props: {
+interface BlockObjectProps {
   readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<any>
+  readonly dispatch: React.Dispatch<ContentEditAction>
   readonly record: {[key: string]: any}
   readonly model: ContentModelSchemaFieldObject
   readonly languageContext: LanguageContext
-}) {
-  const langLane1 = props.languageContext.langLane1
-  const langLane2 = props.languageContext.langLane2
-  const content = Object.entries(props.model.fields).map(item => {
-    const [key, fieldModel] = item
-    const value = props.record[key]
-    const schemaPath = [...props.schemaPath]
-    schemaPath.push(key)
+}
 
-    const hasContent = !!props.record[key]
-    const required = fieldModel.required ? (
-      <Toggle
-        size="lg"
-        checkedChildren="Active"
-        unCheckedChildren="Inactive"
-        checked={hasContent}
-        onChange={e => {}}
-      />
-    ) : null
+export function BlockObject({
+  dispatch,
+  languageContext,
+  model,
+  schemaPath,
+  record
+}: BlockObjectProps) {
+  const langLane1 = languageContext.langLane1
+  const langLane2 = languageContext.langLane2
+  const content = Object.entries(model.fields).map(item => {
+    const [key, fieldModel] = item
+    let value = record[key]
+
+    const childSchemaPath = [...schemaPath]
+    childSchemaPath.push(key)
 
     if ((fieldModel as ContentModelSchemaFieldLeaf).i18n) {
       let componentLane1 = null
       if (langLane1) {
         componentLane1 = (
           <BlockAbstract
-            schemaPath={[...schemaPath, langLane1]}
-            dispatch={props.dispatch}
+            schemaPath={[...childSchemaPath, langLane1]}
+            dispatch={dispatch}
             model={fieldModel}
-            languageContext={props.languageContext}
+            languageContext={languageContext}
             content={value[langLane1]}></BlockAbstract>
         )
       }
+
       let componentLane2 = null
       if (langLane2) {
         componentLane2 = (
           <BlockAbstract
-            schemaPath={[...schemaPath, langLane2]}
-            dispatch={props.dispatch}
+            schemaPath={[...childSchemaPath, langLane2]}
+            dispatch={dispatch}
             model={fieldModel}
-            languageContext={props.languageContext}
+            languageContext={languageContext}
             content={value[langLane2]}></BlockAbstract>
         )
       }
       return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />
     }
+
     return (
       <FormGroup key={key}>
         <ControlLabel>{key}</ControlLabel>
-        {required}
-        <BlockAbstract
-          schemaPath={schemaPath}
-          dispatch={props.dispatch}
-          model={fieldModel}
-          languageContext={props.languageContext}
-          content={value}></BlockAbstract>
+        {
+          <BlockAbstract
+            schemaPath={childSchemaPath}
+            dispatch={dispatch}
+            model={fieldModel}
+            languageContext={languageContext}
+            content={value}></BlockAbstract>
+        }
+        <HelpBlock tooltip>Example Instructions</HelpBlock>
       </FormGroup>
     )
   })

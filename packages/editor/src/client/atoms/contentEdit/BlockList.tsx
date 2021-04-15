@@ -67,7 +67,7 @@ export function BlockList({dispatch, model, languageContext, value, schemaPath}:
               schemaPath: childSchemaPath,
               start: index + 1,
               delete: 0,
-              insert: [generateEmptyContent(model.contentType)]
+              insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
             })
           }}
         />
@@ -107,7 +107,7 @@ export function BlockList({dispatch, model, languageContext, value, schemaPath}:
           dispatch({
             type: ContentEditActionEnum.push,
             schemaPath: childSchemaPath,
-            insert: [generateEmptyContent(model.contentType)]
+            insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
           })
         }}
       />

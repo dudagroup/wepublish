@@ -45,7 +45,10 @@ export function BlockUnion({value, model, dispatch, languageContext, schemaPath}
             dispatch({
               type: ContentEditActionEnum.update,
               value: {
-                [nextCase]: generateEmptyContent(model.cases[nextCase])
+                [nextCase]: generateEmptyContent(
+                  model.cases[nextCase],
+                  languageContext.languagesConfig
+                )
               },
               schemaPath
             })

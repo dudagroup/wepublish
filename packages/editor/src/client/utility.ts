@@ -11,6 +11,10 @@ export function generateID(): string {
   return nanoid()
 }
 
+export function isNullOrUndefined(value: unknown) {
+  return value === undefined || value === null
+}
+
 // https://gist.github.com/mathewbyrne/1280286#gistcomment-2588056
 export function slugify(str: string) {
   return str

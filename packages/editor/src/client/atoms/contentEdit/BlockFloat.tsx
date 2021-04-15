@@ -3,6 +3,7 @@ import {InputNumber} from 'rsuite'
 import {ContentModelSchemaFieldFloat} from '../../interfaces/contentModelSchema'
 import {SchemaPath} from '../../interfaces/utilTypes'
 import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
+import {isNullOrUndefined} from '../../utility'
 
 interface BlockFloatProps {
   readonly schemaPath: SchemaPath
@@ -14,6 +15,7 @@ function BlockFloat({value, schemaPath, dispatch}: BlockFloatProps) {
   return (
     <InputNumber
       value={value}
+      disabled={isNullOrUndefined(value)}
       step={0.001}
       onChange={val =>
         dispatch({type: ContentEditActionEnum.update, value: Number(val), schemaPath})

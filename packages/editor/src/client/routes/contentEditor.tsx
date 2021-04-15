@@ -62,13 +62,15 @@ export enum ContentEditActionEnum {
   setInitialState = 'setInitialState',
   update = 'update',
   splice = 'splice',
-  push = 'push'
+  push = 'push',
+  unset = 'unset'
 }
 export type ContentEditAction =
   | ContentEditActionInitial
   | ContentEditActionUpdate
   | ContentEditActionSplice
   | ContentEditActionPush
+  | ContentEditActionUnset
 
 export interface ContentEditActionBase {
   type: ContentEditActionEnum
@@ -97,6 +99,12 @@ export interface ContentEditActionPush extends ContentEditActionBase {
   type: ContentEditActionEnum.push
   schemaPath: SchemaPath
   insert: any[]
+}
+
+export interface ContentEditActionUnset extends ContentEditActionBase {
+  type: ContentEditActionEnum.unset
+  schemaPath: SchemaPath
+  keys: SchemaPath
 }
 
 function reducer(state: any, action: ContentEditAction) {
@@ -132,6 +140,16 @@ function reducer(state: any, action: ContentEditAction) {
         return {[item]: accu}
       }, pushOperation)
       return update(state, pushOperation)
+
+    case ContentEditActionEnum.unset:
+      const actionUnset = action as ContentEditActionUnset
+      let unsetOperation: CustomCommands<any> = {
+        $unset: actionUnset.keys
+      }
+      pushOperation = actionUnset.schemaPath.reverse().reduce((accu, item) => {
+        return {[item]: accu}
+      }, pushOperation)
+      return update(state, unsetOperation)
 
     default:
       throw new Error()
@@ -481,11 +499,11 @@ export function generateEmptyRootContent(schema: any, lang: LanguagesConfig): un
 
 export function generateEmptyContent(
   field: ContentModelSchemaFieldBase,
-  lang?: LanguagesConfig
+  languagesConfig: LanguagesConfig
 ): unknown {
   function defaultVal(defaultVal: unknown) {
     if ((field as ContentModelSchemaFieldLeaf).i18n) {
-      return lang?.languages.reduce((accu, lang) => {
+      return languagesConfig?.languages.reduce((accu, lang) => {
         accu[lang.tag] = defaultVal
         return accu
       }, {} as any)
@@ -498,10 +516,13 @@ export function generateEmptyContent(
   }
   if (field.type === ContentModelSchemaTypes.object) {
     const schema = field as ContentModelSchemaFieldObject
+    if (!schema.fields) {
+      return undefined
+    }
     const r: {[key: string]: unknown} = {}
     return Object.entries(schema.fields).reduce((accu, item) => {
       const [key, val] = item
-      accu[key] = generateEmptyContent(val, lang)
+      accu[key] = generateEmptyContent(val, languagesConfig)
       return accu
     }, r)
   }
@@ -542,7 +563,7 @@ export function generateEmptyContent(
   if (field.type === ContentModelSchemaTypes.union) {
     const schema = field as ContentModelSchemaFieldUnion
     const [key, val] = Object.entries(schema.cases)[0]
-    return {[key]: generateEmptyContent(val, lang)}
+    return {[key]: generateEmptyContent(val, languagesConfig)}
   }
 
   return {}
