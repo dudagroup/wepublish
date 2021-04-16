@@ -39,8 +39,8 @@ export type _Cmp_ArticleListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -285,8 +285,8 @@ export type _Cmp_ModelAListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -367,8 +367,8 @@ export type _Cmp_ModelBListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -756,8 +756,8 @@ export type AllListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -1128,6 +1128,15 @@ export enum ContentContextEnum {
   Peers = 'peers'
 }
 
+export type ContentFilter = {
+  title?: Maybe<Scalars['String']>
+  draft?: Maybe<Scalars['Boolean']>
+  published?: Maybe<Scalars['Boolean']>
+  pending?: Maybe<Scalars['Boolean']>
+  authors?: Maybe<Array<Scalars['ID']>>
+  tags?: Maybe<Array<Scalars['String']>>
+}
+
 export type ContentModelSummary = {
   __typename?: 'ContentModelSummary'
   id: Scalars['ID']
@@ -1140,6 +1149,14 @@ export type ContentModelSummary = {
   modifiedAt: Scalars['DateTime']
   publicationDate?: Maybe<Scalars['DateTime']>
   dePublicationDate?: Maybe<Scalars['DateTime']>
+}
+
+export enum ContentSort {
+  CreatedAt = 'CREATED_AT',
+  ModifiedAt = 'MODIFIED_AT',
+  PublishAt = 'PUBLISH_AT',
+  PublishedAt = 'PUBLISHED_AT',
+  UpdatedAt = 'UPDATED_AT'
 }
 
 export enum ContentStateEnum {

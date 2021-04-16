@@ -25,13 +25,13 @@ import {NavigationList} from './routes/navigationList'
 
 // import './global.less'
 import {useConfigQuery} from './api'
-import {EditorConfig, ContentModelConfigMerged, ExtensionConfig} from './interfaces/extensionConfig'
 import {Extension} from './routes/extension'
 import {ContentEditor} from './routes/contentEditor'
 import {ContentList} from './routes/contentList'
 import {ConfigContext} from './Editorcontext'
+import {Configs, ContentModelConfigMerged, EditorConfig} from './interfaces/extensionConfig'
 
-export function contentForRoute(route: Route, configs?: EditorConfig) {
+export function contentForRoute(route: Route, configs?: Configs) {
   switch (route.type) {
     case RouteType.Login:
       return <Login />
@@ -51,7 +51,7 @@ export function contentForRoute(route: Route, configs?: EditorConfig) {
       return <ArticleList />
 
     case RouteType.ContentList:
-      return configs && <ContentList contentTypeList={configs} />
+      return configs && <ContentList configs={configs} />
 
     case RouteType.CommentList:
       return <CommentList />
@@ -101,7 +101,7 @@ export function contentForRoute(route: Route, configs?: EditorConfig) {
   return null
 }
 
-export function App({contentModelExtension, cusomExtension}: ExtensionConfig) {
+export function App(editorConfig: EditorConfig) {
   const {current} = useRoute()
   const {data} = useConfigQuery({
     fetchPolicy: 'network-only'
@@ -111,22 +111,38 @@ export function App({contentModelExtension, cusomExtension}: ExtensionConfig) {
     return null
   }
 
-  let editorConfig: EditorConfig | undefined = undefined
+  let configs: Configs | undefined = undefined
   if (data) {
-    let contentModelConfigMerged: ContentModelConfigMerged[] = data.config.content.map(config => {
-      const editorConfig = contentModelExtension?.find(c => c.identifier === config.identifier)
+    let contentModelExtensionMerged: ContentModelConfigMerged[] = data.config.content.map(
+      config => {
+        const cfg = editorConfig.contentModelExtension?.find(
+          c => c.identifier === config.identifier
+        )
 
-      let result = config
-      if (editorConfig) {
-        result = Object.assign({}, result, editorConfig)
+        let result = config
+        if (cfg) {
+          result = Object.assign({}, result, cfg)
+        }
+        return result
       }
-      return result
-    })
+    )
 
-    editorConfig = {
-      contentModelExtension: contentModelConfigMerged,
-      cusomExtension: cusomExtension,
-      lang: data.config.languages
+    configs = {
+      contentModelExtensionMerged,
+      apiConfig: data.config,
+      editorConfig
+    }
+    if (!configs.editorConfig.navigationBar) {
+      configs.editorConfig = Object.assign({}, configs.editorConfig, {
+        navigationBar: {
+          articlesActive: true,
+          authorsActive: true,
+          commentsActive: true,
+          imageLibraryActive: true,
+          navigationActive: true,
+          pagesActive: true
+        }
+      })
     }
   }
 
@@ -152,26 +168,26 @@ export function App({contentModelExtension, cusomExtension}: ExtensionConfig) {
 
     case RouteType.ContentCreate:
     case RouteType.ContentEdit:
-      comp = editorConfig && (
+      comp = configs && (
         <ContentEditor
-          editorConfig={editorConfig}
+          configs={configs}
           id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
         />
       )
       break
 
     case RouteType.Extension:
-      comp = editorConfig && (
-        <Base editorConfig={editorConfig}>
-          <Extension configs={editorConfig} />
+      comp = configs && (
+        <Base configs={configs}>
+          <Extension configs={configs} />
         </Base>
       )
       break
 
     default:
-      comp = <Base editorConfig={editorConfig}>{contentForRoute(current, editorConfig)}</Base>
+      comp = <Base configs={configs}>{contentForRoute(current, configs)}</Base>
   }
-  return <ConfigContext.Provider value={editorConfig}>{comp}</ConfigContext.Provider>
+  return <ConfigContext.Provider value={configs}>{comp}</ConfigContext.Provider>
 }
 
 export const HotApp = hot(App)

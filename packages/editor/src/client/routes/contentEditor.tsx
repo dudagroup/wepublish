@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
 import {Modal, Notification, Icon, IconButton} from 'rsuite'
-import {EditorTemplate} from '../atoms/editorTemplate'
 import {NavigationBar} from '../atoms/navigationBar'
 import {RouteActionType} from '@karma.run/react'
 
@@ -24,7 +23,7 @@ import {
   getReadQuery,
   stripTypename
 } from '../utils/queryUtils'
-import {EditorConfig} from '../interfaces/extensionConfig'
+import {Configs} from '../interfaces/extensionConfig'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
 import {
   ContentModelSchemaFieldBase,
@@ -40,7 +39,7 @@ import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 
 export interface ArticleEditorProps {
   readonly id?: string
-  readonly editorConfig: EditorConfig
+  readonly configs: Configs
 }
 
 interface ContentBody {
@@ -156,13 +155,13 @@ function reducer(state: any, action: ContentEditAction) {
   }
 }
 
-export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
+export function ContentEditor({id, configs}: ArticleEditorProps) {
   const {t} = useTranslation()
   const {current} = useRoute()
   const dispatch = useRouteDispatch()
   const type = (current?.params as any).type || ''
 
-  const contentConfig = editorConfig.contentModelExtension.find(config => {
+  const contentConfig = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
   if (!contentConfig) {
@@ -170,11 +169,11 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
   }
 
   const [createContent, {loading: isCreating, data: createData, error: createError}] = useMutation(
-    getCreateMutation(editorConfig, contentConfig)
+    getCreateMutation(configs, contentConfig)
   )
 
   const [updateContent, {loading: isUpdating, error: updateError}] = useMutation(
-    getUpdateMutation(editorConfig, contentConfig)
+    getUpdateMutation(configs, contentConfig)
   )
 
   const [publishContent, {loading: isPublishing, error: publishError}] = usePublishContentMutation({
@@ -192,7 +191,7 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
 
   const intitialCustomMetadata =
     contentConfig.defaultContent ??
-    generateEmptyRootContent(contentConfig.schema.meta, editorConfig.lang)
+    generateEmptyRootContent(contentConfig.schema.meta, configs.apiConfig.languages)
   const [customMetadata, customMetadataDispatcher] = useReducer(reducer, intitialCustomMetadata)
   function setCustomMetadata(value: unknown) {
     customMetadataDispatcher({
@@ -203,7 +202,7 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
 
   const intitialContent =
     contentConfig.defaultContent ??
-    generateEmptyRootContent(contentConfig.schema.content, editorConfig.lang)
+    generateEmptyRootContent(contentConfig.schema.content, configs.apiConfig.languages)
   const [contentData, dispatcher] = useReducer(reducer, intitialContent)
 
   function setContentData(value: unknown) {
@@ -216,7 +215,7 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
   const contentdId = id || createData?.content[type].create.id
 
   const isNew = id === undefined
-  const {data, loading: isLoading} = useQuery(getReadQuery(editorConfig, contentConfig), {
+  const {data, loading: isLoading} = useQuery(getReadQuery(configs, contentConfig), {
     skip: isNew || createData != null,
     errorPolicy: 'all',
     fetchPolicy: 'no-cache',
@@ -355,7 +354,7 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
       <GenericContentView
         record={contentData}
         fields={contentConfig.schema.content}
-        languagesConfig={editorConfig.lang}
+        languagesConfig={configs.apiConfig.languages}
         dispatch={dispatcher}></GenericContentView>
     )
   }
@@ -381,7 +380,7 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
         customMetaFields={contentConfig.schema.meta}
         customMetadata={customMetadata}
         customMetadataDispatcher={customMetadataDispatcher}
-        languagesConfig={editorConfig.lang}
+        languagesConfig={configs.apiConfig.languages}
         onChangeDefaultMetadata={(value: any) => {
           setMetadata(value)
           setChanged(true)
@@ -392,8 +391,21 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
 
   return (
     <>
-      <EditorTemplate
-        navigationChildren={
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          minHeight: '100%'
+        }}>
+        <div
+          style={{
+            display: 'flex',
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            width: '100%'
+          }}>
           <NavigationBar
             leftChildren={
               <IconButtonLink
@@ -461,9 +473,28 @@ export function ContentEditor({id, editorConfig}: ArticleEditorProps) {
               </>
             }
           />
-        }>
-        {content}
-      </EditorTemplate>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            paddingTop: 40,
+            paddingBottom: 60,
+            paddingLeft: 40,
+            paddingRight: 40
+          }}>
+          <div
+            style={{
+              display: 'flex',
+              width: '100%',
+              maxWidth: 880 + 40
+            }}>
+            {content}
+          </div>
+        </div>
+      </div>
 
       <Modal show={isMetaVisible} full backdrop="static" onHide={() => setMetaVisible(false)}>
         <ContentMetadataPanelModal onClose={() => setMetaVisible(false)}>

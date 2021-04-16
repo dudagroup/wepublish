@@ -1,12 +1,20 @@
 import React from 'react'
-import {ExtensionConfig} from '@wepublish/editor'
 import {CustomViewExample} from './customView'
 import {ContentA_EditView} from './contentA'
 import {BlockType} from './article/articleInterfaces'
 import {getContentView} from './article/articleContentView'
 import {ContentMetadataPanel} from './contentAMetadata'
+import {EditorConfig} from '@wepublish/editor'
 
-export const config: ExtensionConfig = {
+export const config: EditorConfig = {
+  navigationBar: {
+    articlesActive: false,
+    pagesActive: false,
+    imageLibraryActive: false,
+    authorsActive: false,
+    navigationActive: false,
+    commentsActive: false
+  },
   contentModelExtension: [
     {
       identifier: 'modelA',

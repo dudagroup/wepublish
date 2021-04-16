@@ -15,7 +15,7 @@ import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
 const {Column, HeaderCell, Cell} = Table
 import {Content} from '@wepublish/api'
-import {EditorConfig} from '../interfaces/extensionConfig'
+import {Configs} from '../interfaces/extensionConfig'
 
 enum ConfirmAction {
   Delete = 'delete',
@@ -25,10 +25,10 @@ enum ConfirmAction {
 const RecordsPerPage = 10
 
 export interface ArticleEditorProps {
-  readonly contentTypeList: EditorConfig
+  readonly configs: Configs
 }
 
-export function ContentList({contentTypeList}: ArticleEditorProps) {
+export function ContentList({configs}: ArticleEditorProps) {
   const {current} = useRoute()
   const type = (current?.params as any).type || ''
   const [filter, setFilter] = useState('')
@@ -37,7 +37,7 @@ export function ContentList({contentTypeList}: ArticleEditorProps) {
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
 
-  const config = contentTypeList.contentModelExtension.find(config => {
+  const config = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
   if (!config) {

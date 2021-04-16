@@ -35,8 +35,8 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
   if (!(value && config)) {
     return null
   }
-  const [editLang, setEditLang] = useState(config.lang.languages[0].tag)
-  const [viewLang, setViewLang] = useState(config.lang.languages[1].tag)
+  const [editLang, setEditLang] = useState(config.apiConfig.languages.languages[0].tag)
+  const [viewLang, setViewLang] = useState(config.apiConfig.languages.languages[1].tag)
 
   const {myString, myStringI18n, myRichText, myRichTextI18n, myRef} = value
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
@@ -68,7 +68,7 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
     [onChange, editLang]
   )
 
-  const languages = config.lang.languages.map(v => {
+  const languages = config.apiConfig.languages.languages.map(v => {
     return {
       label: v.tag,
       value: v.tag
