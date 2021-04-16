@@ -12,6 +12,7 @@ import BlockInt from './BlockInt'
 import {SchemaPath} from '../../interfaces/utilTypes'
 import BlockRichText from './BlockRichText'
 import {ContentEditAction} from '../../control/contentReducer'
+import BlockDateTime from './BlockDateTime'
 
 export interface BlockAbstractProps<M = any, V = any> {
   readonly schemaPath: SchemaPath
@@ -50,6 +51,8 @@ function BlockAbstract(props: BlockAbstractProps) {
     block = <BlockUnion {...props}></BlockUnion>
   } else if (props.model.type === ContentModelSchemaTypes.reference) {
     block = <BlockRef {...props}></BlockRef>
+  } else if (props.model.type === ContentModelSchemaTypes.dateTime) {
+    block = <BlockDateTime {...props}></BlockDateTime>
   }
 
   return <>{block}</>

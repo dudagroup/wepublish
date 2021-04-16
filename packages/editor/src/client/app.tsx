@@ -103,13 +103,8 @@ export function contentForRoute(route: Route, configs?: Configs) {
 
 export function App(editorConfig: EditorConfig) {
   const {current} = useRoute()
-
-  if (!current) {
-    return null
-  }
-
   const configs = useConfig(editorConfig)
-  if (!configs) {
+  if (!(configs && current)) {
     return null
   }
 
