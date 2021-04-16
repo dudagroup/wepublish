@@ -39,8 +39,8 @@ export type _Cmp_ArticleListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -285,8 +285,8 @@ export type _Cmp_ModelAListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -311,6 +311,7 @@ export type _Cmp_ModelA_Record_Content = {
   myString?: Maybe<Scalars['String']>
   myStringI18n?: Maybe<I18n_String>
   myRichText?: Maybe<Scalars['RichText']>
+  myRichTextI18n?: Maybe<I18n_RichText>
   myRef?: Maybe<Ref_ModelA_ModelB__Media>
 }
 
@@ -339,6 +340,7 @@ export type _Cmp_ModelA_Record_Meta = {
   myString?: Maybe<Scalars['String']>
   myStringI18n?: Maybe<I18n_String>
   myRichText?: Maybe<Scalars['RichText']>
+  myRichTextI18n?: Maybe<I18n_RichText>
   myRef?: Maybe<Ref_ModelA_ModelB__Media>
 }
 
@@ -365,8 +367,8 @@ export type _Cmp_ModelBListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -389,7 +391,44 @@ export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content'
   myString?: Maybe<Scalars['String']>
   myRichText?: Maybe<Scalars['RichText']>
+  myInt?: Maybe<Scalars['Int']>
+  myFloat?: Maybe<Scalars['Float']>
+  myBoolean?: Maybe<Scalars['Boolean']>
+  myEnum?: Maybe<_Cmp_ModelB_Record_Content_MyEnum>
+  myList?: Maybe<Array<Maybe<Scalars['String']>>>
+  myUnion?: Maybe<_Cmp_ModelB_Record_Content_MyUnion>
   myRef?: Maybe<Ref_ModelA>
+}
+
+export enum _Cmp_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmp_ModelB_Record_Content_MyUnion =
+  | _Cmp_ModelB_Record_Content_MyUnion_CaseA
+  | _Cmp_ModelB_Record_Content_MyUnion_CaseB
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseA'
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyUnion_CaseA_Content>
+}
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseA_content'
+  foo?: Maybe<Scalars['Boolean']>
+}
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseB'
+  caseB?: Maybe<_Cmp_ModelB_Record_Content_MyUnion_CaseB_Content>
+}
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseB_Content = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseB_content'
+  bar?: Maybe<Scalars['Float']>
 }
 
 export type _Cmp_ModelBConnection = {
@@ -598,6 +637,7 @@ export type _Cmpi_ModelA_Record_Content = {
   myString?: Maybe<Scalars['String']>
   myStringI18n?: Maybe<I18n_String_Input>
   myRichText?: Maybe<Scalars['RichText']>
+  myRichTextI18n?: Maybe<I18n_RichText_Input>
   myRef?: Maybe<Ref_Input>
 }
 
@@ -612,6 +652,7 @@ export type _Cmpi_ModelA_Record_Meta = {
   myString?: Maybe<Scalars['String']>
   myStringI18n?: Maybe<I18n_String_Input>
   myRichText?: Maybe<Scalars['RichText']>
+  myRichTextI18n?: Maybe<I18n_RichText_Input>
   myRef?: Maybe<Ref_Input>
 }
 
@@ -660,7 +701,33 @@ export type _Cmpi_ModelBUnpublishArgs = {
 export type _Cmpi_ModelB_Record_Content = {
   myString?: Maybe<Scalars['String']>
   myRichText?: Maybe<Scalars['RichText']>
+  myInt?: Maybe<Scalars['Int']>
+  myFloat?: Maybe<Scalars['Float']>
+  myBoolean?: Maybe<Scalars['Boolean']>
+  myEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyEnum>
+  myList?: Maybe<Array<Maybe<Scalars['String']>>>
+  myUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion>
   myRef?: Maybe<Ref_Input>
+}
+
+export enum _Cmpi_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmpi_ModelB_Record_Content_MyUnion = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseA>
+  caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseB>
+}
+
+export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
+  foo?: Maybe<Scalars['Boolean']>
+}
+
+export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
+  bar?: Maybe<Scalars['Float']>
 }
 
 export type _Cmpi_ModelB_Record_Create = {
@@ -689,8 +756,8 @@ export type AllListArgs = {
   before?: Maybe<Scalars['ID']>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
-  filter?: Maybe<ArticleFilter>
-  sort?: Maybe<ArticleSort>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
   order?: Maybe<SortOrder>
 }
 
@@ -1061,6 +1128,15 @@ export enum ContentContextEnum {
   Peers = 'peers'
 }
 
+export type ContentFilter = {
+  title?: Maybe<Scalars['String']>
+  draft?: Maybe<Scalars['Boolean']>
+  published?: Maybe<Scalars['Boolean']>
+  pending?: Maybe<Scalars['Boolean']>
+  authors?: Maybe<Array<Scalars['ID']>>
+  tags?: Maybe<Array<Scalars['String']>>
+}
+
 export type ContentModelSummary = {
   __typename?: 'ContentModelSummary'
   id: Scalars['ID']
@@ -1073,6 +1149,14 @@ export type ContentModelSummary = {
   modifiedAt: Scalars['DateTime']
   publicationDate?: Maybe<Scalars['DateTime']>
   dePublicationDate?: Maybe<Scalars['DateTime']>
+}
+
+export enum ContentSort {
+  CreatedAt = 'CREATED_AT',
+  ModifiedAt = 'MODIFIED_AT',
+  PublishAt = 'PUBLISH_AT',
+  PublishedAt = 'PUBLISHED_AT',
+  UpdatedAt = 'UPDATED_AT'
 }
 
 export enum ContentStateEnum {
@@ -1134,6 +1218,16 @@ export type EmbedBlockInput = {
   styleCustom?: Maybe<Scalars['String']>
 }
 
+export type ExtensionFoo = {
+  __typename?: 'ExtensionFoo'
+  example: Scalars['String']
+}
+
+export type ExtensionMutationFoo = {
+  __typename?: 'ExtensionMutationFoo'
+  example: Scalars['String']
+}
+
 export type ExternalNavigationLink = BaseNavigationLink & {
   __typename?: 'ExternalNavigationLink'
   label: Scalars['String']
@@ -1176,6 +1270,17 @@ export type GalleryImageEdge = {
 export type GalleryImageEdgeInput = {
   caption?: Maybe<Scalars['String']>
   imageID?: Maybe<Scalars['ID']>
+}
+
+export type I18n_RichText = {
+  __typename?: 'i18n_RichText'
+  en?: Maybe<Scalars['RichText']>
+  de?: Maybe<Scalars['RichText']>
+}
+
+export type I18n_RichText_Input = {
+  en?: Maybe<Scalars['RichText']>
+  de?: Maybe<Scalars['RichText']>
 }
 
 export type I18n_String = {
@@ -1463,6 +1568,7 @@ export enum MemberPlanSort {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  extensions: ExtensionMutationFoo
   content: Content_Mutations
   updatePeerProfile: PeerProfile
   createPeer: Peer
@@ -2063,6 +2169,7 @@ export type PropertiesInput = {
 
 export type Query = {
   __typename?: 'Query'
+  extensions: ExtensionFoo
   content: Content
   config: Config
   peerProfile: PeerProfile

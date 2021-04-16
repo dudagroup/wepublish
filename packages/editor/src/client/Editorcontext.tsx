@@ -1,4 +1,4 @@
 import React from 'react'
-import {EditorConfig} from './interfaces/extensionConfig'
+import {Configs} from './interfaces/extensionConfig'
 
-export const ConfigContext = React.createContext<EditorConfig>(null!)
+export const ConfigContext = React.createContext<Configs | undefined>(undefined)

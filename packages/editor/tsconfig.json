@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["./src/**/*"],
+  "include": ["./**/*"],
   "exclude": ["./__mocks__"],
   "compilerOptions": {
     "types": [
@@ -10,8 +10,6 @@
       "@types/resize-observer-browser",
       "@types/emoji-mart"
     ],
-    "lib": ["ES2017", "ES2018", "ES2019", "dom", "dom.iterable"],
-    "outDir": "./lib/",
-    "declaration": true
+    "lib": ["ES2017", "ES2018", "ES2019", "dom", "dom.iterable"]
   }
 }

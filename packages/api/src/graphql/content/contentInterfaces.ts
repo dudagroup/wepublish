@@ -1,4 +1,4 @@
-export enum CustomContentSort {
+export enum ContentSort {
   CreatedAt = 'createdAt',
   ModifiedAt = 'modifiedAt',
   PublishedAt = 'publishedAt',

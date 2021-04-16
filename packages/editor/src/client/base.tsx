@@ -24,14 +24,14 @@ import {
 } from './route'
 
 import {useTranslation} from 'react-i18next'
-import {EditorConfig} from './interfaces/extensionConfig'
+import {Configs} from './interfaces/extensionConfig'
 
 export interface BaseProps {
   children?: ReactNode
-  readonly contentTypeList: EditorConfig
+  readonly configs?: Configs
 }
 
-const AVAILABLE_LANG = [
+export const AVAILABLE_LANG = [
   {id: 'en', lang: 'en_US', name: 'English'}
   /* {id: 'fr', lang: 'fr_FR', name: 'Français'},
   {id: 'de', lang: 'de_CH', name: 'Deutsch'} */
@@ -55,7 +55,7 @@ const NavItemLink = routeLink(Nav.Item)
 // @ts-ignore
 const DropdownItemLink = routeLink(Dropdown.Item)
 
-function useStickyState(defaultValue: string, key: string) {
+export function useStickyState(defaultValue: string, key: string) {
   const [value, setValue] = useState(() => {
     const stickyValue = window.localStorage.getItem(key)
     return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue
@@ -66,7 +66,7 @@ function useStickyState(defaultValue: string, key: string) {
   return [value, setValue]
 }
 
-export function Base({children, contentTypeList}: BaseProps) {
+export function Base({children, configs}: BaseProps) {
   const {current} = useRoute()
 
   const {t, i18n} = useTranslation()
@@ -76,8 +76,8 @@ export function Base({children, contentTypeList}: BaseProps) {
   const [uiLanguage, setUILanguage] = useStickyState(AVAILABLE_LANG[0].id, 'wepublish/language')
 
   let customContentNavItems: any = []
-  if (contentTypeList) {
-    customContentNavItems = contentTypeList.contentModelExtension.map(item => {
+  if (configs) {
+    customContentNavItems = configs.contentModelExtensionMerged.map(item => {
       const route = ContentListRoute.create({type: item.identifier})
       return (
         <NavItemLink
@@ -92,7 +92,7 @@ export function Base({children, contentTypeList}: BaseProps) {
       )
     })
 
-    contentTypeList.cusomExtension?.forEach(item => {
+    configs.editorConfig.cusomExtension?.forEach(item => {
       const route = ExtensionRoute.create({type: item.identifier})
       customContentNavItems.push(
         <NavItemLink
@@ -132,49 +132,61 @@ export function Base({children, contentTypeList}: BaseProps) {
             </Sidenav.Header>
             <Sidenav.Body>
               <Nav>
-                <NavItemLink
-                  icon={<Icon icon="file-text" />}
-                  route={ArticleListRoute.create({})}
-                  active={current?.type === RouteType.ArticleList}>
-                  {t('navbar.articles')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.articlesActive && (
+                  <NavItemLink
+                    icon={<Icon icon="file-text" />}
+                    route={ArticleListRoute.create({})}
+                    active={current?.type === RouteType.ArticleList}>
+                    {t('navbar.articles')}
+                  </NavItemLink>
+                )}
 
-                <NavItemLink
-                  icon={<Icon icon="file" />}
-                  route={PageListRoute.create({})}
-                  active={current?.type === RouteType.PageList}>
-                  {t('navbar.pages')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.pagesActive && (
+                  <NavItemLink
+                    icon={<Icon icon="file" />}
+                    route={PageListRoute.create({})}
+                    active={current?.type === RouteType.PageList}>
+                    {t('navbar.pages')}
+                  </NavItemLink>
+                )}
 
                 {customContentNavItems}
 
-                <NavItemLink
-                  icon={<Icon icon="people-group" />}
-                  route={AuthorListRoute.create({})}
-                  active={current?.type === RouteType.AuthorList}>
-                  {t('navbar.authors')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.authorsActive && (
+                  <NavItemLink
+                    icon={<Icon icon="people-group" />}
+                    route={AuthorListRoute.create({})}
+                    active={current?.type === RouteType.AuthorList}>
+                    {t('navbar.authors')}
+                  </NavItemLink>
+                )}
 
-                <NavItemLink
-                  icon={<Icon icon="comment" />}
-                  route={CommentListRoute.create({})}
-                  active={current?.type === RouteType.CommentList}>
-                  {t('navbar.comments')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.commentsActive && (
+                  <NavItemLink
+                    icon={<Icon icon="comment" />}
+                    route={CommentListRoute.create({})}
+                    active={current?.type === RouteType.CommentList}>
+                    {t('navbar.comments')}
+                  </NavItemLink>
+                )}
 
-                <NavItemLink
-                  icon={<Icon icon="camera-retro" />}
-                  route={ImageListRoute.create({})}
-                  active={current?.type === RouteType.ImageList}>
-                  {t('navbar.imageLibrary')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.imageLibraryActive && (
+                  <NavItemLink
+                    icon={<Icon icon="camera-retro" />}
+                    route={ImageListRoute.create({})}
+                    active={current?.type === RouteType.ImageList}>
+                    {t('navbar.imageLibrary')}
+                  </NavItemLink>
+                )}
 
-                <NavItemLink
-                  icon={<Icon icon="bars" />}
-                  route={NavigationListRoute.create({})}
-                  active={current?.type === RouteType.NavigationList}>
-                  {t('navbar.navigations')}
-                </NavItemLink>
+                {configs?.editorConfig.navigationBar?.navigationActive && (
+                  <NavItemLink
+                    icon={<Icon icon="bars" />}
+                    route={NavigationListRoute.create({})}
+                    active={current?.type === RouteType.NavigationList}>
+                    {t('navbar.navigations')}
+                  </NavItemLink>
+                )}
 
                 <Dropdown
                   eventKey={'1'}

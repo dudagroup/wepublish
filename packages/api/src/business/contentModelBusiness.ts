@@ -3,9 +3,9 @@ import {Content, DBContentState} from '../db/content'
 import nanoid from 'nanoid/generate'
 import {
   authorise,
-  CanCreateArticle,
-  CanDeleteArticle,
-  CanPublishArticle
+  CanCreateContent,
+  CanDeleteContent,
+  CanPublishContent
 } from '../graphql/permissions'
 import {ContentModelSchemas, ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
@@ -24,9 +24,9 @@ export class BusinessLogic {
 
   async createContent(identifier: string, input: Content) {
     const {roles} = this.context.authenticate()
-    authorise(CanCreateArticle, roles)
+    authorise(CanCreateContent, roles)
 
-    const schema = this.context.contentModels.find(item => item.identifier === identifier)
+    const schema = this.context.contentModels?.find(item => item.identifier === identifier)
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
@@ -50,9 +50,9 @@ export class BusinessLogic {
 
   async updateContent(identifier: string, input: Content) {
     const {roles} = this.context.authenticate()
-    authorise(CanCreateArticle, roles)
+    authorise(CanCreateContent, roles)
 
-    const schema = this.context.contentModels.find(item => item.identifier === identifier)
+    const schema = this.context.contentModels?.find(item => item.identifier === identifier)
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
@@ -72,7 +72,7 @@ export class BusinessLogic {
 
   async deleteContent(id: string) {
     const {roles} = this.context.authenticate()
-    authorise(CanDeleteArticle, roles)
+    authorise(CanDeleteContent, roles)
     return this.context.dbAdapter.content.deleteContent({id})
   }
 
@@ -84,7 +84,7 @@ export class BusinessLogic {
     updatedAt?: Date
   ) {
     const {roles} = this.context.authenticate()
-    authorise(CanPublishArticle, roles)
+    authorise(CanPublishContent, roles)
 
     return this.context.dbAdapter.content.updateContent({
       input: {
@@ -99,7 +99,7 @@ export class BusinessLogic {
 
   async unpublishContent(id: string, revision: number) {
     const {roles} = this.context.authenticate()
-    authorise(CanPublishArticle, roles)
+    authorise(CanPublishContent, roles)
 
     return this.context.dbAdapter.content.updateContent({
       input: {

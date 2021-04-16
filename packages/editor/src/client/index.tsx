@@ -1,7 +1,13 @@
 import {initClient} from './client'
-import {ExtensionConfig} from './interfaces/extensionConfig'
+import {EditorConfig} from './interfaces/extensionConfig'
 
-const config: ExtensionConfig = {}
+import 'rsuite/lib/styles/index.less'
+import './global.less'
+import './atoms/emojiPicker.less'
+import './atoms/toolbar.less'
+import './blocks/richTextBlock/toolbar/tableMenu.less'
+
+const config: EditorConfig = {}
 if (document.readyState !== 'loading') {
   initClient(config)
 } else {

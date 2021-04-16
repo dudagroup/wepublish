@@ -7,7 +7,12 @@ export const contentModelA: ContentModel = {
   schema: {
     content: {
       myString: {
-        type: ContentModelSchemaTypes.string
+        type: ContentModelSchemaTypes.string,
+        deprecationReason: "it's very old",
+        instructionsApi: 'this is an ordinary string',
+        instructionsEditor: {
+          en: 'this is an test instruction'
+        }
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
@@ -15,6 +20,10 @@ export const contentModelA: ContentModel = {
       },
       myRichText: {
         type: ContentModelSchemaTypes.richText
+      },
+      myRichTextI18n: {
+        type: ContentModelSchemaTypes.richText,
+        i18n: true
       },
       myRef: {
         type: ContentModelSchemaTypes.reference,
@@ -41,6 +50,10 @@ export const contentModelA: ContentModel = {
       },
       myRichText: {
         type: ContentModelSchemaTypes.richText
+      },
+      myRichTextI18n: {
+        type: ContentModelSchemaTypes.richText,
+        i18n: true
       },
       myRef: {
         type: ContentModelSchemaTypes.reference,

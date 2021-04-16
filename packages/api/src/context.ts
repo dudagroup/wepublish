@@ -7,7 +7,7 @@ import AbortController from 'abort-controller'
 
 import DataLoader from 'dataloader'
 
-import {GraphQLError, GraphQLFieldConfigMap, GraphQLSchema, print} from 'graphql'
+import {GraphQLError, GraphQLFieldConfigMap, GraphQLObjectType, GraphQLSchema, print} from 'graphql'
 
 import {
   Fetcher,
@@ -125,7 +125,7 @@ export interface Context {
   readonly oauth2Providers: Oauth2Provider[]
   readonly paymentProviders: PaymentProvider[]
 
-  readonly contentModels: ContentModel[]
+  readonly contentModels?: ContentModel[]
   readonly languageConfig: LanguageConfig
 
   readonly hooks?: Hooks
@@ -163,8 +163,12 @@ export interface ContextOptions {
   readonly mailProvider?: BaseMailProvider
   readonly oauth2Providers: Oauth2Provider[]
   readonly paymentProviders: PaymentProvider[]
-  readonly contentModels: ContentModel[]
+  readonly contentModels?: ContentModel[]
   readonly languageConfig: LanguageConfig
+  readonly graphQLExtensionPrivate?: {
+    query: GraphQLObjectType<any, Context>
+    mutation: GraphQLObjectType<any, Context>
+  }
   readonly hooks?: Hooks
 }
 

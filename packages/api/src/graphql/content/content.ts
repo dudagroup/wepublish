@@ -19,25 +19,25 @@ import {SessionType} from '../../db/session'
 import {NotAuthorisedError} from '../../error'
 import {GraphQLContentSateEnum} from './contentUtils'
 import {
-  GraphQLArticleFilter,
-  GraphQLArticleSort,
-  GraphQLPublicArticleFilter,
-  GraphQLPublicArticleSort
-} from '../article'
+  GraphQLContentFilter,
+  GraphQLContentSort,
+  GraphQLPublicContentFilter,
+  GraphQLPublicContentSort
+} from './contentGraphQLTypes'
 import {GraphQLPageInfo, GraphQLSortOrder} from '../common'
 import {
   authorise,
-  CanDeleteArticle,
-  CanGetArticle,
-  CanGetArticles,
-  CanGetPeerArticle,
-  CanGetPeerArticles,
-  CanGetSharedArticle,
-  CanGetSharedArticles,
+  CanDeleteContent,
+  CanGetContent,
+  CanGetContents,
+  CanGetPeerContent,
+  CanGetPeerContents,
+  CanGetSharedContent,
+  CanGetSharedContents,
   isAuthorised
 } from '../permissions'
 import {getGraphQLContentConnection, getGraphQLPeerCustomContent} from './contentUtils'
-import {CustomContentSort} from './contentInterfaces'
+import {ContentSort} from './contentInterfaces'
 
 import {
   base64Decode,
@@ -47,7 +47,6 @@ import {
 } from '../../utility'
 import {GraphQLSlug} from '../slug'
 import {WrapQuery} from 'graphql-tools'
-import {ArticleSort} from '../../db/article'
 import {
   generateInputSchema,
   generateSchema,
@@ -58,12 +57,15 @@ import {
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
 
-export interface PeerArticle {
+export interface PeerContent {
   peerID: string
   content: any
 }
 
-export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions: ContextOptions) {
+export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: ContextOptions) {
+  if (!(contextOptions?.contentModels && contextOptions.contentModels.length > 0)) {
+    return
+  }
   let query: GraphQLFieldConfigMap<any, Context, any> = {}
   let queryPublic: GraphQLFieldConfigMap<any, Context, any> = {}
   let mutation: GraphQLFieldConfigMap<any, Context, any> = {}
@@ -106,13 +108,13 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
               type: typePublic,
               args: {id: {type: GraphQLID}},
               async resolve(root, {id}, {session, loaders}) {
-                const article = await loaders.publicContent.load(id)
+                const content = await loaders.publicContent.load(id)
 
                 if (session?.type === SessionType.Token) {
-                  return article?.shared ? article : null
+                  return content?.shared ? content : null
                 }
 
-                return article
+                return content
               }
             },
 
@@ -134,10 +136,10 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
-                filter: {type: GraphQLPublicArticleFilter},
+                filter: {type: GraphQLPublicContentFilter},
                 sort: {
-                  type: GraphQLPublicArticleSort,
-                  defaultValue: CustomContentSort.PublishedAt
+                  type: GraphQLPublicContentSort,
+                  defaultValue: ContentSort.PublishedAt
                 },
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
@@ -249,7 +251,7 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                   const {authenticate} = context
                   const {roles} = authenticate()
 
-                  authorise(CanGetPeerArticle, roles)
+                  authorise(CanGetPeerContent, roles)
 
                   return delegateToPeerSchema(peerID, true, context, {
                     fieldName: `content`,
@@ -298,16 +300,16 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 const {authenticate, loaders} = context
                 const {roles} = authenticate()
 
-                const canGetArticle = isAuthorised(CanGetArticle, roles)
-                const canGetSharedArticle = isAuthorised(CanGetSharedArticle, roles)
+                const canGetContent = isAuthorised(CanGetContent, roles)
+                const canGetSharedContent = isAuthorised(CanGetSharedContent, roles)
 
-                if (canGetArticle || canGetSharedArticle) {
-                  const article = await loaders.content.load(id)
+                if (canGetContent || canGetSharedContent) {
+                  const content = await loaders.content.load(id)
 
-                  if (canGetArticle) {
-                    return article
+                  if (canGetContent) {
+                    return content
                   } else {
-                    return article?.shared ? article : null
+                    return content?.shared ? content : null
                   }
                 } else {
                   throw new NotAuthorisedError()
@@ -321,8 +323,8 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
-                filter: {type: GraphQLArticleFilter},
-                sort: {type: GraphQLArticleSort, defaultValue: CustomContentSort.ModifiedAt},
+                filter: {type: GraphQLContentFilter},
+                sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
               resolve(
@@ -331,15 +333,15 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 {authenticate, dbAdapter}
               ) {
                 const {roles} = authenticate()
-                const canGetArticles = isAuthorised(CanGetArticles, roles)
-                const canGetSharedArticles = isAuthorised(CanGetSharedArticles, roles)
-                if (!(canGetArticles || canGetSharedArticles)) {
+                const canGetContents = isAuthorised(CanGetContents, roles)
+                const canGetSharedContents = isAuthorised(CanGetSharedContents, roles)
+                if (!(canGetContents || canGetSharedContents)) {
                   throw new NotAuthorisedError()
                 }
 
                 return dbAdapter.content.getContents({
                   type: item.identifier,
-                  filter: {...filter, shared: !canGetArticles ? true : undefined},
+                  filter: {...filter, shared: !canGetContents ? true : undefined},
                   sort,
                   order,
                   cursor: InputCursor(after, before),
@@ -410,8 +412,8 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
               before: {type: GraphQLID},
               first: {type: GraphQLInt},
               last: {type: GraphQLInt},
-              filter: {type: GraphQLArticleFilter},
-              sort: {type: GraphQLArticleSort, defaultValue: CustomContentSort.ModifiedAt},
+              filter: {type: GraphQLContentFilter},
+              sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
               order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
             },
             async resolve(
@@ -425,7 +427,7 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
               if (argContext && argContext === 'peers') {
                 const {roles} = authenticate()
 
-                authorise(CanGetPeerArticles, roles)
+                authorise(CanGetPeerContents, roles)
 
                 after = after ? JSON.parse(base64Decode(after)) : null
 
@@ -477,7 +479,7 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                   })
                 }
 
-                const articles = await Promise.all(
+                const contentss = await Promise.all(
                   peers.map((peer: any) => {
                     try {
                       if (after && after[peer.id] == null) return null
@@ -551,67 +553,67 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                   })
                 )
 
-                const totalCount = articles.reduce(
+                const totalCount = contentss.reduce(
                   (prev, result: any) => prev + (result?.totalCount ?? 0),
                   0
                 )
 
                 const cursors = Object.fromEntries(
-                  articles.map((result: any, index) => [
+                  contentss.map((result: any, index) => [
                     peers[index].id,
                     result?.pageInfo.endCursor ?? null
                   ])
                 )
 
-                const hasNextPage = articles.reduce(
+                const hasNextPage = contentss.reduce(
                   (prev, result: any) => prev || (result?.pageInfo.hasNextPage ?? false),
                   false
                 )
 
-                const peerArticles = articles.flatMap<PeerArticle>((result: any, index) => {
+                const peerContents = contentss.flatMap<PeerContent>((result: any, index) => {
                   const peer = peers[index]
                   return (
-                    result?.nodes.map((article: any) =>
-                      Object.assign(article, {peerID: peer.id})
+                    result?.nodes.map((content: any) =>
+                      Object.assign(content, {peerID: peer.id})
                     ) ?? []
                   )
                 })
 
                 switch (sort) {
-                  case ArticleSort.CreatedAt:
-                    peerArticles.sort(
+                  case ContentSort.CreatedAt:
+                    peerContents.sort(
                       (a, b) =>
                         new Date(b.content.createdAt).getTime() -
                         new Date(a.content.createdAt).getTime()
                     )
                     break
 
-                  case ArticleSort.ModifiedAt:
-                    peerArticles.sort(
+                  case ContentSort.ModifiedAt:
+                    peerContents.sort(
                       (a, b) =>
                         new Date(b.content.modifiedAt).getTime() -
                         new Date(a.content.modifiedAt).getTime()
                     )
                     break
 
-                  case ArticleSort.PublishAt:
-                    peerArticles.sort(
+                  case ContentSort.PublishAt:
+                    peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishAt).getTime() -
                         new Date(a.content.latest.publishAt).getTime()
                     )
                     break
 
-                  case ArticleSort.PublishedAt:
-                    peerArticles.sort(
+                  case ContentSort.PublishedAt:
+                    peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishedAt).getTime() -
                         new Date(a.content.latest.publishedAt).getTime()
                     )
                     break
 
-                  case ArticleSort.UpdatedAt:
-                    peerArticles.sort(
+                  case ContentSort.UpdatedAt:
+                    peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.updatedAt).getTime() -
                         new Date(a.content.latest.updatedAt).getTime()
@@ -620,11 +622,11 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 }
 
                 if (order === SortOrder.Ascending) {
-                  peerArticles.reverse()
+                  peerContents.reverse()
                 }
 
                 return {
-                  nodes: peerArticles,
+                  nodes: peerContents,
                   totalCount: totalCount,
                   pageInfo: {
                     endCursor: base64Encode(JSON.stringify(cursors)),
@@ -634,13 +636,13 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
               }
 
               const {roles} = authenticate()
-              const canGetArticles = isAuthorised(CanGetArticles, roles)
-              const canGetSharedArticles = isAuthorised(CanGetSharedArticles, roles)
+              const canGetContents = isAuthorised(CanGetContents, roles)
+              const canGetSharedContents = isAuthorised(CanGetSharedContents, roles)
 
-              if (canGetArticles || canGetSharedArticles) {
+              if (canGetContents || canGetSharedContents) {
                 const r = await dbAdapter.content.getContents({
                   type,
-                  filter: {...filter, shared: !canGetArticles ? true : undefined},
+                  filter: {...filter, shared: !canGetContents ? true : undefined},
                   sort,
                   order,
                   cursor: InputCursor(after, before),
@@ -666,7 +668,7 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
                 const {authenticate} = context
                 const {roles} = authenticate()
 
-                authorise(CanGetPeerArticle, roles)
+                authorise(CanGetPeerContent, roles)
 
                 return null // todo
               }
@@ -674,13 +676,13 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
               const {authenticate, loaders} = context
               const {roles} = authenticate()
 
-              const canGetArticle = isAuthorised(CanGetArticle, roles)
-              const canGetSharedArticle = isAuthorised(CanGetSharedArticle, roles)
+              const canGetContent = isAuthorised(CanGetContent, roles)
+              const canGetSharedContent = isAuthorised(CanGetSharedContent, roles)
 
-              if (canGetArticle || canGetSharedArticle) {
+              if (canGetContent || canGetSharedContent) {
                 const content = await loaders.content.load(id)
 
-                if (canGetArticle) {
+                if (canGetContent) {
                   return content
                 } else {
                   return content?.shared ? content : null
@@ -742,7 +744,7 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
             args: {id: {type: GraphQLNonNull(GraphQLID)}},
             async resolve(root, {id}, {authenticate, dbAdapter}) {
               const {roles} = authenticate()
-              authorise(CanDeleteArticle, roles)
+              authorise(CanDeleteContent, roles)
               return dbAdapter.content.deleteContent({id})
             }
           },
@@ -778,11 +780,11 @@ export function getGraphQLCustomContent<TSource, TContext, TArgs>(contextOptions
       name: nameJoin('content', 'public'),
       fields: queryPublic
     }),
-    query: new GraphQLObjectType<undefined, Context>({
+    queryPrivate: new GraphQLObjectType<undefined, Context>({
       name: 'content',
       fields: query
     }),
-    mutation: new GraphQLObjectType<undefined, Context>({
+    mutationPrivate: new GraphQLObjectType<undefined, Context>({
       name: nameJoin('content', 'mutations'),
       fields: mutation
     })

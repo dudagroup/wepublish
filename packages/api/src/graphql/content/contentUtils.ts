@@ -204,7 +204,7 @@ function generateType(
         type = new GraphQLInputObjectType({
           name,
           fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-            val.required = false
+            val.optional = true
             accu[`${key}`] = {
               type: generateType(config, val, nameJoin(name, key))
             }
@@ -225,7 +225,8 @@ function generateType(
                     fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
                       accu[`${key}`] = {
                         type: generateType(config, val, nameJoin(unionCaseName, key)),
-                        deprecationReason: val.deprecationReason
+                        deprecationReason: val.deprecationReason,
+                        description: val.instructionsApi
                       }
                       return accu
                     }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
@@ -256,7 +257,8 @@ function generateType(
           name,
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
             accu[`${key}`] = {
-              type: generateType(config, val, nameJoin(name, key))
+              type: generateType(config, val, nameJoin(name, key)),
+              description: val.instructionsApi
             }
             return accu
           }, {} as GraphQLInputFieldConfigMap)
@@ -267,7 +269,8 @@ function generateType(
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
             accu[`${key}`] = {
               type: generateType(config, val, nameJoin(name, key)),
-              deprecationReason: val.deprecationReason
+              deprecationReason: val.deprecationReason,
+              description: val.instructionsApi
             }
             return accu
           }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
@@ -280,6 +283,7 @@ function generateType(
       break
 
     case ContentModelSchemaTypes.reference:
+      contentModelSchemas.optional = true
       if (config.isInput) {
         type = getLeaf(config, contentModelSchemas, GraphQLReferenceInput)
       } else {
@@ -291,7 +295,7 @@ function generateType(
       }
       break
   }
-  if (contentModelSchemas.required) {
+  if (!contentModelSchemas.optional) {
     type = GraphQLNonNull(type)
   }
   return type

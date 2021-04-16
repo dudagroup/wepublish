@@ -11,7 +11,8 @@ import {
   StripePaymentProvider,
   URLAdapter,
   WepublishServer,
-  JobType
+  JobType,
+  Context
 } from '@wepublish/api'
 
 import {KarmaMediaAdapter} from '@wepublish/api-media-karma'
@@ -29,9 +30,10 @@ import {hideBin} from 'yargs/helpers'
 import {contentModelArticle} from './modelArticle'
 import {contentModelA} from './modelA'
 import {contentModelB} from './modelB'
+import {GraphQLNonNull, GraphQLObjectType, GraphQLString} from 'graphql'
 
 interface ExampleURLAdapterProps {
-  websiteURL: string
+  websiteURL: string //a
 }
 
 class ExampleURLAdapter implements URLAdapter {
@@ -302,6 +304,30 @@ async function asyncMain() {
           tag: 'de'
         }
       ]
+    },
+    graphQLExtensionPrivate: {
+      mutation: new GraphQLObjectType<undefined, Context>({
+        name: 'ExtensionMutationFoo',
+        fields: {
+          example: {
+            type: GraphQLNonNull(GraphQLString),
+            resolve: () => {
+              return 'foo'
+            }
+          }
+        }
+      }),
+      query: new GraphQLObjectType<undefined, Context>({
+        name: 'ExtensionFoo',
+        fields: {
+          example: {
+            type: GraphQLNonNull(GraphQLString),
+            resolve: () => {
+              return 'foo'
+            }
+          }
+        }
+      })
     },
     logger
   })

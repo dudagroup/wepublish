@@ -1,4 +1,4 @@
-import {ContentConfig, LanguagesConfig} from '../api'
+import {ContentConfig, Config} from '../api'
 import {DefaultMetadata} from '../panel/contentMetadataPanel'
 
 export interface ExtensionBase {
@@ -11,9 +11,19 @@ export interface CusomExtension extends ExtensionBase {
   view: any
 }
 
-export interface ExtensionConfig {
+export interface NavigationBarConfig {
+  articlesActive: boolean
+  pagesActive: boolean
+  imageLibraryActive: boolean
+  authorsActive: boolean
+  commentsActive: boolean
+  navigationActive: boolean
+}
+
+export interface EditorConfig {
   contentModelExtension?: ContentModelExtension[]
   cusomExtension?: CusomExtension[]
+  navigationBar?: NavigationBarConfig
 }
 
 export interface ContentModelExtension<M = any> extends ExtensionBase {
@@ -29,8 +39,8 @@ export interface ContentModelExtension<M = any> extends ExtensionBase {
 }
 
 export type ContentModelConfigMerged = ContentConfig & Partial<ContentModelExtension>
-export interface EditorConfig {
-  contentModelExtension: ContentModelConfigMerged[]
-  cusomExtension?: CusomExtension[]
-  lang: LanguagesConfig
+export interface Configs {
+  apiConfig: Config
+  editorConfig: EditorConfig
+  contentModelExtensionMerged: ContentModelConfigMerged[]
 }

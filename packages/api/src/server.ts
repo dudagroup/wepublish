@@ -30,7 +30,7 @@ export class WepublishServer {
   constructor(opts: WepublishServerOpts) {
     const app = express()
     this.opts = opts
-    const {dbAdapter} = opts
+    const {dbAdapter, graphQLExtensionPrivate} = opts
 
     serverLogger = opts.logger ? opts.logger : pino({name: 'we.publish'})
 
@@ -67,7 +67,11 @@ export class WepublishServer {
       }
     })
 
-    const {privateSchema, publicSchema} = getGraphQLWepublishSchemas(opts)
+    const {privateSchema, publicSchema} = getGraphQLWepublishSchemas(
+      opts,
+      graphQLExtensionPrivate?.query,
+      graphQLExtensionPrivate?.mutation
+    )
 
     const adminServer = new ApolloServer({
       schema: privateSchema,

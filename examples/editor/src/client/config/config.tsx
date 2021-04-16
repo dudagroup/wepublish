@@ -1,13 +1,20 @@
 import React from 'react'
-import {ExtensionConfig} from '@wepublish/editor'
 import {CustomViewExample} from './customView'
 import {ContentA_EditView} from './contentA'
-import {ContentB_EditView} from './contentB'
 import {BlockType} from './article/articleInterfaces'
 import {getContentView} from './article/articleContentView'
 import {ContentMetadataPanel} from './contentAMetadata'
+import {EditorConfig} from '@wepublish/editor'
 
-export const config: ExtensionConfig = {
+export const config: EditorConfig = {
+  navigationBar: {
+    articlesActive: false,
+    pagesActive: false,
+    imageLibraryActive: false,
+    authorsActive: false,
+    navigationActive: false,
+    commentsActive: false
+  },
   contentModelExtension: [
     {
       identifier: 'modelA',
@@ -27,6 +34,28 @@ export const config: ExtensionConfig = {
             ]
           }
         ],
+        myRichTextI18n: {
+          de: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: ''
+                }
+              ]
+            }
+          ],
+          en: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: ''
+                }
+              ]
+            }
+          ]
+        },
         myRef: null
       },
       defaultMeta: {
@@ -45,6 +74,28 @@ export const config: ExtensionConfig = {
             ]
           }
         ],
+        myRichTextI18n: {
+          de: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: ''
+                }
+              ]
+            }
+          ],
+          en: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: ''
+                }
+              ]
+            }
+          ]
+        },
         myRef: null
       },
       getContentView: (content, onChange, disabled) => {
@@ -59,26 +110,6 @@ export const config: ExtensionConfig = {
             onChangeCustomMetadata={onChangeMetadata}
           />
         )
-      }
-    },
-    {
-      identifier: 'modelB',
-      defaultContent: {
-        myString: '',
-        myRichText: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: ''
-              }
-            ]
-          }
-        ],
-        myRef: null
-      },
-      getContentView: (content: any, handleChange: any, disabled: boolean) => {
-        return <ContentB_EditView value={content} onChange={handleChange} />
       }
     },
     {
