@@ -86,6 +86,7 @@ function replace(file) {
 function updateImports() {
   replace('package.json')
   handleFilesrecursive('./packages', replace)
+  handleFilesrecursive('./examples', replace)
 }
 
 async function npmInstallAndBuild() {
