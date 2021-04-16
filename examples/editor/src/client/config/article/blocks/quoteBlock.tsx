@@ -1,15 +1,12 @@
 import React, {useRef, useEffect} from 'react'
-
 import {BlockProps} from '../atoms/blockList'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
-
 import {QuoteBlockValue} from './types'
-
 import {useTranslation} from 'react-i18next'
 
 export type QuoteBlockProps = BlockProps<QuoteBlockValue>
 
-export function QuoteBlock({value, onChange, autofocus, disabled}: QuoteBlockProps) {
+export function QuoteBlock({value, onChangeNew, autofocus, disabled}: QuoteBlockProps) {
   const {quote, author} = value
   const focusRef = useRef<HTMLTextAreaElement>(null)
   const {t} = useTranslation()
@@ -26,7 +23,9 @@ export function QuoteBlock({value, onChange, autofocus, disabled}: QuoteBlockPro
         placeholder={t('blocks.quote.quote')}
         value={quote}
         disabled={disabled}
-        onChange={e => onChange({...value, quote: e.target.value})}
+        onChange={e => {
+          onChangeNew(e.target.value, ['quote'])
+        }}
       />
       <div
         style={{
@@ -45,7 +44,9 @@ export function QuoteBlock({value, onChange, autofocus, disabled}: QuoteBlockPro
           placeholder={t('blocks.quote.author')}
           value={author}
           disabled={disabled}
-          onChange={e => onChange({...value, author: e.target.value})}
+          onChange={e => {
+            onChangeNew(e.target.value, ['author'])
+          }}
         />
       </div>
     </>

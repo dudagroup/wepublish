@@ -34,24 +34,29 @@ export function BlockObject({
       let componentLane1 = null
       if (langLane1) {
         componentLane1 = (
-          <BlockAbstract
-            schemaPath={[...childSchemaPath, langLane1]}
-            dispatch={dispatch}
-            model={fieldModel}
-            languageContext={languageContext}
-            value={v[langLane1]}></BlockAbstract>
+          <>
+            <ControlLabel>{key}</ControlLabel>
+            <BlockAbstract
+              schemaPath={[...childSchemaPath, langLane1]}
+              dispatch={dispatch}
+              model={fieldModel}
+              languageContext={languageContext}
+              value={v[langLane1]}></BlockAbstract>
+          </>
         )
       }
 
       let componentLane2 = null
       if (langLane2) {
         componentLane2 = (
-          <BlockAbstract
-            schemaPath={[...childSchemaPath, langLane2]}
-            dispatch={dispatch}
-            model={fieldModel}
-            languageContext={languageContext}
-            value={v[langLane2]}></BlockAbstract>
+          <>
+            <BlockAbstract
+              schemaPath={[...childSchemaPath, langLane2]}
+              dispatch={dispatch}
+              model={fieldModel}
+              languageContext={languageContext}
+              value={v[langLane2]}></BlockAbstract>
+          </>
         )
       }
       return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />

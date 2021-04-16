@@ -37,7 +37,7 @@ export function LinkPageBreakBlock({
 
   const handleRichTextChange = useCallback(
     (richText: React.SetStateAction<RichTextBlockValue>) =>
-      onChange(value => ({
+      onChange((value: any) => ({
         ...value,
         richText: isFunctionalUpdate(richText) ? richText(value.richText) : richText
       })),
@@ -78,7 +78,7 @@ export function LinkPageBreakBlock({
             disabled={false}
             openChooseModalOpen={() => setChooseModalOpen(true)}
             openEditModalOpen={() => setEditModalOpen(true)}
-            removeImage={() => onChange(value => ({...value, image: undefined}))}
+            removeImage={() => onChange((value: any) => ({...value, image: undefined}))}
           />
         </div>
         <div style={{flex: '1 0 70%'}}>

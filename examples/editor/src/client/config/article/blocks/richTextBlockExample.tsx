@@ -8,7 +8,7 @@ export type RichTextBlockProps = BlockProps<RichTextBlockExampleValue>
 
 export function RichTextBlockExampleBlock({
   value,
-  onChange,
+  onChangeNew,
   autofocus,
   disabled
 }: RichTextBlockProps) {
@@ -17,7 +17,7 @@ export function RichTextBlockExampleBlock({
     <RichTextBlock
       value={richText}
       onChange={val => {
-        onChange({richText: val as any})
+        onChangeNew(val, ['richText'])
       }}
       autofocus={autofocus}
       disabled={disabled}

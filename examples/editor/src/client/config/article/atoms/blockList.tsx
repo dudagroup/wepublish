@@ -1,15 +1,27 @@
-import React, {Fragment, useState, ReactNode, useCallback, useMemo, memo} from 'react'
-import {isFunctionalUpdate} from '@karma.run/react'
-import {isValueConstructor, ValueConstructor, UnionToIntersection} from '@karma.run/utility'
+import React, {Fragment, useState, ReactNode, useMemo, memo} from 'react'
+import {ValueConstructor, UnionToIntersection} from '@karma.run/utility'
 
 import {AddBlockInput} from './addBlockInput'
 import {IconButton, Icon, Panel} from 'rsuite'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 import {SVGIcon} from 'rsuite/lib/@types/common'
+import {
+  ContentEditAction,
+  ContentEditActionEnum
+} from '@wepublish/editor/lib/client/control/contentReducer'
+import {
+  BlockValue,
+  Configs,
+  ContentModelConfigMerged,
+  generateEmptyContent
+} from '@wepublish/editor'
+import {BlockMap} from '../blocks/blockMap'
+import {SchemaPath} from '@wepublish/editor/lib/client/interfaces/utilTypes'
 
 export interface BlockProps<V = any> {
   value: V
-  onChange: React.Dispatch<React.SetStateAction<V>>
+  onChange: any
+  onChangeNew: (value: any, path: SchemaPath) => void
   autofocus?: boolean
   disabled?: boolean
 }
@@ -39,8 +51,8 @@ export interface BlockListItemProps<T extends string = string, V = any> {
   icon: IconNames | SVGIcon
   autofocus: boolean
   disabled?: boolean
-
-  onChange: (index: number, value: React.SetStateAction<BlockListValue<T, V>>) => void
+  dispatch: React.Dispatch<ContentEditAction>
+  unionCase: string
   onDelete: (index: number) => void
   onMoveUp?: (index: number) => void
   onMoveDown?: (index: number) => void
@@ -51,29 +63,15 @@ const BlockListItem = memo(function BlockListItem({
   index,
   value,
   icon,
+  unionCase,
+  dispatch,
   autofocus,
   disabled,
   children,
-  onChange,
   onDelete,
   onMoveUp,
   onMoveDown
 }: BlockListItemProps) {
-  const handleValueChange = useCallback(
-    (fieldValue: React.SetStateAction<any>) => {
-      onChange(index, value => {
-        const {unionCase} = destructUnionCase(value)
-        const updated = isFunctionalUpdate(fieldValue) ? fieldValue(value.value) : fieldValue
-        const r = {
-          ...value,
-          [unionCase]: updated
-        }
-        return r
-      })
-    },
-    [onChange, index]
-  )
-
   return (
     <ListItemWrapper
       icon={icon}
@@ -81,7 +79,19 @@ const BlockListItem = memo(function BlockListItem({
       onDelete={() => onDelete(index)}
       onMoveUp={onMoveUp ? () => onMoveUp(index) : undefined}
       onMoveDown={onMoveDown ? () => onMoveDown(index) : undefined}>
-      {children({value, onChange: handleValueChange, autofocus, disabled})}
+      {children({
+        value,
+        onChangeNew: (value, path) => {
+          dispatch({
+            type: ContentEditActionEnum.update,
+            schemaPath: ['blocks', index, unionCase].concat(path),
+            value
+          })
+        },
+        onChange: () => {},
+        autofocus,
+        disabled
+      })}
     </ListItemWrapper>
   )
 })
@@ -98,7 +108,9 @@ export interface BlockListProps<V extends BlockListValue> {
   onChange: React.Dispatch<React.SetStateAction<BlockListRoot<V>>>
   autofocus?: boolean
   disabled?: boolean
-  children: BlockMapForValue<V>
+  dispatch: React.Dispatch<ContentEditAction>
+  configs: Configs
+  contentModelConfigMerged: ContentModelConfigMerged
 }
 
 export interface BlockListRoot<V> {
@@ -107,87 +119,45 @@ export interface BlockListRoot<V> {
 
 export function BlockList<V extends BlockListValue>({
   value: values,
-  children,
   disabled,
-  onChange
+  dispatch,
+  configs,
+  contentModelConfigMerged
 }: BlockListProps<V>) {
-  const [focusIndex, setFocusIndex] = useState<number | null>(null)
+  //const [focusIndex, setFocusIndex] = useState<number | null>(null) // TODO handle focus
+  const [focusIndex] = useState<number | null>(null)
 
-  const blockMap = children as BlockMap
+  const blockMap = useBlockMap<BlockValue>(() => BlockMap, []) as BlockMap
 
-  const handleItemChange = useCallback(
-    (index: number, itemValue: React.SetStateAction<BlockListValue>) => {
-      onChange((value: BlockListRoot<V>) => {
-        const updatedValue = isFunctionalUpdate(itemValue)
-          ? itemValue(value.blocks[index])
-          : itemValue
+  const handleRemove = (itemIndex: number) => {
+    dispatch({
+      type: ContentEditActionEnum.splice,
+      schemaPath: ['blocks'],
+      start: itemIndex,
+      delete: 1,
+      insert: []
+    })
+  }
 
-        //console.log('updatedValue', updatedValue)
-        return Object.assign({}, value, {
-          blocks: Object.assign([], value.blocks, {
-            [index]: updatedValue
-          })
-        })
-      })
-    },
-    [onChange]
-  )
+  const handleMoveUp = (index: number) => {
+    dispatch({
+      type: ContentEditActionEnum.splice,
+      schemaPath: ['blocks'],
+      start: index - 1,
+      delete: 2,
+      insert: [values.blocks[index], values.blocks[index - 1]]
+    })
+  }
 
-  const handleAdd = useCallback(
-    (index: number, type: string) => {
-      setFocusIndex(index)
-      onChange((values: BlockListRoot<V>) => {
-        const {defaultValue} = blockMap[type]
-        const valuesCopy = values.blocks.slice()
-
-        valuesCopy.splice(index, 0, {
-          [type]: isValueConstructor(defaultValue) ? defaultValue() : defaultValue
-        })
-
-        return Object.assign({}, values, {blocks: valuesCopy})
-      })
-    },
-    [blockMap, onChange]
-  )
-
-  const handleRemove = useCallback(
-    (itemIndex: number) => {
-      onChange((value: BlockListRoot<V>) =>
-        Object.assign({}, value, {
-          blocks: value.blocks.filter((value: any, index: any) => index !== itemIndex)
-        })
-      )
-    },
-    [onChange]
-  )
-
-  const handleMoveIndex = useCallback(
-    (from: number, to: number) => {
-      onChange((values: BlockListRoot<V>) => {
-        const valuesCopy = values.blocks.slice()
-        const [value] = valuesCopy.splice(from, 1)
-
-        valuesCopy.splice(to, 0, value)
-
-        return Object.assign({}, values, {blocks: valuesCopy})
-      })
-    },
-    [onChange]
-  )
-
-  const handleMoveUp = useCallback(
-    (index: number) => {
-      handleMoveIndex(index, index - 1)
-    },
-    [handleMoveIndex]
-  )
-
-  const handleMoveDown = useCallback(
-    (index: number) => {
-      handleMoveIndex(index, index + 1)
-    },
-    [handleMoveIndex]
-  )
+  const handleMoveDown = (index: number) => {
+    dispatch({
+      type: ContentEditActionEnum.splice,
+      schemaPath: ['blocks'],
+      start: index,
+      delete: 2,
+      insert: [values.blocks[index + 1], values.blocks[index]]
+    })
+  }
 
   function addButtonForIndex(index: number) {
     return (
@@ -205,7 +175,22 @@ export function BlockList<V extends BlockListValue>({
             icon,
             label
           }))}
-          onMenuItemClick={({id}: {id: string}) => handleAdd(index, id)}
+          onMenuItemClick={({id}: {id: string}) => {
+            dispatch({
+              type: ContentEditActionEnum.splice,
+              schemaPath: ['blocks'],
+              start: index,
+              delete: 0,
+              insert: [
+                {
+                  [id]: generateEmptyContent(
+                    contentModelConfigMerged.schema.content.blocks.contentType.cases[id],
+                    configs.apiConfig.languages
+                  )
+                }
+              ]
+            })
+          }}
           subtle={index !== values.blocks.length || disabled}
           disabled={disabled}
         />
@@ -225,9 +210,10 @@ export function BlockList<V extends BlockListValue>({
         <BlockListItem
           index={index}
           value={val}
+          unionCase={unionCase}
           icon={blockDef.icon}
           onDelete={handleRemove}
-          onChange={handleItemChange}
+          dispatch={dispatch}
           onMoveUp={hasPrevIndex ? handleMoveUp : undefined}
           onMoveDown={hasNextIndex ? handleMoveDown : undefined}
           autofocus={focusIndex === index}

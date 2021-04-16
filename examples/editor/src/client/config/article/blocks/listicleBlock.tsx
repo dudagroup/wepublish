@@ -24,7 +24,7 @@ export function ListicleBlock({value, onChange, disabled}: BlockProps<ListicleBl
     <ListInput
       value={value.items}
       onChange={items =>
-        onChange(value => ({
+        onChange((value: any) => ({
           items: isFunctionalUpdate(items) ? items(value.items) : items
         }))
       }

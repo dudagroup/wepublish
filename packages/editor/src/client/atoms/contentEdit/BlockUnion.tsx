@@ -1,8 +1,8 @@
 import React from 'react'
 import {SelectPicker} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
+import {generateEmptyContent} from '../../control/contentUtil'
 import {ContentModelSchemaFieldUnion} from '../../interfaces/contentModelSchema'
-import {generateEmptyContent} from '../../routes/contentEditor'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 
 export function BlockUnion({

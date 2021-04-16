@@ -1,12 +1,23 @@
+import {Configs, ContentModelConfigMerged, getContentViewFunction} from '@wepublish/editor'
+import {ContentEditAction} from '@wepublish/editor/lib/client/control/contentReducer'
 import React from 'react'
-import {BlockList, useBlockMap} from './atoms/blockList'
-import {BlockMap} from './blocks/blockMap'
-import {BlockValue} from './blocks/types'
+import {BlockList} from './atoms/blockList'
 
-export const getContentView = (content: any, handleChange: any, disabled: boolean) => {
+export const getContentView: getContentViewFunction = (
+  content: any,
+  handleChange: any,
+  disabled: boolean,
+  dispatch: React.Dispatch<ContentEditAction>,
+  configs: Configs,
+  contentModelConfigMerged: ContentModelConfigMerged
+) => {
   return (
-    <BlockList value={content} onChange={handleChange} disabled={disabled}>
-      {useBlockMap<BlockValue>(() => BlockMap, [])}
-    </BlockList>
+    <BlockList
+      value={content}
+      onChange={handleChange}
+      disabled={disabled}
+      dispatch={dispatch}
+      configs={configs}
+      contentModelConfigMerged={contentModelConfigMerged}></BlockList>
   )
 }

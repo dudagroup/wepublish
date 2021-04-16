@@ -387,6 +387,7 @@ export type _Cmp_ModelB_Record_Content = {
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
   myBoolean: Scalars['Boolean'];
+  myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
   myList: Array<Scalars['String']>;
   myUnion: _Cmp_ModelB_Record_Content_MyUnion;
@@ -711,6 +712,7 @@ export type _Cmpi_ModelB_Record_Content = {
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
   myBoolean: Scalars['Boolean'];
+  myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
   myList: Array<Scalars['String']>;
   myUnion: _Cmpi_ModelB_Record_Content_MyUnion;

@@ -2,8 +2,8 @@ import React from 'react'
 import {ContentModelSchemaFieldList} from '../../interfaces/contentModelSchema'
 import {Icon, IconButton, List} from 'rsuite'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
-import {generateEmptyContent} from '../../routes/contentEditor'
 import {ContentEditActionEnum} from '../../control/contentReducer'
+import {generateEmptyContent} from '../../control/contentUtil'
 
 export function BlockList({
   dispatch,

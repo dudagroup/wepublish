@@ -98,7 +98,7 @@ export const config: EditorConfig = {
         },
         myRef: null
       },
-      getContentView: (content, onChange, disabled) => {
+      getContentView: (content, onChange) => {
         return <ContentA_EditView value={content} onChange={onChange} />
       },
       getMetaView: (metadata, customMetadata, onChange, onChangeMetadata) => {
