@@ -21,6 +21,10 @@ export const contentModelB: ContentModel = {
       myBoolean: {
         type: ContentModelSchemaTypes.boolean
       },
+      myDateTime: {
+        type: ContentModelSchemaTypes.dateTime,
+        optional: true
+      },
       myEnum: {
         type: ContentModelSchemaTypes.enum,
         values: [

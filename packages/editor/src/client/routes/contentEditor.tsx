@@ -489,6 +489,9 @@ export function generateEmptyContent(
   if (field.type === ContentModelSchemaTypes.boolean) {
     return defaultVal(true)
   }
+  if (field.type === ContentModelSchemaTypes.dateTime) {
+    return defaultVal(new Date().toISOString())
+  }
   if (field.type === ContentModelSchemaTypes.list) {
     return []
   }
