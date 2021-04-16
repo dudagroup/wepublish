@@ -4,9 +4,12 @@ export interface ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes
   nameGUI?: string
   indexed?: boolean
-  instructions?: string
+  instructionsApi?: string
+  instructionsEditor?: {
+    [lang: string]: string
+  }
   public?: boolean
-  required?: boolean
+  optional?: boolean
   deprecationReason?: string
 }
 

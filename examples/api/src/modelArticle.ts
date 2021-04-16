@@ -22,8 +22,7 @@ const richText: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
   fields: {
     richText: {
-      type: ContentModelSchemaTypes.richText,
-      required: true
+      type: ContentModelSchemaTypes.richText
     }
   }
 }
@@ -37,8 +36,7 @@ const image: ContentModelSchemaFieldObject = {
         [MediaReferenceType]: {
           scope: 'local'
         }
-      },
-      required: true
+      }
     },
     caption: {
       type: ContentModelSchemaTypes.string
@@ -51,8 +49,7 @@ const imageGallery: ContentModelSchemaFieldObject = {
   fields: {
     images: {
       type: ContentModelSchemaTypes.list,
-      contentType: image,
-      required: true
+      contentType: image
     }
   }
 }
@@ -79,11 +76,9 @@ const blockListicleItem: ContentModelSchemaFieldObject = {
 
 const listicle: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     items: {
       type: ContentModelSchemaTypes.list,
-      required: true,
       contentType: blockListicleItem
     }
   }
@@ -91,97 +86,102 @@ const listicle: ContentModelSchemaFieldObject = {
 
 const vimeo: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     videoID: {
-      type: ContentModelSchemaTypes.id,
-      required: true
+      type: ContentModelSchemaTypes.id
     }
   }
 }
 
 const youtube: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     videoID: {
-      type: ContentModelSchemaTypes.id,
-      required: true
+      type: ContentModelSchemaTypes.id
     }
   }
 }
 
 const soundCloudTrack: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     trackID: {
-      type: ContentModelSchemaTypes.id,
-      required: true
+      type: ContentModelSchemaTypes.id
     }
   }
 }
 
 const embed: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     type: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     url: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     title: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     width: {
-      type: ContentModelSchemaTypes.int
+      type: ContentModelSchemaTypes.int,
+      optional: true
     },
     height: {
-      type: ContentModelSchemaTypes.int
+      type: ContentModelSchemaTypes.int,
+      optional: true
     },
     styleCustom: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     }
   }
 }
 
 const linkPageBreak: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
+  optional: true,
   fields: {
     text: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     richText: {
-      type: ContentModelSchemaTypes.richText,
-      required: true
+      type: ContentModelSchemaTypes.richText
     },
     linkURL: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     linkText: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     linkTarget: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     hideButton: {
-      type: ContentModelSchemaTypes.boolean,
-      required: true
+      type: ContentModelSchemaTypes.boolean
     },
     styleOption: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     layoutOption: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     templateOption: {
-      type: ContentModelSchemaTypes.string
+      type: ContentModelSchemaTypes.string,
+      optional: true
     },
     image: {
       type: ContentModelSchemaTypes.reference,
+      optional: true,
       types: {
         [MediaReferenceType]: {
           scope: 'local'
@@ -193,7 +193,6 @@ const linkPageBreak: ContentModelSchemaFieldObject = {
 
 const quote: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     quote: {
       type: ContentModelSchemaTypes.string
@@ -215,11 +214,9 @@ const teaserStyle: ContentModelSchemaFieldEnum = {
 
 const teaserGrid: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
-  required: true,
   fields: {
     teasers: {
       type: ContentModelSchemaTypes.list,
-      required: true,
       contentType: {
         type: ContentModelSchemaTypes.object,
         fields: {
@@ -250,8 +247,7 @@ const teaserGrid: ContentModelSchemaFieldObject = {
       }
     },
     numColumns: {
-      type: ContentModelSchemaTypes.int,
-      required: true
+      type: ContentModelSchemaTypes.int
     }
   }
 }

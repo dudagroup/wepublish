@@ -31,7 +31,7 @@ export interface BaseProps {
   readonly configs?: Configs
 }
 
-const AVAILABLE_LANG = [
+export const AVAILABLE_LANG = [
   {id: 'en', lang: 'en_US', name: 'English'}
   /* {id: 'fr', lang: 'fr_FR', name: 'Français'},
   {id: 'de', lang: 'de_CH', name: 'Deutsch'} */
@@ -55,7 +55,7 @@ const NavItemLink = routeLink(Nav.Item)
 // @ts-ignore
 const DropdownItemLink = routeLink(Dropdown.Item)
 
-function useStickyState(defaultValue: string, key: string) {
+export function useStickyState(defaultValue: string, key: string) {
   const [value, setValue] = useState(() => {
     const stickyValue = window.localStorage.getItem(key)
     return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue

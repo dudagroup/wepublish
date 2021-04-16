@@ -1,17 +1,15 @@
 import React from 'react'
 import {InputNumber} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldInt} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
 import {isNullOrUndefined} from '../../utility'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockIntProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: number
-  readonly model: ContentModelSchemaFieldInt
-}
-function BlockInt({value, schemaPath, dispatch}: BlockIntProps) {
+function BlockInt({
+  value,
+  schemaPath,
+  dispatch
+}: BlockAbstractProps<ContentModelSchemaFieldInt, number>) {
   const Max32BitIntSize = Math.pow(2, 31) - 1
   return (
     <InputNumber

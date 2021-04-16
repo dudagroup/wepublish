@@ -85,7 +85,7 @@ export function GenericContent({
               langLane2,
               languagesConfig
             }}
-            record={record}
+            value={record}
             schemaPath={[]}></BlockObject>
         </Form>
       </Panel>

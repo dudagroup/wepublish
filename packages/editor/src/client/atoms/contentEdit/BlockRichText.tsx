@@ -3,19 +3,17 @@ import React from 'react'
 import {Panel, Toggle} from 'rsuite'
 import {ContentContextEnum} from '../../api'
 import {RichTextBlock} from '../../blocks/richTextBlock/richTextBlock'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
 import {isNullOrUndefined} from '../../utility'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockRichTextProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: any
-  readonly model: ContentModelSchemaFieldString
-}
-
-function BlockRichText({dispatch, schemaPath, model, value}: BlockRichTextProps) {
+function BlockRichText({
+  dispatch,
+  schemaPath,
+  model,
+  value
+}: BlockAbstractProps<ContentModelSchemaFieldString, any>) {
   const empty = [
     {
       type: 'paragraph',
@@ -30,7 +28,7 @@ function BlockRichText({dispatch, schemaPath, model, value}: BlockRichTextProps)
 
   const isActive = !isNullOrUndefined(value)
   let toggle
-  if (!model.required) {
+  if (model.optional) {
     toggle = (
       <>
         <Toggle

@@ -1,24 +1,17 @@
 import React from 'react'
 import {ContentModelSchemaFieldList} from '../../interfaces/contentModelSchema'
 import {Icon, IconButton, List} from 'rsuite'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import BlockAbstract from './BlockAbstract'
-import {
-  ContentEditAction,
-  ContentEditActionEnum,
-  generateEmptyContent
-} from '../../routes/contentEditor'
-import {LanguageContext} from './BlockObject'
+import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
+import {generateEmptyContent} from '../../routes/contentEditor'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 
-interface BlockListProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: unknown[]
-  readonly model: ContentModelSchemaFieldList
-  readonly languageContext: LanguageContext
-}
-
-export function BlockList({dispatch, model, languageContext, value, schemaPath}: BlockListProps) {
+export function BlockList({
+  dispatch,
+  model,
+  languageContext,
+  value,
+  schemaPath
+}: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
   const childSchemaPath = [...schemaPath]
 
   const content = value.map((item, index, array) => {
@@ -93,7 +86,7 @@ export function BlockList({dispatch, model, languageContext, value, schemaPath}:
           dispatch={dispatch}
           model={model.contentType}
           languageContext={languageContext}
-          content={item}></BlockAbstract>
+          value={item}></BlockAbstract>
       </List.Item>
     )
   })

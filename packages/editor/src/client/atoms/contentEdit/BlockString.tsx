@@ -1,21 +1,19 @@
 import React from 'react'
 import {FormControl, Toggle} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
 import {isNullOrUndefined} from '../../utility'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockStringProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: any
-  readonly model: ContentModelSchemaFieldString
-}
-
-function BlockString({dispatch, schemaPath, model, value}: BlockStringProps) {
+function BlockString({
+  dispatch,
+  schemaPath,
+  model,
+  value
+}: BlockAbstractProps<ContentModelSchemaFieldString, string | null>) {
   let toggle
   const isActive = !isNullOrUndefined(value)
-  if (!model.required) {
+  if (model.optional) {
     toggle = (
       <>
         <Toggle

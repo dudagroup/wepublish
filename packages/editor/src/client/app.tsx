@@ -24,12 +24,12 @@ import {PaymentMethodList} from './routes/paymentMethodList'
 import {NavigationList} from './routes/navigationList'
 
 // import './global.less'
-import {useConfigQuery} from './api'
 import {Extension} from './routes/extension'
 import {ContentEditor} from './routes/contentEditor'
 import {ContentList} from './routes/contentList'
 import {ConfigContext} from './Editorcontext'
-import {Configs, ContentModelConfigMerged, EditorConfig} from './interfaces/extensionConfig'
+import {Configs, EditorConfig} from './interfaces/extensionConfig'
+import {useConfig} from './control/configHook'
 
 export function contentForRoute(route: Route, configs?: Configs) {
   switch (route.type) {
@@ -103,47 +103,14 @@ export function contentForRoute(route: Route, configs?: Configs) {
 
 export function App(editorConfig: EditorConfig) {
   const {current} = useRoute()
-  const {data} = useConfigQuery({
-    fetchPolicy: 'network-only'
-  })
 
   if (!current) {
     return null
   }
 
-  let configs: Configs | undefined = undefined
-  if (data) {
-    let contentModelExtensionMerged: ContentModelConfigMerged[] = data.config.content.map(
-      config => {
-        const cfg = editorConfig.contentModelExtension?.find(
-          c => c.identifier === config.identifier
-        )
-
-        let result = config
-        if (cfg) {
-          result = Object.assign({}, result, cfg)
-        }
-        return result
-      }
-    )
-
-    configs = {
-      contentModelExtensionMerged,
-      apiConfig: data.config,
-      editorConfig
-    }
-    if (!configs.editorConfig.navigationBar) {
-      configs.editorConfig = Object.assign({}, configs.editorConfig, {
-        navigationBar: {
-          articlesActive: true,
-          authorsActive: true,
-          commentsActive: true,
-          imageLibraryActive: true,
-          navigationActive: true,
-          pagesActive: true
-        }
-      })
-    }
+  const configs = useConfig(editorConfig)
+  if (!configs) {
+    return null
   }
 
   let comp = null

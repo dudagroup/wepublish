@@ -1,24 +1,17 @@
 import React from 'react'
 import {SelectPicker} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldUnion} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {
-  ContentEditAction,
-  ContentEditActionEnum,
-  generateEmptyContent
-} from '../../routes/contentEditor'
-import BlockAbstract from './BlockAbstract'
-import {LanguageContext} from './BlockObject'
+import {generateEmptyContent} from '../../routes/contentEditor'
+import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockUnionProp {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: {[key: string]: unknown}
-  readonly model: ContentModelSchemaFieldUnion
-  readonly languageContext: LanguageContext
-}
-
-export function BlockUnion({value, model, dispatch, languageContext, schemaPath}: BlockUnionProp) {
+export function BlockUnion({
+  value,
+  model,
+  dispatch,
+  languageContext,
+  schemaPath
+}: BlockAbstractProps<ContentModelSchemaFieldUnion, {[key: string]: unknown}>) {
   if (!(value && Object.entries(value).length === 1)) {
     return null
   }
@@ -61,7 +54,7 @@ export function BlockUnion({value, model, dispatch, languageContext, schemaPath}
           dispatch={dispatch}
           model={model.cases[currentCase]}
           languageContext={languageContext}
-          content={val}></BlockAbstract>
+          value={val}></BlockAbstract>
       }
     </div>
   )

@@ -1,17 +1,15 @@
 import React from 'react'
 import {SelectPicker} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldEnum} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockEnumProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: unknown
-  readonly model: ContentModelSchemaFieldEnum
-}
-
-function BlockEnum({value, dispatch, model, schemaPath}: BlockEnumProps) {
+function BlockEnum({
+  value,
+  dispatch,
+  model,
+  schemaPath
+}: BlockAbstractProps<ContentModelSchemaFieldEnum, unknown>) {
   const data = model.values.map(val => {
     return {
       label: val.description,
@@ -21,7 +19,7 @@ function BlockEnum({value, dispatch, model, schemaPath}: BlockEnumProps) {
 
   return (
     <SelectPicker
-      cleanable={!model.required}
+      cleanable={model.optional}
       data={data}
       value={value}
       onChange={val => {

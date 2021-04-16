@@ -1,21 +1,18 @@
 import React, {memo, useState} from 'react'
 import {Modal} from 'rsuite'
 import {ContentContextEnum} from '../../api'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
-import {SchemaPath} from '../../interfaces/utilTypes'
 import {RefSelectModal} from '../../panel/refSelectPanelModal'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
 import {ReferenceButton} from '../referenceButton'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockRefProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value?: Reference | null
-  readonly model: ContentModelSchemaFieldRef
-}
-
-function BlockRef({value, schemaPath, dispatch}: BlockRefProps) {
+function BlockRef({
+  value,
+  schemaPath,
+  dispatch
+}: BlockAbstractProps<ContentModelSchemaFieldRef, Reference | null>) {
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
 
   return (

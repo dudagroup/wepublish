@@ -1,16 +1,14 @@
 import React, {memo} from 'react'
 import {Toggle} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldBoolean} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockBooleanProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: boolean
-  readonly model: ContentModelSchemaFieldBoolean
-}
-function BlockBoolean({value, schemaPath, dispatch}: BlockBooleanProps) {
+function BlockBoolean({
+  value,
+  schemaPath,
+  dispatch
+}: BlockAbstractProps<ContentModelSchemaFieldBoolean, boolean>) {
   return (
     <Toggle
       checked={value}

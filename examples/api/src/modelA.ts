@@ -7,7 +7,12 @@ export const contentModelA: ContentModel = {
   schema: {
     content: {
       myString: {
-        type: ContentModelSchemaTypes.string
+        type: ContentModelSchemaTypes.string,
+        deprecationReason: "it's very old",
+        instructionsApi: 'this is an ordinary string',
+        instructionsEditor: {
+          en: 'this is an test instruction'
+        }
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,

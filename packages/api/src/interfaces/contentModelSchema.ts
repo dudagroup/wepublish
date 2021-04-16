@@ -9,7 +9,7 @@ export interface ContentModelSchemaFieldBase {
     [lang: string]: string
   }
   public?: boolean
-  required?: boolean
+  optional?: boolean
   deprecationReason?: string
 }
 

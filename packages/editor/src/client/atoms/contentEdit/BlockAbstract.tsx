@@ -7,28 +7,17 @@ import BlockBoolean from './BlockBoolean'
 import BlockList from './BlockList'
 import BlockUnion from './BlockUnion'
 import BlockRef from './BlockRef'
-import {
-  ContentModelSchemaFieldBase,
-  ContentModelSchemaFieldBoolean,
-  ContentModelSchemaFieldEnum,
-  ContentModelSchemaFieldFloat,
-  ContentModelSchemaFieldInt,
-  ContentModelSchemaFieldList,
-  ContentModelSchemaFieldObject,
-  ContentModelSchemaFieldRef,
-  ContentModelSchemaFieldString,
-  ContentModelSchemaFieldUnion,
-  ContentModelSchemaTypes
-} from '../../interfaces/contentModelSchema'
+import {ContentModelSchemaTypes} from '../../interfaces/contentModelSchema'
 import BlockInt from './BlockInt'
 import {SchemaPath} from '../../interfaces/utilTypes'
 import BlockRichText from './BlockRichText'
+import {ContentEditAction} from '../../control/contentReducer'
 
-interface BlockAbstractProps {
+export interface BlockAbstractProps<M = any, V = any> {
   readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<any>
-  readonly content: any | null
-  readonly model: ContentModelSchemaFieldBase | null
+  readonly dispatch: React.Dispatch<ContentEditAction>
+  readonly value: V
+  readonly model: M
   readonly languageContext: LanguageContext
 }
 
@@ -37,103 +26,35 @@ function BlockAbstract(props: BlockAbstractProps) {
     return null
   }
 
-  const updatePath = props.schemaPath
   let block: any = null
   if (props.model.type === ContentModelSchemaTypes.object) {
-    block = (
-      <BlockObject
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldObject}
-        languageContext={props.languageContext}
-        record={props.content}></BlockObject>
-    )
+    block = <BlockObject {...props}></BlockObject>
   } else if (
     props.model.type === ContentModelSchemaTypes.string ||
     props.model.type === ContentModelSchemaTypes.id
   ) {
-    block = (
-      <BlockString
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldString}
-        value={props.content}></BlockString>
-    )
+    block = <BlockString {...props}></BlockString>
   } else if (props.model.type === ContentModelSchemaTypes.richText) {
-    block = (
-      <BlockRichText
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldString}
-        value={props.content}></BlockRichText>
-    )
+    block = <BlockRichText {...props}></BlockRichText>
   } else if (props.model.type === ContentModelSchemaTypes.enum) {
-    block = (
-      <BlockEnum
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldEnum}
-        value={props.content}></BlockEnum>
-    )
+    block = <BlockEnum {...props}></BlockEnum>
   } else if (props.model.type === ContentModelSchemaTypes.int) {
-    block = (
-      <BlockInt
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldInt}
-        value={props.content}></BlockInt>
-    )
+    block = <BlockInt {...props}></BlockInt>
   } else if (props.model.type === ContentModelSchemaTypes.float) {
-    block = (
-      <BlockFloat
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldFloat}
-        value={props.content}></BlockFloat>
-    )
+    block = <BlockFloat {...props}></BlockFloat>
   } else if (props.model.type === ContentModelSchemaTypes.boolean) {
-    block = (
-      <BlockBoolean
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldBoolean}
-        value={props.content}></BlockBoolean>
-    )
+    block = <BlockBoolean {...props}></BlockBoolean>
   } else if (props.model.type === ContentModelSchemaTypes.list) {
-    block = (
-      <BlockList
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldList}
-        languageContext={props.languageContext}
-        value={props.content}></BlockList>
-    )
+    block = <BlockList {...props}></BlockList>
   } else if (props.model.type === ContentModelSchemaTypes.union) {
-    block = (
-      <BlockUnion
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldUnion}
-        languageContext={props.languageContext}
-        value={props.content}></BlockUnion>
-    )
+    block = <BlockUnion {...props}></BlockUnion>
   } else if (props.model.type === ContentModelSchemaTypes.reference) {
-    block = (
-      <BlockRef
-        schemaPath={updatePath}
-        dispatch={props.dispatch}
-        model={props.model as ContentModelSchemaFieldRef}
-        value={props.content}></BlockRef>
-    )
-  }
-
-  if (!block) {
-    return block
+    block = <BlockRef {...props}></BlockRef>
   }
 
   return <>{block}</>
 }
 
 export default memo(BlockAbstract, (a, b) => {
-  return Object.is(a.content, b.content)
+  return Object.is(a.value, b.value)
 })

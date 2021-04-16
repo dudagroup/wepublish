@@ -1,17 +1,15 @@
 import React from 'react'
 import {InputNumber} from 'rsuite'
+import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldFloat} from '../../interfaces/contentModelSchema'
-import {SchemaPath} from '../../interfaces/utilTypes'
-import {ContentEditAction, ContentEditActionEnum} from '../../routes/contentEditor'
 import {isNullOrUndefined} from '../../utility'
+import {BlockAbstractProps} from './BlockAbstract'
 
-interface BlockFloatProps {
-  readonly schemaPath: SchemaPath
-  readonly dispatch: React.Dispatch<ContentEditAction>
-  readonly value: number
-  readonly model: ContentModelSchemaFieldFloat
-}
-function BlockFloat({value, schemaPath, dispatch}: BlockFloatProps) {
+function BlockFloat({
+  value,
+  schemaPath,
+  dispatch
+}: BlockAbstractProps<ContentModelSchemaFieldFloat, number>) {
   return (
     <InputNumber
       value={value}
