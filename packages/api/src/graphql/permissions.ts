@@ -165,6 +165,66 @@ export const CanGetArticlePreviewLink: Permission = {
   deprecated: false
 }
 
+export const CanCreateContent: Permission = {
+  id: 'CAN_CREATE_CONTENT',
+  description: 'Allows to create contents',
+  deprecated: false
+}
+
+export const CanGetContent: Permission = {
+  id: 'CAN_GET_CONTENT',
+  description: 'Allows to get content',
+  deprecated: false
+}
+
+export const CanGetSharedContent: Permission = {
+  id: 'CAN_GET_SHARED_CONTENT',
+  description: 'Allows to get shared content',
+  deprecated: false
+}
+
+export const CanGetContents: Permission = {
+  id: 'CAN_GET_CONTENTS',
+  description: 'Allows to get all contents',
+  deprecated: false
+}
+
+export const CanGetSharedContents: Permission = {
+  id: 'CAN_GET_SHARED_CONTENTS',
+  description: 'Allows to get shared contents',
+  deprecated: false
+}
+
+export const CanGetPeerContent: Permission = {
+  id: 'CAN_GET_PEER_CONTENT',
+  description: 'Allows to get peer content',
+  deprecated: false
+}
+
+export const CanGetPeerContents: Permission = {
+  id: 'CAN_GET_PEER_CONTENTS',
+  description: 'Allows to get all peer contents',
+  deprecated: false
+}
+
+export const CanPublishContent: Permission = {
+  id: 'CAN_PUBLISH_CONTENT',
+  description: 'Allows to publish contents',
+  deprecated: false
+}
+
+export const CanDeleteContent: Permission = {
+  id: 'CAN_DELETE_CONTENT',
+  description: 'Allows to delete contents',
+  deprecated: false
+}
+
+export const CanGetContentPreviewLink: Permission = {
+  id: 'CAN_GET_CONTENT_PREVIEW_LINK',
+  description: 'Allows to get preview links for contents',
+  deprecated: false
+}
+
 export const CanTakeActionOnComment: Permission = {
   id: 'CAN_TAKE_COMMENT_ACTION',
   description: 'Allows to take an action on comment',
@@ -457,6 +517,14 @@ export const AllPermissions: Permission[] = [
   CanPublishArticle,
   CanGetPeerArticle,
   CanGetPeerArticles,
+  CanCreateContent,
+  CanGetContent,
+  CanGetContents,
+  CanDeleteContent,
+  CanGetContentPreviewLink,
+  CanPublishContent,
+  CanGetPeerContent,
+  CanGetPeerContents,
   CanCreatePage,
   CanGetPage,
   CanGetPages,
