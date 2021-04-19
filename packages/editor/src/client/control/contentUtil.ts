@@ -74,6 +74,9 @@ export function generateEmptyContent(
   if (field.type === ContentModelSchemaTypes.reference) {
     return defaultVal(null)
   }
+  if (field.type === ContentModelSchemaTypes.media) {
+    return defaultVal(null)
+  }
   if (field.type === ContentModelSchemaTypes.union) {
     const schema = field as ContentModelSchemaFieldUnion
     const [key, val] = Object.entries(schema.cases)[0]

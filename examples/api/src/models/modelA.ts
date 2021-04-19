@@ -38,6 +38,21 @@ export const contentModelA: ContentModel = {
             scope: 'local'
           }
         }
+      },
+      myRefI18n: {
+        type: ContentModelSchemaTypes.reference,
+        i18n: true,
+        types: {
+          modelA: {
+            scope: 'local'
+          },
+          modelB: {
+            scope: 'local'
+          },
+          [MediaReferenceType]: {
+            scope: 'local'
+          }
+        }
       }
     },
     meta: {

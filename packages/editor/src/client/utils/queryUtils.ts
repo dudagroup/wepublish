@@ -150,35 +150,45 @@ function getFragmentSchemaRecursive(
       }`
     case ContentModelSchemaTypes.list:
       return getFragmentSchemaRecursive(configs, schema.contentType, name)
-    case ContentModelSchemaTypes.reference:
-      return `{
-        recordId
-        contentType
-        peerId
-      }`
-    case ContentModelSchemaTypes.media:
-      return `{
-          focalPoint {
-            x
-            y
-          }
-          media {
-            id
-            createdAt
-            modifiedAt
-            filename
-            fileSize
-            extension
-            mimeType
-            url
-            transformURL
-            image {
-              format
-              width
-              height
-            }
-          }
+    case ContentModelSchemaTypes.reference: {
+      const q = `{
+          recordId
+          contentType
+          peerId
         }`
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return `{${configs.apiConfig.languages.languages.map(v => `${v.tag} ${q}`).join('\n')}}`
+      }
+      return q
+    }
+    case ContentModelSchemaTypes.media: {
+      const q = `{
+        focalPoint {
+          x
+          y
+        }
+        media {
+          id
+          createdAt
+          modifiedAt
+          filename
+          fileSize
+          extension
+          mimeType
+          url
+          transformURL
+          image {
+            format
+            width
+            height
+          }
+        }
+      }`
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return `{${configs.apiConfig.languages.languages.map(v => `${v.tag} ${q}`).join('\n')}}`
+      }
+      return q
+    }
     case ContentModelSchemaTypes.union:
       return `{
         ${Object.entries(schema.cases)

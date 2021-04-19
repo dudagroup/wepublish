@@ -7,7 +7,11 @@ import {
   CanDeleteContent,
   CanPublishContent
 } from '../graphql/permissions'
-import {ContentModelSchemas, ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
+import {
+  ContentModelSchemaFieldRef,
+  ContentModelSchemas,
+  ContentModelSchemaTypes
+} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
 import {MediaReferenceType, Reference} from '../interfaces/referenceType'
 import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
@@ -132,6 +136,55 @@ async function validateRecursive(
   schema: ContentModelSchemas,
   data: unknown
 ) {
+  async function handleRef(data: unknown, schema: ContentModelSchemaFieldRef) {
+    const ref = data as Reference
+    if (ref?.recordId) {
+      let record
+      try {
+        if (ref.contentType === MediaReferenceType) {
+          const image = await validatorContext.context.loaders.images.load(ref.recordId)
+          if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
+            record = image
+          }
+        } else {
+          const content = await validatorContext.context.loaders.content.load(ref.recordId)
+          if (Object.keys(schema.types).some(type => type === content?.contentType)) {
+            record = content
+          }
+        }
+      } catch (error) {}
+      if (!record) {
+        throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
+      }
+
+      delete ref.record
+      delete ref.peer
+    }
+  }
+
+  async function handleMedia(data: unknown) {
+    const mediaInput = data as MediaInput
+    const mediaDb = data as MediaPersisted
+
+    if (mediaInput?.file) {
+      const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
+      mediaDb.id = image.id
+      mediaDb.createdAt = new Date()
+      mediaDb.modifiedAt = new Date()
+      mediaDb.filename = image.filename
+      mediaDb.fileSize = image.fileSize
+      mediaDb.extension = image.extension
+      mediaDb.mimeType = image.mimeType
+      mediaDb.image = {
+        format: image.format,
+        height: image.width,
+        width: image.height
+      }
+      delete mediaInput.file
+      delete mediaInput.media
+    }
+  }
+
   switch (schema.type) {
     case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
@@ -156,56 +209,25 @@ async function validateRecursive(
       break
     }
 
-    case ContentModelSchemaTypes.reference:
-      {
-        const ref = data as Reference
-        if (ref?.recordId) {
-          let record
-          try {
-            if (ref.contentType === MediaReferenceType) {
-              const image = await validatorContext.context.loaders.images.load(ref.recordId)
-              if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
-                record = image
-              }
-            } else {
-              const content = await validatorContext.context.loaders.content.load(ref.recordId)
-              if (Object.keys(schema.types).some(type => type === content?.contentType)) {
-                record = content
-              }
-            }
-          } catch (error) {}
-          if (!record) {
-            throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
-          }
-
-          delete ref.record
-          delete ref.peer
+    case ContentModelSchemaTypes.reference: {
+      if (schema.i18n) {
+        for (const val of Object.values(data as any)) {
+          await handleRef(val, schema)
         }
+        break
       }
-
+      await handleRef(data, schema)
       break
+    }
 
     case ContentModelSchemaTypes.media: {
-      const mediaInput = data as MediaInput
-      const mediaDb = data as MediaPersisted
-
-      if (mediaInput?.file) {
-        const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
-        mediaDb.id = image.id
-        mediaDb.createdAt = new Date()
-        mediaDb.modifiedAt = new Date()
-        mediaDb.filename = image.filename
-        mediaDb.fileSize = image.fileSize
-        mediaDb.extension = image.extension
-        mediaDb.mimeType = image.mimeType
-        mediaDb.image = {
-          format: image.format,
-          height: image.width,
-          width: image.height
+      if (schema.i18n) {
+        for (const val of Object.values(data as any)) {
+          await handleMedia(val)
         }
-        delete mediaInput.file
-        delete mediaInput.media
+        break
       }
+      await handleMedia(data)
       break
     }
 

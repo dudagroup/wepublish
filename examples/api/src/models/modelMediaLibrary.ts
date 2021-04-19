@@ -9,11 +9,17 @@ export const contentModelMediaLibrary: ContentModel = {
       media: {
         type: ContentModelSchemaTypes.media
       },
+      mediaI18n: {
+        type: ContentModelSchemaTypes.media,
+        i18n: true
+      },
       title: {
-        type: ContentModelSchemaTypes.string
+        type: ContentModelSchemaTypes.string,
+        i18n: true
       },
       description: {
-        type: ContentModelSchemaTypes.string
+        type: ContentModelSchemaTypes.string,
+        i18n: true
       },
       source: {
         type: ContentModelSchemaTypes.string

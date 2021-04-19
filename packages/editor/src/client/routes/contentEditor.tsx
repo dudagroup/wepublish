@@ -162,8 +162,9 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   }, [createError, updateError, publishError])
 
   function createInput(): any {
+    console.log('contentData', contentData)
     const content = stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
-
+    console.log('contentcontentcontentcontentcontent', content)
     let meta
     if (customMetadata) {
       const {__typename: waste, ...rest} = customMetadata
