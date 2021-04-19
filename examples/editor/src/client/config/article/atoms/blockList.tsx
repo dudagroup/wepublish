@@ -17,11 +17,12 @@ import {
 } from '@wepublish/editor'
 import {BlockMap} from '../blocks/blockMap'
 import {SchemaPath} from '@wepublish/editor/lib/client/interfaces/utilTypes'
+import nanoid from 'nanoid'
+import {destructUnionCase} from '../utility'
 
 export interface BlockProps<V = any> {
   value: V
-  onChange: any
-  onChangeNew: (value: any, path: SchemaPath) => void
+  onChange: (value: any, path: SchemaPath) => void
   autofocus?: boolean
   disabled?: boolean
 }
@@ -81,14 +82,13 @@ const BlockListItem = memo(function BlockListItem({
       onMoveDown={onMoveDown ? () => onMoveDown(index) : undefined}>
       {children({
         value,
-        onChangeNew: (value, path) => {
+        onChange: (value, path) => {
           dispatch({
             type: ContentEditActionEnum.update,
-            schemaPath: ['blocks', index, unionCase].concat(path),
+            path: ['blocks', index, unionCase].concat(path),
             value
           })
         },
-        onChange: () => {},
         autofocus,
         disabled
       })}
@@ -124,15 +124,14 @@ export function BlockList<V extends BlockListValue>({
   configs,
   contentModelConfigMerged
 }: BlockListProps<V>) {
-  //const [focusIndex, setFocusIndex] = useState<number | null>(null) // TODO handle focus
-  const [focusIndex] = useState<number | null>(null)
+  const [focusIndex, setFocusIndex] = useState<number | null>(null)
 
   const blockMap = useBlockMap<BlockValue>(() => BlockMap, []) as BlockMap
 
   const handleRemove = (itemIndex: number) => {
     dispatch({
       type: ContentEditActionEnum.splice,
-      schemaPath: ['blocks'],
+      path: ['blocks'],
       start: itemIndex,
       delete: 1,
       insert: []
@@ -142,7 +141,7 @@ export function BlockList<V extends BlockListValue>({
   const handleMoveUp = (index: number) => {
     dispatch({
       type: ContentEditActionEnum.splice,
-      schemaPath: ['blocks'],
+      path: ['blocks'],
       start: index - 1,
       delete: 2,
       insert: [values.blocks[index], values.blocks[index - 1]]
@@ -152,7 +151,7 @@ export function BlockList<V extends BlockListValue>({
   const handleMoveDown = (index: number) => {
     dispatch({
       type: ContentEditActionEnum.splice,
-      schemaPath: ['blocks'],
+      path: ['blocks'],
       start: index,
       delete: 2,
       insert: [values.blocks[index + 1], values.blocks[index]]
@@ -178,7 +177,7 @@ export function BlockList<V extends BlockListValue>({
           onMenuItemClick={({id}: {id: string}) => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: ['blocks'],
+              path: ['blocks'],
               start: index,
               delete: 0,
               insert: [
@@ -190,6 +189,7 @@ export function BlockList<V extends BlockListValue>({
                 }
               ]
             })
+            setFocusIndex(index)
           }}
           subtle={index !== values.blocks.length || disabled}
           disabled={disabled}
@@ -201,12 +201,16 @@ export function BlockList<V extends BlockListValue>({
   function listItemForIndex(value: V, index: number) {
     const hasPrevIndex = index - 1 >= 0
     const hasNextIndex = index + 1 < values.blocks.length
-    const {unionCase, val} = destructUnionCase(value)
+    const {unionCase, value: val} = destructUnionCase(value)
     const blockDef = blockMap[unionCase]
-    const key_ = unionCase + index // TODO improve key handling
+    if (!val.__ephemeralReactStateMeta) {
+      val.__ephemeralReactStateMeta = {
+        id: nanoid() + 'a'
+      }
+    }
 
     return (
-      <Fragment key={key_}>
+      <Fragment key={val.__ephemeralReactStateMeta.id}>
         <BlockListItem
           index={index}
           value={val}
@@ -310,12 +314,4 @@ function ListItemWrapper({
       </div>
     </div>
   )
-}
-
-function destructUnionCase(value: any) {
-  const unionCase = Object.keys(value)[0]
-  return {
-    unionCase,
-    val: value[unionCase]
-  }
 }

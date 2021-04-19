@@ -43,7 +43,7 @@ export function BlockUnion({
                   languageContext.languagesConfig
                 )
               },
-              schemaPath
+              path: schemaPath
             })
           }
         }}

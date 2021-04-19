@@ -3,13 +3,14 @@ import {MapType} from '@wepublish/api/lib/interfaces/utilTypes'
 import React, {memo, useMemo, useState} from 'react'
 import {Button, Col, Form, Grid, Icon, Panel, Row, SelectPicker} from 'rsuite'
 import {LanguagesConfig} from '../../api'
+import {ContentEditAction} from '../../control/contentReducer'
 import {ContentModelSchemaTypes} from '../../interfaces/apiTypes'
 import BlockObject from './BlockObject'
 
 interface GenericContentViewProps {
   readonly fields: MapType<ContentModelSchemas>
-  readonly record: any
-  readonly dispatch: React.Dispatch<any>
+  readonly record: MapType<unknown>
+  readonly dispatch: React.Dispatch<ContentEditAction>
   readonly languagesConfig: LanguagesConfig
 }
 

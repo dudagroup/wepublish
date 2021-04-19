@@ -1,7 +1,7 @@
 import React from 'react'
 import {hot} from 'react-hot-loader/root'
 
-//import 'rsuite/lib/styles/index.less'
+// import 'rsuite/lib/styles/index.less'
 
 import {useRoute, RouteType, Route} from './route'
 
@@ -46,7 +46,6 @@ export function contentForRoute(route: Route, configs?: Configs) {
     case RouteType.TokenGenerate:
       return <TokenList />
 
-    case RouteType.Index:
     case RouteType.ArticleList:
       return <ArticleList />
 
@@ -95,7 +94,7 @@ export function contentForRoute(route: Route, configs?: Configs) {
       return <NavigationList />
 
     case RouteType.NotFound:
-      return <ArticleList />
+      return null
   }
 
   return null

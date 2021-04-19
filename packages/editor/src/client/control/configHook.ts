@@ -6,9 +6,9 @@ export function useConfig(editorConfig: EditorConfig): Configs | undefined {
     fetchPolicy: 'network-only'
   })
 
-  let configs: Configs | undefined = undefined
+  let configs: Configs | undefined
   if (data) {
-    let contentModelExtensionMerged: ContentModelConfigMerged[] = data.config.content.map(
+    const contentModelExtensionMerged: ContentModelConfigMerged[] = data.config.content.map(
       config => {
         const cfg = editorConfig.contentModelExtension?.find(
           c => c.identifier === config.identifier

@@ -20,7 +20,8 @@ import {useTranslation} from 'react-i18next'
 // TODO: Handle disabled prop
 export function EmbedBlock({value, onChange, autofocus}: BlockProps<EmbedBlockValue>) {
   const [isEmbedDialogOpen, setEmbedDialogOpen] = useState(false)
-  const isEmpty = value.type === EmbedType.Other && value.url === undefined
+
+  const isEmpty = value.type === EmbedType.Undefined && !value.url
   const {t} = useTranslation()
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export function EmbedBlock({value, onChange, autofocus}: BlockProps<EmbedBlockVa
           onClose={() => setEmbedDialogOpen(false)}
           onConfirm={value => {
             setEmbedDialogOpen(false)
-            onChange(value)
+            onChange(value, [])
           }}
         />
       </Drawer>

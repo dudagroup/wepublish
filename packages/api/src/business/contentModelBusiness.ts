@@ -10,6 +10,7 @@ import {
 import {ContentModelSchemas, ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
 import {MediaReferenceType, Reference} from '../interfaces/referenceType'
+import {MediaInput} from '../interfaces/mediaType'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -132,52 +133,68 @@ async function validateRecursive(
   data: unknown
 ) {
   switch (schema.type) {
-    case ContentModelSchemaTypes.object:
+    case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
-      for (let [key, val] of Object.entries(obj)) {
+      for (const [key, val] of Object.entries(obj)) {
         await validateRecursive(validatorContext, schema.fields[key], val)
       }
       break
+    }
 
-    case ContentModelSchemaTypes.list:
+    case ContentModelSchemaTypes.list: {
       const list = data as unknown[]
       for (const item of list) {
         await validateRecursive(validatorContext, schema.contentType, item)
       }
       break
+    }
 
-    case ContentModelSchemaTypes.union:
+    case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
       await validateRecursive(validatorContext, schema.cases[unionCase], val)
       break
+    }
 
     case ContentModelSchemaTypes.reference:
-      const ref = data as Reference
-      if (ref?.recordId) {
-        let record
-        try {
-          if (ref.contentType === MediaReferenceType) {
-            const image = await validatorContext.context.loaders.images.load(ref.recordId)
-            if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
-              record = image
+      {
+        const ref = data as Reference
+        if (ref?.recordId) {
+          let record
+          try {
+            if (ref.contentType === MediaReferenceType) {
+              const image = await validatorContext.context.loaders.images.load(ref.recordId)
+              if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
+                record = image
+              }
+            } else {
+              const content = await validatorContext.context.loaders.content.load(ref.recordId)
+              if (Object.keys(schema.types).some(type => type === content?.contentType)) {
+                record = content
+              }
             }
-          } else {
-            const content = await validatorContext.context.loaders.content.load(ref.recordId)
-            if (Object.keys(schema.types).some(type => type === content?.contentType)) {
-              record = content
-            }
+          } catch (error) {}
+          if (!record) {
+            throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
           }
-        } catch (error) {}
-        if (!record) {
-          throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
-        }
 
-        delete ref.record
-        delete ref.peer
+          delete ref.record
+          delete ref.peer
+        }
       }
 
       break
+
+    case ContentModelSchemaTypes.media: {
+      const mediaInput = data as MediaInput
+      if (mediaInput?.file) {
+        // const {id, ...image} = await validatorContext.context.mediaAdapter.uploadImage(
+        //   mediaInput.file
+        // )
+        console.log('image', mediaInput)
+      }
+      break
+    }
 
     default:
       break

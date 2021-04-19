@@ -9,6 +9,7 @@ export enum ContentModelSchemaTypes {
   richText = 'richText',
   reference = 'reference',
   list = 'list',
+  media = 'media',
   object = 'object',
   union = 'union'
 }

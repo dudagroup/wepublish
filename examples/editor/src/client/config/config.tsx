@@ -1,6 +1,7 @@
+/* eslint-disable react/display-name */
 import React from 'react'
 import {CustomViewExample} from './customView'
-import {ContentA_EditView} from './contentA'
+import {ContentAEditView} from './contentA'
 import {BlockType} from './article/articleInterfaces'
 import {getContentView} from './article/articleContentView'
 import {ContentMetadataPanel} from './contentAMetadata'
@@ -18,96 +19,22 @@ export const config: EditorConfig = {
   contentModelExtension: [
     {
       identifier: 'modelA',
-      defaultContent: {
-        myString: '',
-        myStringI18n: {
-          de: '',
-          en: ''
-        },
-        myRichText: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: ''
-              }
-            ]
-          }
-        ],
-        myRichTextI18n: {
-          de: [
-            {
-              type: 'paragraph',
-              children: [
-                {
-                  text: ''
-                }
-              ]
-            }
-          ],
-          en: [
-            {
-              type: 'paragraph',
-              children: [
-                {
-                  text: ''
-                }
-              ]
-            }
-          ]
-        },
-        myRef: null
+      getContentView: (content, onChange, disabled, dispatch) => {
+        return <ContentAEditView value={content} dispatch={dispatch} />
       },
-      defaultMeta: {
-        myString: '',
-        myStringI18n: {
-          de: '',
-          en: ''
-        },
-        myRichText: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: ''
-              }
-            ]
-          }
-        ],
-        myRichTextI18n: {
-          de: [
-            {
-              type: 'paragraph',
-              children: [
-                {
-                  text: ''
-                }
-              ]
-            }
-          ],
-          en: [
-            {
-              type: 'paragraph',
-              children: [
-                {
-                  text: ''
-                }
-              ]
-            }
-          ]
-        },
-        myRef: null
-      },
-      getContentView: (content, onChange) => {
-        return <ContentA_EditView value={content} onChange={onChange} />
-      },
-      getMetaView: (metadata, customMetadata, onChange, onChangeMetadata) => {
+      getMetaView: (
+        metadata,
+        customMetadata,
+        onChange,
+        onChangeMetadata,
+        dispatchCustomMetadata
+      ) => {
         return (
           <ContentMetadataPanel
             defaultMetadata={metadata}
             customMetadata={customMetadata}
             onChangeDefaultMetadata={onChange}
-            onChangeCustomMetadata={onChangeMetadata}
+            dispatch={dispatchCustomMetadata}
           />
         )
       }

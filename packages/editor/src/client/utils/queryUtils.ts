@@ -136,7 +136,7 @@ function getFragmentSchema(
 function getFragmentSchemaRecursive(
   configs: Configs,
   schema: ContentModelSchemas,
-  name: string = ''
+  name = ''
 ): string {
   switch (schema.type) {
     case ContentModelSchemaTypes.object:
@@ -156,6 +156,29 @@ function getFragmentSchemaRecursive(
         contentType
         peerId
       }`
+    case ContentModelSchemaTypes.media:
+      return `{
+          id
+          focalPoint {
+            x
+            y
+          }
+          media {
+            createdAt
+            modifiedAt
+            filename
+            fileSize
+            extension
+            mimeType
+            url
+            transformURL
+            image {
+              format
+              width
+              height
+            }
+          }
+        }`
     case ContentModelSchemaTypes.union:
       return `{
         ${Object.entries(schema.cases)
@@ -175,21 +198,25 @@ function getFragmentSchemaRecursive(
   }
 }
 
-export function stripTypename<T>(input: T) {
+export function stripKeysRecursive<T>(input: T, keys: string[]) {
   if (typeof input === 'string' || input instanceof String) {
     return input
   }
   const newish = {...input}
 
   for (const prop in newish) {
-    if (prop === '__typename') delete newish[prop]
+    if (keys.some(v => v === prop)) delete newish[prop]
     else if (newish[prop] === null) {
     } else if (Array.isArray(newish[prop])) {
       for (const next in newish[prop]) {
-        newish[prop][next] = stripTypename(newish[prop][next])
+        try {
+          newish[prop][next] = stripKeysRecursive(newish[prop][next], keys)
+        } catch (error) {
+          // ignore readonly props
+        }
       }
     } else if (typeof newish[prop] === 'object') {
-      newish[prop] = stripTypename(newish[prop])
+      newish[prop] = stripKeysRecursive(newish[prop], keys)
     }
   }
 

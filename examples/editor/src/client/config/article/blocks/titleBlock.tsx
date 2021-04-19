@@ -6,7 +6,7 @@ import {TitleBlockValue} from './types'
 
 export type TitleBlockProps = BlockProps<TitleBlockValue>
 
-export function TitleBlock({value, onChangeNew, autofocus, disabled}: TitleBlockProps) {
+export function TitleBlock({value, onChange, autofocus, disabled}: TitleBlockProps) {
   const {title, lead} = value
   const focusRef = useRef<HTMLTextAreaElement>(null)
 
@@ -26,7 +26,7 @@ export function TitleBlock({value, onChangeNew, autofocus, disabled}: TitleBlock
         value={title}
         disabled={disabled}
         onChange={e => {
-          onChangeNew(e.target.value, ['title'])
+          onChange(e.target.value, ['title'])
         }}
       />
       <TypographicTextArea
@@ -36,7 +36,7 @@ export function TitleBlock({value, onChangeNew, autofocus, disabled}: TitleBlock
         value={lead}
         disabled={disabled}
         onChange={e => {
-          onChangeNew(e.target.value, ['lead'])
+          onChange(e.target.value, ['lead'])
         }}
       />
     </>

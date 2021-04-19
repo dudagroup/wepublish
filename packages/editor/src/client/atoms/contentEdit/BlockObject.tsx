@@ -7,6 +7,7 @@ import {
 import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
+import {MapType} from '../../interfaces/utilTypes'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -20,12 +21,13 @@ export function BlockObject({
   model,
   schemaPath,
   value
-}: BlockAbstractProps<ContentModelSchemaFieldObject, {[key: string]: any}>) {
+}: BlockAbstractProps<ContentModelSchemaFieldObject, MapType<any>>) {
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
   const content = Object.entries(model.fields).map(item => {
     const [key, fieldModel] = item
-    let v = value[key]
+    const v = value[key]
+    const instructions = null // TODO
 
     const childSchemaPath = [...schemaPath]
     childSchemaPath.push(key)
@@ -50,6 +52,7 @@ export function BlockObject({
       if (langLane2) {
         componentLane2 = (
           <>
+            <ControlLabel>{key}</ControlLabel>
             <BlockAbstract
               schemaPath={[...childSchemaPath, langLane2]}
               dispatch={dispatch}
@@ -73,7 +76,7 @@ export function BlockObject({
             languageContext={languageContext}
             value={v}></BlockAbstract>
         }
-        <HelpBlock tooltip>Example Instructions</HelpBlock>
+        <HelpBlock tooltip>{instructions}</HelpBlock>
       </FormGroup>
     )
   })

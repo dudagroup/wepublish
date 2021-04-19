@@ -33,6 +33,7 @@ import {GraphQLPageInfo} from '../common'
 import {GraphQLPeer} from '../peer'
 import {getI18nOutputType, getI18nInputType} from '../i18nPrimitives'
 import {MapType} from '../../interfaces/utilTypes'
+import {GraphQLMedia, GraphQLMediaInput} from './media'
 
 export interface PeerArticle {
   peerID: string
@@ -172,7 +173,7 @@ function getLeaf(
 function generateType(
   config: GenerateTypeConfig,
   contentModelSchemas: ContentModelSchemas,
-  name: string = ''
+  name = ''
 ) {
   let type: any
 
@@ -294,6 +295,15 @@ function generateType(
         )
       }
       break
+
+    case ContentModelSchemaTypes.media:
+      contentModelSchemas.optional = true
+      if (config.isInput) {
+        type = getLeaf(config, contentModelSchemas, GraphQLMediaInput)
+      } else {
+        type = getLeaf(config, contentModelSchemas, GraphQLMedia)
+      }
+      break
   }
   if (!contentModelSchemas.optional) {
     type = GraphQLNonNull(type)
@@ -320,7 +330,7 @@ export function getGraphQLPeerCustomContent(parentName: string, content?: any) {
     fields: {
       peer: {
         type: GraphQLPeer,
-        resolve: ({peerID}, {}, {loaders}) => {
+        resolve: ({peerID}, _, {loaders}) => {
           if (peerID) {
             return loaders.peer.load(peerID)
           }

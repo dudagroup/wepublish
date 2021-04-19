@@ -3,9 +3,7 @@ import {
   GraphQLInputObjectType,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLScalarType,
   GraphQLType,
-  valueFromASTUntyped,
   GraphQLUnionType
 } from 'graphql'
 import {Context} from '../../context'
@@ -15,38 +13,8 @@ import {MapType} from '../../interfaces/utilTypes'
 import {createProxyingIsTypeOf, createProxyingResolver} from '../../utility'
 import {GraphQLImage} from '../image'
 import {GraphQLPeer} from '../peer'
+import {GraphQLUnknown} from './contentGraphQLTypes'
 import {nameJoin} from './contentUtils'
-
-export const GraphQLReference = new GraphQLScalarType({
-  name: 'Reference',
-  serialize(value) {
-    return value
-  },
-
-  parseValue(value) {
-    return value
-  },
-
-  parseLiteral(literal) {
-    const obj = valueFromASTUntyped(literal)
-    return obj
-  }
-})
-
-export const GraphQLUnknown = new GraphQLScalarType({
-  name: 'Unknown',
-  serialize(value) {
-    return null
-  },
-
-  parseValue(value) {
-    return null
-  },
-
-  parseLiteral(literal) {
-    return null
-  }
-})
 
 export const GraphQLReferenceInput = new GraphQLInputObjectType({
   name: 'ref_input',

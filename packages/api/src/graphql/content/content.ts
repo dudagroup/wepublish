@@ -17,7 +17,6 @@ import {Context, ContextOptions} from '../../context'
 import {InputCursor, Limit, SortOrder} from '../../db/common'
 import {SessionType} from '../../db/session'
 import {NotAuthorisedError} from '../../error'
-import {GraphQLContentSateEnum} from './contentUtils'
 import {
   GraphQLContentFilter,
   GraphQLContentSort,
@@ -36,7 +35,6 @@ import {
   CanGetSharedContents,
   isAuthorised
 } from '../permissions'
-import {getGraphQLContentConnection, getGraphQLPeerCustomContent} from './contentUtils'
 import {ContentSort} from './contentInterfaces'
 
 import {
@@ -53,7 +51,10 @@ import {
   nameJoin,
   ContentModelPrefix,
   ContentModelPrefixPrivate,
-  ContentModelPrefixPrivateInput
+  GraphQLContentSateEnum,
+  ContentModelPrefixPrivateInput,
+  getGraphQLContentConnection,
+  getGraphQLPeerCustomContent
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
 
@@ -66,9 +67,9 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
   if (!(contextOptions?.contentModels && contextOptions.contentModels.length > 0)) {
     return
   }
-  let query: GraphQLFieldConfigMap<any, Context, any> = {}
-  let queryPublic: GraphQLFieldConfigMap<any, Context, any> = {}
-  let mutation: GraphQLFieldConfigMap<any, Context, any> = {}
+  const query: GraphQLFieldConfigMap<any, Context, any> = {}
+  const queryPublic: GraphQLFieldConfigMap<any, Context, any> = {}
+  const mutation: GraphQLFieldConfigMap<any, Context, any> = {}
 
   const contentModelsPrivate: MapType<GraphQLObjectType> = {}
   const contentModelsPublic: MapType<GraphQLObjectType> = {}
@@ -393,7 +394,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
       dePublicationDate: {type: GraphQLDateTime}
     }
   })
-  query['_all'] = {
+  query._all = {
     type: GraphQLNonNull(
       new GraphQLObjectType<undefined, Context>({
         name: `All`,
@@ -700,7 +701,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
     }
   }
 
-  let GraphQlAllCustomContentsRevision = new GraphQLObjectType<any, Context>({
+  const GraphQlAllCustomContentsRevision = new GraphQLObjectType<any, Context>({
     name: `AllCustomContentsRevision`,
     fields: {
       revision: {type: GraphQLNonNull(GraphQLInt)},
@@ -734,7 +735,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
     }
   })
 
-  mutation['_all'] = {
+  mutation._all = {
     type: GraphQLNonNull(
       new GraphQLObjectType<undefined, Context>({
         name: `AllMutations`,

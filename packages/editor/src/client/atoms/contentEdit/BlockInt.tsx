@@ -20,7 +20,7 @@ function BlockInt({
         dispatch({
           type: ContentEditActionEnum.update,
           value: Math.min(Math.max(Number(val), -Max32BitIntSize), Max32BitIntSize),
-          schemaPath
+          path: schemaPath
         })
       }
     />

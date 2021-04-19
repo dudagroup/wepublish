@@ -23,7 +23,7 @@ function BlockRef({
         onClose={() => {
           dispatch({
             type: ContentEditActionEnum.update,
-            schemaPath,
+            path: schemaPath,
             value: null
           })
         }}></ReferenceButton>
@@ -38,7 +38,7 @@ function BlockRef({
             dispatch({
               type: ContentEditActionEnum.update,
               value: ref,
-              schemaPath
+              path: schemaPath
             })
           }}
         />

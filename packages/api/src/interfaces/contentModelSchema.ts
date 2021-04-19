@@ -25,6 +25,7 @@ export enum ContentModelSchemaTypes {
   float = 'float',
   enum = 'enum',
   dateTime = 'dateTime',
+  media = 'media',
   richText = 'richText',
   reference = 'reference',
   list = 'list',
@@ -101,6 +102,10 @@ export interface ContentModelSchemaFieldRichText extends ContentModelSchemaField
   config?: RichTextConfig
 }
 
+export interface ContentModelSchemaFieldMedia extends ContentModelSchemaFieldLeaf {
+  type: ContentModelSchemaTypes.media
+}
+
 export type ReferenceScope = 'local' | 'peers' | 'all'
 
 export interface ContentModelSchemaFieldRefTypeMap {
@@ -137,6 +142,7 @@ export type ContentModelSchemas =
   | ContentModelSchemaFieldBoolean
   | ContentModelSchemaFieldDate
   | ContentModelSchemaFieldRichText
+  | ContentModelSchemaFieldMedia
   | ContentModelSchemaFieldRef
   | ContentModelSchemaFieldEnum
   | ContentModelSchemaFieldList

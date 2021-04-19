@@ -27,13 +27,15 @@ import {createWriteStream} from 'pino-sentry'
 import yargs from 'yargs'
 // @ts-ignore
 import {hideBin} from 'yargs/helpers'
-import {contentModelArticle} from './modelArticle'
-import {contentModelA} from './modelA'
-import {contentModelB} from './modelB'
+import {contentModelArticle} from './models/modelArticle'
+import {contentModelA} from './models/modelA'
+import {contentModelB} from './models/modelB'
 import {GraphQLNonNull, GraphQLObjectType, GraphQLString} from 'graphql'
+import {contentModelAuthor} from './models/modelAuthor'
+import {contentModelMediaLibrary} from './models/modelMediaLibrary'
 
 interface ExampleURLAdapterProps {
-  websiteURL: string //a
+  websiteURL: string
 }
 
 class ExampleURLAdapter implements URLAdapter {
@@ -289,7 +291,13 @@ async function asyncMain() {
     playground: true,
     introspection: true,
     tracing: true,
-    contentModels: [contentModelA, contentModelB, contentModelArticle],
+    contentModels: [
+      contentModelA,
+      contentModelB,
+      contentModelMediaLibrary,
+      contentModelAuthor,
+      contentModelArticle
+    ],
     languageConfig: {
       defaultLanguageId: '1',
       languages: [

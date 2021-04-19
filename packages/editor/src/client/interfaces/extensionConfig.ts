@@ -1,4 +1,3 @@
-import {ReactElement} from 'react'
 import {ContentConfig, Config} from '../api'
 import {ContentEditAction} from '../control/contentReducer'
 import {DefaultMetadata} from '../panel/contentMetadataPanel'
@@ -42,7 +41,7 @@ export type getContentViewFunction = (
   dispatch: React.Dispatch<ContentEditAction>,
   configs: Configs,
   contentModelConfigMerged: ContentModelConfigMerged
-) => ReactElement
+) => JSX.Element
 
 export type getMetaViewFunction<M = any> = (
   metadata: DefaultMetadata,
@@ -52,7 +51,7 @@ export type getMetaViewFunction<M = any> = (
   dispatchCustomMetaData: React.Dispatch<ContentEditAction>,
   configs: Configs,
   contentModelConfigMerged: ContentModelConfigMerged
-) => ReactElement
+) => JSX.Element
 
 export type ContentModelConfigMerged = ContentConfig & Partial<ContentModelExtension>
 export interface Configs {

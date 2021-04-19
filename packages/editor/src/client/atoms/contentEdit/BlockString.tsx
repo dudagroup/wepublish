@@ -21,9 +21,9 @@ function BlockString({
           checked={isActive}
           onChange={() => {
             if (isActive) {
-              dispatch({type: ContentEditActionEnum.update, value: null, schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: null, path: schemaPath})
             } else {
-              dispatch({type: ContentEditActionEnum.update, value: '', schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: '', path: schemaPath})
             }
           }}
         />
@@ -40,7 +40,9 @@ function BlockString({
         readOnly={!isActive}
         rows={3}
         value={value || ''}
-        onChange={val => dispatch({type: ContentEditActionEnum.update, value: val, schemaPath})}
+        onChange={val =>
+          dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
+        }
       />
     </>
   )

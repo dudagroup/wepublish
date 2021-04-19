@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next'
 
 export type QuoteBlockProps = BlockProps<QuoteBlockValue>
 
-export function QuoteBlock({value, onChangeNew, autofocus, disabled}: QuoteBlockProps) {
+export function QuoteBlock({value, onChange, autofocus, disabled}: QuoteBlockProps) {
   const {quote, author} = value
   const focusRef = useRef<HTMLTextAreaElement>(null)
   const {t} = useTranslation()
@@ -24,7 +24,7 @@ export function QuoteBlock({value, onChangeNew, autofocus, disabled}: QuoteBlock
         value={quote}
         disabled={disabled}
         onChange={e => {
-          onChangeNew(e.target.value, ['quote'])
+          onChange(e.target.value, ['quote'])
         }}
       />
       <div
@@ -45,7 +45,7 @@ export function QuoteBlock({value, onChangeNew, autofocus, disabled}: QuoteBlock
           value={author}
           disabled={disabled}
           onChange={e => {
-            onChangeNew(e.target.value, ['author'])
+            onChange(e.target.value, ['author'])
           }}
         />
       </div>

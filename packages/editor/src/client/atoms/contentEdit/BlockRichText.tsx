@@ -36,9 +36,9 @@ function BlockRichText({
           checked={isActive}
           onChange={() => {
             if (isActive) {
-              dispatch({type: ContentEditActionEnum.update, value: null, schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: null, path: schemaPath})
             } else {
-              dispatch({type: ContentEditActionEnum.update, value: empty, schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: empty, path: schemaPath})
             }
           }}
         />
@@ -59,7 +59,7 @@ function BlockRichText({
           dispatch({
             type: ContentEditActionEnum.update,
             value: update,
-            schemaPath
+            path: schemaPath
           })
         }}
         config={{

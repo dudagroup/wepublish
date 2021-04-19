@@ -16,7 +16,7 @@ function BlockFloat({
       disabled={isNullOrUndefined(value)}
       step={0.001}
       onChange={val =>
-        dispatch({type: ContentEditActionEnum.update, value: Number(val), schemaPath})
+        dispatch({type: ContentEditActionEnum.update, value: Number(val), path: schemaPath})
       }
     />
   )

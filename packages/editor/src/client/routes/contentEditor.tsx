@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
 import {Modal, Notification, Icon, IconButton} from 'rsuite'
 import {NavigationBar} from '../atoms/navigationBar'
@@ -21,7 +22,7 @@ import {
   getCreateMutation,
   getUpdateMutation,
   getReadQuery,
-  stripTypename
+  stripKeysRecursive
 } from '../utils/queryUtils'
 import {Configs} from '../interfaces/extensionConfig'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
@@ -85,12 +86,11 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   })
 
   const intitialCustomMetadata =
-    contentConfig.defaultContent ??
+    contentConfig.defaultMeta ??
     generateEmptyRootContent(contentConfig.schema.meta, configs.apiConfig.languages)
-  const [customMetadata, customMetadataDispatcher] = useReducer(
-    contentReducer,
-    intitialCustomMetadata
-  )
+  const [{record: customMetadata}, customMetadataDispatcher] = useReducer(contentReducer, {
+    record: intitialCustomMetadata
+  })
   function setCustomMetadata(value: unknown) {
     customMetadataDispatcher({
       type: ContentEditActionEnum.setInitialState,
@@ -101,7 +101,7 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   const intitialContent =
     contentConfig.defaultContent ??
     generateEmptyRootContent(contentConfig.schema.content, configs.apiConfig.languages)
-  const [contentData, dispatcher] = useReducer(contentReducer, intitialContent)
+  const [{record: contentData}, dispatcher] = useReducer(contentReducer, {record: intitialContent})
 
   function setContentData(value: unknown) {
     dispatcher({
@@ -139,7 +139,7 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
 
   useEffect(() => {
     if (recordData) {
-      const {shared, title, content, meta} = stripTypename(recordData)
+      const {shared, title, content, meta} = stripKeysRecursive(recordData, ['__typename'])
       const publishedAt = new Date()
       if (publishedAt) setPublishedAt(new Date(publishedAt))
 
@@ -162,9 +162,9 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   }, [createError, updateError, publishError])
 
   function createInput(): any {
-    let {__typename, ...content} = contentData
+    const content = stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
 
-    let meta = undefined
+    let meta
     if (customMetadata) {
       const {__typename: waste, ...rest} = customMetadata
       meta = rest

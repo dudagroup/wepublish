@@ -5,6 +5,7 @@ import {
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLScalarType,
   GraphQLString
 } from 'graphql'
 import {ContentSort} from './contentInterfaces'
@@ -45,5 +46,20 @@ export const GraphQLPublicContentSort = new GraphQLEnumType({
   values: {
     PUBLISHED_AT: {value: ContentSort.PublishedAt},
     UPDATED_AT: {value: ContentSort.UpdatedAt}
+  }
+})
+
+export const GraphQLUnknown = new GraphQLScalarType({
+  name: 'Unknown',
+  serialize() {
+    return null
+  },
+
+  parseValue() {
+    return null
+  },
+
+  parseLiteral() {
+    return null
   }
 })

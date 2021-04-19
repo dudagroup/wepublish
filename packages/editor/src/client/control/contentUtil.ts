@@ -8,16 +8,6 @@ import {
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
 
-export function generateEmptyRootContent(schema: any, lang: LanguagesConfig): unknown {
-  return generateEmptyContent(
-    {
-      type: ContentModelSchemaTypes.object,
-      fields: schema
-    } as any,
-    lang
-  )
-}
-
 export function generateEmptyContent(
   field: ContentModelSchemaFieldBase,
   languagesConfig: LanguagesConfig
@@ -91,4 +81,14 @@ export function generateEmptyContent(
   }
 
   return {}
+}
+
+export function generateEmptyRootContent(schema: unknown, lang: LanguagesConfig): unknown {
+  return generateEmptyContent(
+    {
+      type: ContentModelSchemaTypes.object,
+      fields: schema
+    } as any,
+    lang
+  )
 }

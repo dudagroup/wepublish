@@ -79,7 +79,15 @@ const listicle: ContentModelSchemaFieldObject = {
   fields: {
     items: {
       type: ContentModelSchemaTypes.list,
-      contentType: blockListicleItem
+      contentType: {
+        type: ContentModelSchemaTypes.object,
+        fields: {
+          id: {
+            type: ContentModelSchemaTypes.id
+          },
+          value: blockListicleItem
+        }
+      }
     }
   }
 }
@@ -277,6 +285,43 @@ export const contentModelArticle: ContentModel = {
             teaserGrid
           }
         }
+      }
+    },
+    meta: {
+      title: {
+        type: ContentModelSchemaTypes.string
+      },
+      preTitle: {
+        type: ContentModelSchemaTypes.string
+      },
+      lead: {
+        type: ContentModelSchemaTypes.string
+      },
+      seoTitle: {
+        type: ContentModelSchemaTypes.string
+      },
+      slug: {
+        type: ContentModelSchemaTypes.string
+      },
+      authors: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.reference,
+          types: {
+            author: {
+              scope: 'local'
+            }
+          }
+        }
+      },
+      hideAuthors: {
+        type: ContentModelSchemaTypes.boolean
+      },
+      breaking: {
+        type: ContentModelSchemaTypes.boolean
+      },
+      peering: {
+        type: ContentModelSchemaTypes.boolean
       }
     }
   }

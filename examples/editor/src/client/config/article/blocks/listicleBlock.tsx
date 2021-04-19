@@ -23,11 +23,10 @@ export function ListicleBlock({value, onChange, disabled}: BlockProps<ListicleBl
   return (
     <ListInput
       value={value.items}
-      onChange={items =>
-        onChange((value: any) => ({
-          items: isFunctionalUpdate(items) ? items(value.items) : items
-        }))
-      }
+      onChange={items => {
+        const val = isFunctionalUpdate(items) ? items(value.items) : items
+        onChange(val, ['items'])
+      }}
       defaultValue={{image: null, richText: createDefaultValue(), title: ''}}
       disabled={disabled}>
       {props => <ListicleItemElement {...props} />}

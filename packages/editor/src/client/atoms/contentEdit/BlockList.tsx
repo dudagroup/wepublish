@@ -23,7 +23,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index - 1,
               delete: 2,
               insert: [item, array[index - 1]]
@@ -40,7 +40,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index,
               delete: 2,
               insert: [array[index + 1], item]
@@ -57,7 +57,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index + 1,
               delete: 0,
               insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
@@ -70,7 +70,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index,
               delete: 1,
               insert: []
@@ -99,7 +99,7 @@ export function BlockList({
         onClick={() => {
           dispatch({
             type: ContentEditActionEnum.push,
-            schemaPath: childSchemaPath,
+            path: childSchemaPath,
             insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
           })
         }}

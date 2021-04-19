@@ -27,6 +27,7 @@ export enum ContentModelSchemaTypes {
   dateTime = 'dateTime',
   richText = 'richText',
   reference = 'reference',
+  media = 'media',
   list = 'list',
   object = 'object',
   union = 'union'
@@ -114,6 +115,10 @@ export interface ContentModelSchemaFieldRef extends ContentModelSchemaFieldLeaf 
   types: ContentModelSchemaFieldRefTypeMap
 }
 
+export interface ContentModelSchemaFieldMedia extends ContentModelSchemaFieldLeaf {
+  type: ContentModelSchemaTypes.media
+}
+
 export interface ContentModelSchemaFieldList extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.list
   contentType: ContentModelSchemas
@@ -142,6 +147,7 @@ export type ContentModelSchemas =
   | ContentModelSchemaFieldList
   | ContentModelSchemaFieldObject
   | ContentModelSchemaFieldUnion
+  | ContentModelSchemaFieldMedia
 
 export interface ContentModelSchema {
   content: MapType<ContentModelSchemas>
