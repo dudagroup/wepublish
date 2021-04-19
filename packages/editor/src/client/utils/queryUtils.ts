@@ -158,12 +158,12 @@ function getFragmentSchemaRecursive(
       }`
     case ContentModelSchemaTypes.media:
       return `{
-          id
           focalPoint {
             x
             y
           }
           media {
+            id
             createdAt
             modifiedAt
             filename
@@ -199,7 +199,7 @@ function getFragmentSchemaRecursive(
 }
 
 export function stripKeysRecursive<T>(input: T, keys: string[]) {
-  if (typeof input === 'string' || input instanceof String) {
+  if (typeof input === 'string' || input instanceof String || input instanceof File) {
     return input
   }
   const newish = {...input}

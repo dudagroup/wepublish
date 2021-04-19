@@ -1,13 +1,32 @@
 export interface MediaBase {
-  id: string
   focalPoint?: {
     x: number
     y: number
   }
-  media?: unknown
 }
 
 export interface MediaInput extends MediaBase {
-  id: string
   file: any
+  media?: unknown
+}
+
+export interface MediaDetail {
+  id: string
+  createdAt: Date
+  modifiedAt: Date
+  filename: string
+  fileSize: number
+  extension: string
+  mimeType: string
+  image: {
+    format: string
+    width: number
+    height: number
+  }
+}
+
+export type MediaPersisted = MediaBase & MediaDetail
+
+export interface MediaOutput extends MediaBase {
+  media?: MediaDetail & {transformURL: string}
 }

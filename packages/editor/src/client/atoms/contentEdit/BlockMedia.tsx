@@ -1,20 +1,20 @@
 import React, {memo, useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Icon, Panel} from 'rsuite'
+import {Button, Icon, Panel} from 'rsuite'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
-import {Media, MediaMedia} from '../../interfaces/mediaType'
 import {DescriptionList, DescriptionListItem} from '../descriptionList'
 import {FileDropInput} from '../fileDropInput'
 import {FocalPointInput} from '../focalPointInput'
 import {BlockAbstractProps} from './BlockAbstract'
 import prettyBytes from 'pretty-bytes'
 import {ContentEditActionEnum} from '../../control/contentReducer'
+import {MediaDetail, MediaInput, MediaOutput} from '../../interfaces/mediaType'
 
 function BlockMedia({
   value,
   schemaPath,
   dispatch
-}: BlockAbstractProps<ContentModelSchemaFieldRef, Media | null>) {
+}: BlockAbstractProps<ContentModelSchemaFieldRef, (MediaOutput & MediaInput) | null>) {
   const {t} = useTranslation()
 
   useEffect(() => {
@@ -29,7 +29,7 @@ function BlockMedia({
       }
 
       const handleImageLoad = function () {
-        const mediaMedia: Partial<MediaMedia> = {
+        const mediaMedia: Partial<MediaDetail> = {
           createdAt: undefined,
           modifiedAt: undefined,
           fileSize: value.file.size,
@@ -76,8 +76,10 @@ function BlockMedia({
     const file = files[0]
     dispatch({
       type: ContentEditActionEnum.update,
-      path: [...schemaPath, 'file'],
-      value: file
+      path: [...schemaPath],
+      value: {
+        file
+      }
     })
   }
 
@@ -127,15 +129,17 @@ function BlockMedia({
             <DescriptionListItem label={t('images.panels.fileSize')}>
               {prettyBytes(fileSize)}
             </DescriptionListItem>
-
-            {/* {originalImageURL && (
-              <DescriptionListItem label={t('images.panels.link')}>
-                <Link href={originalImageURL} target="_blank">
-                  {originalImageURL}
-                </Link>
-              </DescriptionListItem>
-            )} */}
           </DescriptionList>
+          <Button
+            onClick={() => {
+              dispatch({
+                type: ContentEditActionEnum.update,
+                path: [...schemaPath],
+                value: null
+              })
+            }}>
+            {t('global.buttons.delete')}
+          </Button>
         </Panel>
       </>
     )

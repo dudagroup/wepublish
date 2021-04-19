@@ -10,7 +10,7 @@ import {ImageGalleryBlockValue} from './types'
 import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
-import {ImagedEditPanel, ImageSelectPanel, Reference} from '@wepublish/editor'
+import {ImagedEditPanel, ImageSelectPanel} from '@wepublish/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
 
 export function ImageGalleryBlock({
@@ -33,7 +33,7 @@ export function ImageGalleryBlock({
   const {data} = useImageQuery({
     skip: image?.record || !image?.recordId,
     variables: {
-      id: image?.recordId!
+      id: image?.recordId || ''
     }
   })
   const imageRecord: ImageRefFragment = image?.record || data?.image
@@ -53,29 +53,29 @@ export function ImageGalleryBlock({
     }
   }, [])
 
-  function handleImageChange(image: Reference | null) {
-    onChange({
-      ...value,
-      images: Object.assign([], value.images, {
-        [index]: {
-          image,
-          caption
-        }
-      })
-    })
-  }
+  // function handleImageChange(image: Reference | null) {
+  //   onChange({
+  //     ...value,
+  //     images: Object.assign([], value.images, {
+  //       [index]: {
+  //         image,
+  //         caption
+  //       }
+  //     })
+  //   })
+  // }
 
-  function handleCaptionChange(caption: string) {
-    onChange({
-      ...value,
-      images: Object.assign([], value.images, {
-        [index]: {
-          image,
-          caption
-        }
-      })
-    })
-  }
+  // function handleCaptionChange(caption: string) {
+  //   onChange({
+  //     ...value,
+  //     images: Object.assign([], value.images, {
+  //       [index]: {
+  //         image,
+  //         caption
+  //       }
+  //     })
+  //   })
+  // }
 
   return (
     <>
@@ -186,16 +186,18 @@ export function ImageGalleryBlock({
         value={caption}
         disabled={disabled}
         onChange={e => {
-          handleCaptionChange(e.target.value)
+          // handleCaptionChange(e.target.value)
         }}
       />
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
-          onSelect={value => {}}
+          onSelect={value => {
+            //
+          }}
           onSelectRef={value => {
             setChooseModalOpen(false)
-            handleImageChange(value)
+            // handleImageChange(value)
           }}
         />
       </Drawer>
@@ -211,7 +213,7 @@ export function ImageGalleryBlock({
         <GalleryListEditPanel
           initialImages={value.images}
           onSave={images => {
-            onChange({images})
+            // onChange({images})
             setGalleryListEditModalOpen(false)
           }}
           onClose={() => setGalleryListEditModalOpen(false)}

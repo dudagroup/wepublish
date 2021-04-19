@@ -10,7 +10,7 @@ import {
 import {ContentModelSchemas, ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
 import {MediaReferenceType, Reference} from '../interfaces/referenceType'
-import {MediaInput} from '../interfaces/mediaType'
+import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -187,11 +187,24 @@ async function validateRecursive(
 
     case ContentModelSchemaTypes.media: {
       const mediaInput = data as MediaInput
+      const mediaDb = data as MediaPersisted
+
       if (mediaInput?.file) {
-        // const {id, ...image} = await validatorContext.context.mediaAdapter.uploadImage(
-        //   mediaInput.file
-        // )
-        console.log('image', mediaInput)
+        const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
+        mediaDb.id = image.id
+        mediaDb.createdAt = new Date()
+        mediaDb.modifiedAt = new Date()
+        mediaDb.filename = image.filename
+        mediaDb.fileSize = image.fileSize
+        mediaDb.extension = image.extension
+        mediaDb.mimeType = image.mimeType
+        mediaDb.image = {
+          format: image.format,
+          height: image.width,
+          width: image.height
+        }
+        delete mediaInput.file
+        delete mediaInput.media
       }
       break
     }
