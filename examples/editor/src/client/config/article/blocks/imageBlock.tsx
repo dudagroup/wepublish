@@ -33,7 +33,7 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
   }, [])
 
   function handleImageChange(image: Reference | null) {
-    onChange({...value, image})
+    //onChange({...value, image})
   }
 
   const imageRecord: ImageRefFragment = image?.record || data?.image
@@ -86,7 +86,7 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
         placeholder={t('blocks.image.overview.caption')}
         value={caption}
         onChange={e => {
-          onChange({...value, caption: e.target.value})
+          //onChange({...value, caption: e.target.value})
         }}
       />
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>

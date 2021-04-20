@@ -30,6 +30,7 @@ export interface EditorConfig {
 export interface ContentModelExtension<M = any> extends ExtensionBase {
   defaultContent?: any
   defaultMeta?: any
+  previewPath?: string[]
   getMetaView?: getMetaViewFunction<M>
   getContentView?: getContentViewFunction
 }

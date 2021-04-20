@@ -29,7 +29,7 @@ function BlockMedia({
       }
 
       const handleImageLoad = function () {
-        const mediaMedia: Partial<MediaDetail> = {
+        const mediaDetail: Partial<MediaDetail> = {
           createdAt: undefined,
           modifiedAt: undefined,
           fileSize: value.file.size,
@@ -51,7 +51,7 @@ function BlockMedia({
         dispatch({
           type: ContentEditActionEnum.update,
           path: [...schemaPath, 'media'],
-          value: mediaMedia
+          value: mediaDetail
         })
       }
 
@@ -143,12 +143,34 @@ function BlockMedia({
         </Panel>
       </>
     )
+  } else if (value?.file || value?.media?.filename) {
+    let name = ''
+    if (value?.media?.filename && value?.media?.extension) {
+      name = value.media.filename + value.media.extension
+    } else {
+      name = value.file.name
+    }
+    panel = (
+      <Panel bodyFill={true} style={{height: '180px'}}>
+        <Button
+          onClick={() => {
+            dispatch({
+              type: ContentEditActionEnum.update,
+              path: [...schemaPath],
+              value: null
+            })
+          }}>
+          {t('global.buttons.delete')}
+        </Button>
+        <FileDropInput disabled={true} text={name} onDrop={handleDrop} />
+      </Panel>
+    )
   } else {
     panel = (
       <Panel bodyFill={true} style={{height: '150px'}}>
         <FileDropInput
           icon={<Icon icon="upload" />}
-          text={t('articleEditor.panels.dropImage')}
+          text={t('global.buttons.dropMedia')}
           onDrop={handleDrop}
         />
       </Panel>

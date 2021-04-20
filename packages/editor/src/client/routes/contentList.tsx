@@ -14,6 +14,7 @@ import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
 import {Content} from '@wepublish/api'
 import {Configs} from '../interfaces/extensionConfig'
+import {RecordPreview} from '../atoms/recordPreview'
 
 const {Column, HeaderCell, Cell} = Table
 
@@ -113,41 +114,49 @@ export function ContentList({configs}: ArticleEditorProps) {
 
       <Table style={{marginTop: '20px'}} loading={isLoading} data={articles}>
         <Column flexGrow={3} align="left">
-          <HeaderCell>{t('articles.overview.title')}</HeaderCell>
+          <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
             {(rowData: ContentListRefFragment) => {
               return (
                 <Link route={ContentEditRoute.create({type, id: rowData.id})}>
-                  {rowData.title || t('articles.overview.untitled')}
+                  {rowData.title || t('content.overview.untitled')}
                 </Link>
               )
             }}
           </Cell>
         </Column>
+        <Column flexGrow={3} align="left">
+          <HeaderCell>{t('content.overview.preview')}</HeaderCell>
+          <Cell>
+            {(rowData: ContentListRefFragment) => {
+              return <RecordPreview record={rowData}></RecordPreview>
+            }}
+          </Cell>
+        </Column>
         <Column flexGrow={2} minWidth={140} align="left">
-          <HeaderCell>{t('articles.overview.created')}</HeaderCell>
+          <HeaderCell>{t('content.overview.created')}</HeaderCell>
           <Cell dataKey="createdAt" />
         </Column>
         <Column flexGrow={2} minWidth={140} align="left">
-          <HeaderCell>{t('articles.overview.updated')}</HeaderCell>
+          <HeaderCell>{t('content.overview.updated')}</HeaderCell>
           <Cell dataKey="modifiedAt" />
         </Column>
         <Column flexGrow={2} align="left">
-          <HeaderCell>{t('articles.overview.states')}</HeaderCell>
+          <HeaderCell>{t('content.overview.states')}</HeaderCell>
           <Cell>
             {(rowData: PageRefFragment) => {
               const states = []
 
-              if (rowData.draft) states.push(t('articles.overview.draft'))
-              if (rowData.pending) states.push(t('articles.overview.pending'))
-              if (rowData.published) states.push(t('articles.overview.published'))
+              if (rowData.draft) states.push(t('content.overview.draft'))
+              if (rowData.pending) states.push(t('content.overview.pending'))
+              if (rowData.published) states.push(t('content.overview.published'))
 
               return <div>{states.join(' / ')}</div>
             }}
           </Cell>
         </Column>
         <Column width={90} align="right" fixed="right">
-          <HeaderCell>{t('articles.overview.action')}</HeaderCell>
+          <HeaderCell>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 0'}}>
             {(rowData: Content) => (
               <>
@@ -181,7 +190,7 @@ export function ContentList({configs}: ArticleEditorProps) {
       </Table>
 
       {data?.content._all.list.pageInfo.hasNextPage && (
-        <Button style={{height: '80px'}} label={t('articles.overview.loadMore')} onClick={loadMore}>
+        <Button style={{height: '80px'}} label={t('content.overview.loadMore')} onClick={loadMore}>
           {t('buttons.loadMore')}
         </Button>
       )}

@@ -2,7 +2,7 @@ import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 
 export const contentModelMediaLibrary: ContentModel = {
   identifier: 'mediaLibrary',
-  nameSingular: 'Media Library',
+  nameSingular: 'Media',
   namePlural: 'Media',
   schema: {
     content: {

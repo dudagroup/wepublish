@@ -175,11 +175,16 @@ async function validateRecursive(
       mediaDb.fileSize = image.fileSize
       mediaDb.extension = image.extension
       mediaDb.mimeType = image.mimeType
-      mediaDb.image = {
-        format: image.format,
-        height: image.width,
-        width: image.height
+      if (image.format && image.width && image.height) {
+        mediaDb.image = {
+          format: image.format,
+          height: image.width,
+          width: image.height
+        }
+      } else {
+        mediaDb.image = null
       }
+
       delete mediaInput.file
       delete mediaInput.media
     }

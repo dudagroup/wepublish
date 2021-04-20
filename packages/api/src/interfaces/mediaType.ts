@@ -22,7 +22,7 @@ export interface MediaDetail {
     format: string
     width: number
     height: number
-  }
+  } | null
 }
 
 export type MediaPersisted = MediaBase & MediaDetail

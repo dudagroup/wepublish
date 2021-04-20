@@ -1,5 +1,4 @@
 import React, {useState, ReactNode} from 'react'
-import nanoid from 'nanoid'
 
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {PlaceholderImage} from '../atoms/placeholderImage'
@@ -10,7 +9,6 @@ import {Typography} from '../atoms/typography'
 import {IconButton, Drawer, Panel, Icon, Avatar} from 'rsuite'
 
 import {SortableElement, SortableContainer, SortEnd} from 'react-sortable-hoc'
-import arrayMove from 'array-move'
 
 import {TeaserGridBlockValue, Teaser, TeaserType} from './types'
 

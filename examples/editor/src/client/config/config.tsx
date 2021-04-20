@@ -43,6 +43,10 @@ export const config: EditorConfig = {
       identifier: 'article',
       defaultContent: {blocks: [{[BlockType.Title]: {title: '', lead: ''}}]},
       getContentView: getContentView
+    },
+    {
+      identifier: 'mediaLibrary',
+      previewPath: ['media']
     }
   ],
   cusomExtension: [
