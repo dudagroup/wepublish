@@ -8,13 +8,22 @@ import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
 import BlockTags from './BlockTags'
+import {Reference} from '../../interfaces/referenceType'
 
 export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
   if (
     props.model.contentType.type === ContentModelSchemaTypes.reference &&
     Object.keys(props.model.contentType.types).length === 1
   ) {
-    return <BlockTags {...props} model={props.model.contentType} />
+    return (
+      <BlockTags
+        dispatch={props.dispatch}
+        schemaPath={props.schemaPath}
+        value={props.value as Reference[]}
+        languageContext={props.languageContext}
+        model={props.model.contentType}
+      />
+    )
   }
 
   const {dispatch, model, languageContext, value, schemaPath} = props
