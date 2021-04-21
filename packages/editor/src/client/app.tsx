@@ -49,8 +49,9 @@ export function contentForRoute(route: Route, configs?: Configs) {
     case RouteType.ArticleList:
       return <ArticleList />
 
-    case RouteType.ContentList:
-      return configs && <ContentList configs={configs} />
+    case RouteType.ContentList: {
+      return configs && <ContentList type={route.params.type} />
+    }
 
     case RouteType.CommentList:
       return <CommentList />
@@ -129,9 +130,10 @@ export function App(editorConfig: EditorConfig) {
 
     case RouteType.ContentCreate:
     case RouteType.ContentEdit:
-      comp = configs && (
+      comp = (
         <ContentEditor
           configs={configs}
+          type={current.params.type}
           id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
         />
       )

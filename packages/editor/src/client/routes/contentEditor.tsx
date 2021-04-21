@@ -4,13 +4,7 @@ import {Modal, Notification, Icon, IconButton} from 'rsuite'
 import {NavigationBar} from '../atoms/navigationBar'
 import {RouteActionType} from '@karma.run/react'
 
-import {
-  useRouteDispatch,
-  IconButtonLink,
-  ContentListRoute,
-  useRoute,
-  ContentEditRoute
-} from '../route'
+import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
 
 import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPanel'
 import {usePublishContentMutation} from '../api'
@@ -24,15 +18,16 @@ import {
   getReadQuery,
   stripKeysRecursive
 } from '../utils/queryUtils'
-import {Configs} from '../interfaces/extensionConfig'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
 
 import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {ContentEditActionEnum, contentReducer} from '../control/contentReducer'
 import {generateEmptyRootContent} from '../control/contentUtil'
+import {Configs} from '../interfaces/extensionConfig'
 
 export interface ArticleEditorProps {
   readonly id?: string
+  readonly type: string
   readonly configs: Configs
 }
 
@@ -51,11 +46,9 @@ interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({id, configs}: ArticleEditorProps) {
+export function ContentEditor({id, type, configs}: ArticleEditorProps) {
   const {t} = useTranslation()
-  const {current} = useRoute()
   const dispatch = useRouteDispatch()
-  const type = (current?.params as any).type || ''
 
   const contentConfig = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type

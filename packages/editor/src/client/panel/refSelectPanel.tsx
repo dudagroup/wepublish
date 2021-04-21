@@ -2,16 +2,16 @@ import React, {useState} from 'react'
 import {Icon, Nav} from 'rsuite'
 import {ContentModelSchemaFieldRefTypeMap, ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
-import {RefContentSelectPanel} from './refContentSelectPanel'
+import {ContentList} from '../routes/contentList'
 
 export interface RefSelectPanelProps {
-  readonly config: ContentModelSchemaFieldRefTypeMap
+  readonly refConfig: ContentModelSchemaFieldRefTypeMap
   onClose(): void
   onSelectRef: (ref: Reference) => void
 }
 
-export function RefSelectPanel({onSelectRef, config}: RefSelectPanelProps) {
-  const types = Object.entries(config).map(([type, {scope}]) => {
+export function RefSelectPanel({onSelectRef, refConfig}: RefSelectPanelProps) {
+  const types = Object.entries(refConfig).map(([type, {scope}]) => {
     return {
       type,
       scope
@@ -30,10 +30,10 @@ export function RefSelectPanel({onSelectRef, config}: RefSelectPanelProps) {
 
   function currentContent(currentType: {type: string; scope: ReferenceScope}) {
     return (
-      <RefContentSelectPanel
-        onSelectRef={onSelectRef}
+      <ContentList
+        type={currentType.type}
         scope={currentType.scope}
-        type={currentType.type}></RefContentSelectPanel>
+        onSelectRef={onSelectRef}></ContentList>
     )
   }
 

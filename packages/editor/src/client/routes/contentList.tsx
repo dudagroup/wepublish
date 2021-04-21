@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute, useRoute} from '../route'
+import React, {useContext, useEffect, useState} from 'react'
+import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
 import {
   useUnpublishContentMutation,
   PageRefFragment,
@@ -13,8 +13,10 @@ import {FlexboxGrid, Input, InputGroup, Icon, IconButton, Table, Modal, Button} 
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
 import {Content} from '@wepublish/api'
-import {Configs} from '../interfaces/extensionConfig'
 import {RecordPreview} from '../atoms/recordPreview'
+import {ReferenceScope} from '../interfaces/contentModelSchema'
+import {Reference} from '../interfaces/referenceType'
+import {ConfigContext} from '../Editorcontext'
 
 const {Column, HeaderCell, Cell} = Table
 
@@ -26,13 +28,14 @@ enum ConfirmAction {
 const RecordsPerPage = 10
 
 export interface ArticleEditorProps {
-  readonly configs: Configs
+  readonly type: string
+  readonly scope?: ReferenceScope
+  onSelectRef?: (ref: Reference) => void
 }
 
-export function ContentList({configs}: ArticleEditorProps) {
-  const {current} = useRoute()
-  const type = (current?.params as any).type || ''
+export function ContentList({type, onSelectRef}: ArticleEditorProps) {
   const [filter, setFilter] = useState('')
+  const configs = useContext(ConfigContext)
 
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
@@ -50,7 +53,7 @@ export function ContentList({configs}: ArticleEditorProps) {
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(getDeleteMutation(config))
 
-  const listVariables = {type, filter: filter || undefined, first: RecordsPerPage}
+  const listVariables = {type: type as any, filter: filter || undefined, first: RecordsPerPage}
   const {data, fetchMore, loading: isLoading, refetch} = useContentListQuery({
     variables: listVariables,
     skip: !type,
@@ -118,7 +121,17 @@ export function ContentList({configs}: ArticleEditorProps) {
           <Cell>
             {(rowData: ContentListRefFragment) => {
               return (
-                <Link route={ContentEditRoute.create({type, id: rowData.id})}>
+                <Link
+                  route={ContentEditRoute.create({type, id: rowData.id})}
+                  onClick={e => {
+                    if (onSelectRef) {
+                      e.preventDefault()
+                      onSelectRef({
+                        contentType: type,
+                        recordId: rowData.id
+                      })
+                    }
+                  }}>
                   {rowData.title || t('content.overview.untitled')}
                 </Link>
               )

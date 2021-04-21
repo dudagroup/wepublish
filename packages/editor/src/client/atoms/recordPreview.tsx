@@ -1,8 +1,6 @@
-import {useQuery} from '@apollo/client'
 import React, {useContext} from 'react'
-import {ContentGetDocument} from '../api'
+import {useRecordHook} from '../control/recordHook'
 import {ConfigContext} from '../Editorcontext'
-import {getReadQuery} from '../utils/queryUtils'
 
 interface RecordPreviewProps {
   readonly record: {
@@ -14,37 +12,30 @@ interface RecordPreviewProps {
 }
 
 export function RecordPreview({record}: RecordPreviewProps) {
+  const enrichedRecord = useRecordHook({
+    recordId: record.id,
+    contentType: record.contentType,
+    record
+  })
   const configs = useContext(ConfigContext)
 
   const contentModelConfig = configs?.contentModelExtensionMerged.find(
     config => config.identifier === record.contentType
   )
 
-  let query
-  if (configs && contentModelConfig) {
-    query = getReadQuery(configs, contentModelConfig)
-  }
-  const {data} = useQuery(query || ContentGetDocument, {
-    skip: !query,
-    fetchPolicy: 'no-cache',
-    variables: {id: record.id}
-  })
-
   if (
-    data?.content &&
+    enrichedRecord.content &&
     contentModelConfig?.previewPath &&
     contentModelConfig.previewPath.length > 0
   ) {
-    const r: any = Object.values(data.content)[0]
-    const content = r.read.content
-    const previewObject = content[contentModelConfig?.previewPath[0]]
+    const previewObject = enrichedRecord.content[contentModelConfig?.previewPath[0]]
     if (previewObject?.media.image) {
       return <img src={previewObject?.media.url} />
     }
 
     return <>{previewObject}</>
-  } else if (record.title) {
-    return <>{record.title}</>
+  } else if (enrichedRecord.title) {
+    return <>{enrichedRecord.title}</>
   }
-  return <>{`Type: ${record.contentType} Id: ${record.id}`}</>
+  return <>{`Type: ${enrichedRecord.contentType} Id: ${enrichedRecord.id}`}</>
 }

@@ -79,7 +79,7 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
         </ButtonToolbar>
       </Form>
       <RefSelectPanel
-        config={types}
+        refConfig={types}
         onClose={() => {
           insertLink(editor, selection, reference, title || undefined)
           closeMenu()

@@ -35,11 +35,6 @@ import {getI18nOutputType, getI18nInputType} from '../i18nPrimitives'
 import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia, GraphQLMediaInput} from './media'
 
-export interface PeerArticle {
-  peerID: string
-  content: any
-}
-
 export const GraphQLContentSateEnum = new GraphQLEnumType({
   name: 'ContentStateEnum',
   values: Object.keys(DBContentState).reduce((accu, item) => {

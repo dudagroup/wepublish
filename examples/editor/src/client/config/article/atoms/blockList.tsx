@@ -25,6 +25,7 @@ export interface BlockProps<V = any> {
   onChange: (value: any, path: SchemaPath) => void
   autofocus?: boolean
   disabled?: boolean
+  configs: Configs
 }
 
 export type BlockConstructorFn<V = any> = (props: BlockProps<V>) => JSX.Element
@@ -58,6 +59,7 @@ export interface BlockListItemProps<T extends string = string, V = any> {
   onMoveUp?: (index: number) => void
   onMoveDown?: (index: number) => void
   children: (props: BlockProps<V>) => JSX.Element
+  configs: Configs
 }
 
 const BlockListItem = memo(function BlockListItem({
@@ -71,7 +73,8 @@ const BlockListItem = memo(function BlockListItem({
   children,
   onDelete,
   onMoveUp,
-  onMoveDown
+  onMoveDown,
+  configs
 }: BlockListItemProps) {
   return (
     <ListItemWrapper
@@ -82,6 +85,7 @@ const BlockListItem = memo(function BlockListItem({
       onMoveDown={onMoveDown ? () => onMoveDown(index) : undefined}>
       {children({
         value,
+        configs,
         onChange: (value, path) => {
           dispatch({
             type: ContentEditActionEnum.update,
@@ -212,6 +216,7 @@ export function BlockList<V extends BlockListValue>({
     return (
       <Fragment key={val.__ephemeralReactStateMeta.id}>
         <BlockListItem
+          configs={configs}
           index={index}
           value={val}
           unionCase={unionCase}

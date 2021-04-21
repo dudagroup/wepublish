@@ -219,7 +219,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
 
       <Modal show={isChooseModalOpen} size="lg" onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
-          config={{
+          refConfig={{
             modelA: {scope: ContentContextEnum.Local},
             modelB: {scope: ContentContextEnum.Local}
           }}
