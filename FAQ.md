@@ -45,3 +45,5 @@ A: If you are using Windows then run this command after checking that you can re
 
 Now you can go in the terminal to examples/media and run `yarn` and the magic module should be installed successfully. 
 
+#### Q: What do I do if I receive the error `request to http://localhost:3004/ failed` after media upload?
+Remove the "node_modules" (and maybe also yarn/npm cache) directory, run `yarn install` 

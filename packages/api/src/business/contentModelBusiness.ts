@@ -13,7 +13,7 @@ import {
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
-import {MediaReferenceType, Reference} from '../interfaces/referenceType'
+import {Reference} from '../interfaces/referenceType'
 import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
 
 export function generateID() {
@@ -141,16 +141,9 @@ async function validateRecursive(
     if (ref?.recordId) {
       let record
       try {
-        if (ref.contentType === MediaReferenceType) {
-          const image = await validatorContext.context.loaders.images.load(ref.recordId)
-          if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
-            record = image
-          }
-        } else {
-          const content = await validatorContext.context.loaders.content.load(ref.recordId)
-          if (Object.keys(schema.types).some(type => type === content?.contentType)) {
-            record = content
-          }
+        const content = await validatorContext.context.loaders.content.load(ref.recordId)
+        if (Object.keys(schema.types).some(type => type === content?.contentType)) {
+          record = content
         }
       } catch (error) {}
       if (!record) {

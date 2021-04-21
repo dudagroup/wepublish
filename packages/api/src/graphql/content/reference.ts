@@ -8,7 +8,7 @@ import {
 } from 'graphql'
 import {Context} from '../../context'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
-import {MediaReferenceType, Reference} from '../../interfaces/referenceType'
+import {Reference} from '../../interfaces/referenceType'
 import {MapType} from '../../interfaces/utilTypes'
 import {createProxyingIsTypeOf, createProxyingResolver} from '../../utility'
 import {GraphQLImage} from '../image'
@@ -44,9 +44,7 @@ export function getReference(
     throw Error('At least one type should be definied for Reference')
   } else if (typeArray.length === 1) {
     const contentType = typeArray[0][0]
-    if (typeArray[0][0] === MediaReferenceType) {
-      graphQLRecordType = GraphQLImage
-    } else if (contentModels?.[contentType]) {
+    if (contentModels?.[contentType]) {
       graphQLRecordType = contentModels[contentType]
     }
   } else {
@@ -54,9 +52,7 @@ export function getReference(
       name,
       types: typeArray.map(([contentType, {scope}]) => {
         let graphQLUnionCase: GraphQLType = GraphQLUnknown
-        if (contentType === MediaReferenceType) {
-          graphQLUnionCase = GraphQLImage
-        } else if (contentModels?.[contentType]) {
+        if (contentModels?.[contentType]) {
           graphQLUnionCase = contentModels[contentType]
         }
 
@@ -88,9 +84,6 @@ export function getReference(
       record: {
         type: graphQLRecordType,
         resolve: createProxyingResolver(async ({contentType, recordId}, _args, {loaders}) => {
-          if (recordId && contentType === MediaReferenceType) {
-            return loaders.images.load(recordId)
-          }
           return loaders.content.load(recordId)
         })
       },

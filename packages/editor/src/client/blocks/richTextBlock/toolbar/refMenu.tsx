@@ -7,8 +7,9 @@ import {WepublishEditor} from '../editor/wepublishEditor'
 import {InlineFormat} from '../editor/formats'
 import {Button, ButtonToolbar, ControlLabel, Form, FormControl, FormGroup} from 'rsuite'
 import {useTranslation} from 'react-i18next'
-import {ContentModelSchemaFieldRefTypeMap, Reference} from '../../../interfaces/referenceType'
+import {Reference} from '../../../interfaces/referenceType'
 import {ReferencePreview} from '../../../atoms/referencePreview'
+import {ContentModelSchemaFieldRefTypeMap} from '../../../interfaces/contentModelSchema'
 
 export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
   const {t} = useTranslation()

@@ -1,7 +1,8 @@
 import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 
+export const typeMediaLibrary = 'mediaLibrary'
 export const contentModelMediaLibrary: ContentModel = {
-  identifier: 'mediaLibrary',
+  identifier: typeMediaLibrary,
   nameSingular: 'Media',
   namePlural: 'Media',
   schema: {

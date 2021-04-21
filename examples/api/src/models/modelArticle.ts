@@ -2,9 +2,9 @@ import {
   ContentModel,
   ContentModelSchemaFieldEnum,
   ContentModelSchemaFieldObject,
-  ContentModelSchemaTypes,
-  MediaReferenceType
+  ContentModelSchemaTypes
 } from '@wepublish/api'
+import {typeMediaLibrary} from './modelMediaLibrary'
 
 const title: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
@@ -33,7 +33,7 @@ const image: ContentModelSchemaFieldObject = {
     image: {
       type: ContentModelSchemaTypes.reference,
       types: {
-        [MediaReferenceType]: {
+        [typeMediaLibrary]: {
           scope: 'local'
         }
       }
@@ -66,7 +66,7 @@ const blockListicleItem: ContentModelSchemaFieldObject = {
     image: {
       type: ContentModelSchemaTypes.reference,
       types: {
-        [MediaReferenceType]: {
+        mediaLibrary: {
           scope: 'local'
         }
       }
@@ -191,7 +191,7 @@ const linkPageBreak: ContentModelSchemaFieldObject = {
       type: ContentModelSchemaTypes.reference,
       optional: true,
       types: {
-        [MediaReferenceType]: {
+        [typeMediaLibrary]: {
           scope: 'local'
         }
       }
@@ -232,7 +232,7 @@ const teaserGrid: ContentModelSchemaFieldObject = {
           imageID: {
             type: ContentModelSchemaTypes.reference,
             types: {
-              [MediaReferenceType]: {
+              [typeMediaLibrary]: {
                 scope: 'local'
               }
             }

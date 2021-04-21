@@ -24,7 +24,7 @@ import {TableMenu} from './toolbar/tableMenu'
 import {WepublishEditor} from './editor/wepublishEditor'
 import {LinkMenu} from './toolbar/linkMenu'
 import {RefMenu} from './toolbar/refMenu'
-import {ContentModelSchemaFieldRefTypeMap} from '../../interfaces/referenceType'
+import {ContentModelSchemaFieldRefTypeMap} from '../../interfaces/contentModelSchema'
 
 export interface RichTextConfig {
   h1?: boolean

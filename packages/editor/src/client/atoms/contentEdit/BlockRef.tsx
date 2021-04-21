@@ -1,6 +1,5 @@
 import React, {memo, useState} from 'react'
 import {Modal} from 'rsuite'
-import {ContentContextEnum} from '../../api'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
@@ -11,6 +10,7 @@ import {BlockAbstractProps} from './BlockAbstract'
 function BlockRef({
   value,
   schemaPath,
+  model,
   dispatch
 }: BlockAbstractProps<ContentModelSchemaFieldRef, Reference | null>) {
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
@@ -29,9 +29,7 @@ function BlockRef({
         }}></ReferenceButton>
       <Modal show={isChooseModalOpen} size="lg" onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
-          config={{
-            modelA: {scope: ContentContextEnum.Local}
-          }}
+          config={model.types}
           onClose={() => setChooseModalOpen(false)}
           onSelectRef={ref => {
             setChooseModalOpen(false)

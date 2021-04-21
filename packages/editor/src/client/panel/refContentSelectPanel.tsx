@@ -1,26 +1,27 @@
 import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
 import {Button, Icon, List, Input, InputGroup, Notification} from 'rsuite'
-import {ContentContextEnum, ContentListQuery, useContentListQuery} from '../api'
+import {ContentListQuery, useContentListQuery} from '../api'
+import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
 
 export interface RefContentSelectPanelProps {
   readonly type: string
-  readonly context: ContentContextEnum
+  readonly scope: ReferenceScope
   onSelectRef: (ref: Reference) => void
 }
 
-export function RefContentSelectPanel({onSelectRef, type, context}: RefContentSelectPanelProps) {
+export function RefContentSelectPanel({onSelectRef, type, scope}: RefContentSelectPanelProps) {
   const [filter, setFilter] = useState('')
 
   const listVariables: {
     type: any
-    context: ContentContextEnum
+    scope: ReferenceScope
     filter: string | undefined
     first: number
   } = {
-    type: type,
-    context: context,
+    type,
+    scope,
     filter: filter || undefined,
     first: 20
   }

@@ -1,13 +1,8 @@
 import React, {useState} from 'react'
 import {Icon, Nav} from 'rsuite'
-import {ContentContextEnum} from '../api'
-import {
-  ContentModelSchemaFieldRefTypeMap,
-  MediaReferenceType,
-  Reference
-} from '../interfaces/referenceType'
+import {ContentModelSchemaFieldRefTypeMap, ReferenceScope} from '../interfaces/contentModelSchema'
+import {Reference} from '../interfaces/referenceType'
 import {RefContentSelectPanel} from './refContentSelectPanel'
-import {RefImageSelectPanel} from './refMediaSelectPanel'
 
 export interface RefSelectPanelProps {
   readonly config: ContentModelSchemaFieldRefTypeMap
@@ -15,11 +10,11 @@ export interface RefSelectPanelProps {
   onSelectRef: (ref: Reference) => void
 }
 
-export function RefSelectPanel({onClose, onSelectRef, config}: RefSelectPanelProps) {
-  const types = Object.entries(config).map(([type, val]) => {
+export function RefSelectPanel({onSelectRef, config}: RefSelectPanelProps) {
+  const types = Object.entries(config).map(([type, {scope}]) => {
     return {
       type,
-      context: val.scope
+      scope
     }
   })
   const [tabIndex, setTabIndex] = useState(0)
@@ -28,21 +23,16 @@ export function RefSelectPanel({onClose, onSelectRef, config}: RefSelectPanelPro
   const tabs = types.map((type, index) => {
     return (
       <Nav.Item key={index} eventKey={index} icon={<Icon icon="file-text" />}>
-        {type.type === MediaReferenceType ? 'media' : type.type}
+        {type.type}
       </Nav.Item>
     )
   })
 
-  function currentContent(currentType: {type: string; context: ContentContextEnum}) {
-    if (currentType.type === MediaReferenceType) {
-      return (
-        <RefImageSelectPanel onSelectRef={onSelectRef} onClose={() => {}}></RefImageSelectPanel>
-      )
-    }
+  function currentContent(currentType: {type: string; scope: ReferenceScope}) {
     return (
       <RefContentSelectPanel
         onSelectRef={onSelectRef}
-        context={currentType.context}
+        scope={currentType.scope}
         type={currentType.type}></RefContentSelectPanel>
     )
   }

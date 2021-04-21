@@ -20,7 +20,7 @@ export function RecordPreview({record}: RecordPreviewProps) {
     config => config.identifier === record.contentType
   )
 
-  let query = undefined
+  let query
   if (configs && contentModelConfig) {
     query = getReadQuery(configs, contentModelConfig)
   }

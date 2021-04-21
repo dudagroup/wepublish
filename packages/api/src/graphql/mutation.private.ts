@@ -623,8 +623,6 @@ export function getGraphQLPrivateMutation<TSource, TContext, TArgs>(
             focalPoint
           } = input
 
-          console.log('file', file)
-
           const {id, ...image} = await mediaAdapter.uploadImage(file)
 
           return dbAdapter.image.createImage({

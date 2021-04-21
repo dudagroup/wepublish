@@ -19,17 +19,15 @@ import {
 
 import {FileDropInput} from '../atoms/fileDropInput'
 import {Typography} from '../atoms/typography'
-import {MediaReferenceType, Reference} from '../interfaces/referenceType'
 
 export interface ImageSelectPanelProps {
   onClose(): void
   onSelect(image: ImageRefFragment): void
-  onSelectRef?: (ref: Reference) => void
 }
 
 const ImagesPerPage = 20
 
-export function ImageSelectPanel({onClose, onSelect, onSelectRef}: ImageSelectPanelProps) {
+export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
   const [filter, setFilter] = useState('')
 
   const [file, setFile] = useState<File | null>(null)
@@ -84,9 +82,6 @@ export function ImageSelectPanel({onClose, onSelect, onSelectRef}: ImageSelectPa
         file={file}
         onSave={image => {
           onSelect(image)
-          if (onSelectRef) {
-            onSelectRef({contentType: MediaReferenceType, recordId: image.id, record: image})
-          }
         }}
       />
     )
@@ -126,13 +121,6 @@ export function ImageSelectPanel({onClose, onSelect, onSelectRef}: ImageSelectPa
                       style={{cursor: 'pointer'}}
                       onClick={() => {
                         onSelect(image)
-                        if (onSelectRef) {
-                          onSelectRef({
-                            contentType: MediaReferenceType,
-                            recordId: image.id,
-                            record: image
-                          })
-                        }
                       }}
                       shaded
                       bordered

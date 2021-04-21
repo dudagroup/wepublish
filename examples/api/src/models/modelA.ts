@@ -1,4 +1,4 @@
-import {ContentModel, ContentModelSchemaTypes, MediaReferenceType} from '@wepublish/api'
+import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 
 export const contentModelA: ContentModel = {
   identifier: 'modelA',
@@ -19,7 +19,16 @@ export const contentModelA: ContentModel = {
         i18n: true
       },
       myRichText: {
-        type: ContentModelSchemaTypes.richText
+        type: ContentModelSchemaTypes.richText,
+        config: {
+          italic: true,
+          bold: true,
+          ref: {
+            modelB: {
+              scope: 'local'
+            }
+          }
+        }
       },
       myRichTextI18n: {
         type: ContentModelSchemaTypes.richText,
@@ -33,9 +42,6 @@ export const contentModelA: ContentModel = {
           },
           modelB: {
             scope: 'local'
-          },
-          [MediaReferenceType]: {
-            scope: 'local'
           }
         }
       },
@@ -47,9 +53,6 @@ export const contentModelA: ContentModel = {
             scope: 'local'
           },
           modelB: {
-            scope: 'local'
-          },
-          [MediaReferenceType]: {
             scope: 'local'
           }
         }
@@ -77,9 +80,6 @@ export const contentModelA: ContentModel = {
             scope: 'local'
           },
           modelB: {
-            scope: 'local'
-          },
-          [MediaReferenceType]: {
             scope: 'local'
           }
         }

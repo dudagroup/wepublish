@@ -310,6 +310,11 @@ async function asyncMain() {
           id: '2',
           description: 'de',
           tag: 'de'
+        },
+        {
+          id: '3',
+          description: 'fr',
+          tag: 'fr'
         }
       ]
     },

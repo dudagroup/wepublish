@@ -57,6 +57,7 @@ export type _Cmp_Article_Record = {
   title: Scalars['String']
   shared: Scalars['Boolean']
   content: _Cmp_Article_Record_Content
+  meta: _Cmp_Article_Record_Meta
 }
 
 export type _Cmp_Article_Record_Content = {
@@ -151,6 +152,12 @@ export type _Cmp_Article_Record_Content_Blocks_Listicle_Content = {
 
 export type _Cmp_Article_Record_Content_Blocks_Listicle_Items = {
   __typename?: '_cmp_article_record_content_blocks_listicle_items'
+  id: Scalars['ID']
+  value: _Cmp_Article_Record_Content_Blocks_Listicle_Items_Value
+}
+
+export type _Cmp_Article_Record_Content_Blocks_Listicle_Items_Value = {
+  __typename?: '_cmp_article_record_content_blocks_listicle_items_value'
   title: Scalars['String']
   richText: Scalars['RichText']
   image?: Maybe<Ref__Media>
@@ -262,9 +269,133 @@ export type _Cmp_Article_Record_Content_Blocks_Youtube_Content = {
   videoID: Scalars['ID']
 }
 
+export type _Cmp_Article_Record_Meta = {
+  __typename?: '_cmp_article_record_meta'
+  title: Scalars['String']
+  preTitle: Scalars['String']
+  lead: Scalars['String']
+  seoTitle: Scalars['String']
+  slug: Scalars['String']
+  authors: Array<Maybe<Ref_Author>>
+  hideAuthors: Scalars['Boolean']
+  breaking: Scalars['Boolean']
+  peering: Scalars['Boolean']
+}
+
 export type _Cmp_ArticleConnection = {
   __typename?: '_cmp_articleConnection'
   nodes: Array<_Cmp_Article_Record>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']
+}
+
+export type _Cmp_Author = {
+  __typename?: '_cmp_author'
+  read: _Cmp_Author_Record
+  list: _Cmp_AuthorConnection
+}
+
+export type _Cmp_AuthorReadArgs = {
+  peerID?: Maybe<Scalars['ID']>
+  id: Scalars['ID']
+}
+
+export type _Cmp_AuthorListArgs = {
+  after?: Maybe<Scalars['ID']>
+  before?: Maybe<Scalars['ID']>
+  first?: Maybe<Scalars['Int']>
+  last?: Maybe<Scalars['Int']>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
+  order?: Maybe<SortOrder>
+}
+
+export type _Cmp_Author_Record = {
+  __typename?: '_cmp_author_record'
+  id: Scalars['ID']
+  contentType: Scalars['String']
+  revision: Scalars['Int']
+  state: ContentStateEnum
+  createdAt: Scalars['DateTime']
+  modifiedAt: Scalars['DateTime']
+  publicationDate?: Maybe<Scalars['DateTime']>
+  dePublicationDate?: Maybe<Scalars['DateTime']>
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmp_Author_Record_Content
+}
+
+export type _Cmp_Author_Record_Content = {
+  __typename?: '_cmp_author_record_content'
+  name: Scalars['String']
+  jobTitle: Scalars['String']
+  biographicalInformation: Scalars['RichText']
+  links: Array<_Cmp_Author_Record_Content_Links>
+}
+
+export type _Cmp_Author_Record_Content_Links = {
+  __typename?: '_cmp_author_record_content_links'
+  title: Scalars['String']
+  link: Scalars['String']
+}
+
+export type _Cmp_AuthorConnection = {
+  __typename?: '_cmp_authorConnection'
+  nodes: Array<_Cmp_Author_Record>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']
+}
+
+export type _Cmp_MediaLibrary = {
+  __typename?: '_cmp_mediaLibrary'
+  read: _Cmp_MediaLibrary_Record
+  list: _Cmp_MediaLibraryConnection
+}
+
+export type _Cmp_MediaLibraryReadArgs = {
+  peerID?: Maybe<Scalars['ID']>
+  id: Scalars['ID']
+}
+
+export type _Cmp_MediaLibraryListArgs = {
+  after?: Maybe<Scalars['ID']>
+  before?: Maybe<Scalars['ID']>
+  first?: Maybe<Scalars['Int']>
+  last?: Maybe<Scalars['Int']>
+  filter?: Maybe<ContentFilter>
+  sort?: Maybe<ContentSort>
+  order?: Maybe<SortOrder>
+}
+
+export type _Cmp_MediaLibrary_Record = {
+  __typename?: '_cmp_mediaLibrary_record'
+  id: Scalars['ID']
+  contentType: Scalars['String']
+  revision: Scalars['Int']
+  state: ContentStateEnum
+  createdAt: Scalars['DateTime']
+  modifiedAt: Scalars['DateTime']
+  publicationDate?: Maybe<Scalars['DateTime']>
+  dePublicationDate?: Maybe<Scalars['DateTime']>
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmp_MediaLibrary_Record_Content
+}
+
+export type _Cmp_MediaLibrary_Record_Content = {
+  __typename?: '_cmp_mediaLibrary_record_content'
+  media?: Maybe<Media>
+  mediaI18n?: Maybe<I18n_Media>
+  title: I18n_String
+  description: I18n_String
+  source: Scalars['String']
+  license: Scalars['String']
+  authors: Array<Maybe<Ref_Author>>
+}
+
+export type _Cmp_MediaLibraryConnection = {
+  __typename?: '_cmp_mediaLibraryConnection'
+  nodes: Array<_Cmp_MediaLibrary_Record>
   pageInfo: PageInfo
   totalCount: Scalars['Int']
 }
@@ -317,6 +448,7 @@ export type _Cmp_ModelA_Record_Content = {
   myRichText: Scalars['RichText']
   myRichTextI18n: I18n_RichText
   myRef?: Maybe<Ref_ModelA_ModelB__Media>
+  myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB__Media>
 }
 
 export type _Cmp_ModelA_Record_Content_MyRef =
@@ -537,6 +669,11 @@ export type _Cmpi_Article_Record_Content_Blocks_Listicle = {
 }
 
 export type _Cmpi_Article_Record_Content_Blocks_Listicle_Items = {
+  id: Scalars['ID']
+  value: _Cmpi_Article_Record_Content_Blocks_Listicle_Items_Value
+}
+
+export type _Cmpi_Article_Record_Content_Blocks_Listicle_Items_Value = {
   title: Scalars['String']
   richText: Scalars['RichText']
   image?: Maybe<Ref_Input>
@@ -595,6 +732,19 @@ export type _Cmpi_Article_Record_Create = {
   title: Scalars['String']
   shared: Scalars['Boolean']
   content: _Cmpi_Article_Record_Content
+  meta: _Cmpi_Article_Record_Meta
+}
+
+export type _Cmpi_Article_Record_Meta = {
+  title: Scalars['String']
+  preTitle: Scalars['String']
+  lead: Scalars['String']
+  seoTitle: Scalars['String']
+  slug: Scalars['String']
+  authors: Array<Maybe<Ref_Input>>
+  hideAuthors: Scalars['Boolean']
+  breaking: Scalars['Boolean']
+  peering: Scalars['Boolean']
 }
 
 export type _Cmpi_Article_Record_Update = {
@@ -602,6 +752,123 @@ export type _Cmpi_Article_Record_Update = {
   title: Scalars['String']
   shared: Scalars['Boolean']
   content: _Cmpi_Article_Record_Content
+  meta: _Cmpi_Article_Record_Meta
+}
+
+export type _Cmpi_Author = {
+  __typename?: '_cmpi_author'
+  create: _Cmp_Author_Record
+  update: _Cmp_Author_Record
+  delete: Scalars['Boolean']
+  publish?: Maybe<_Cmp_Author_Record>
+  unpublish?: Maybe<_Cmp_Author_Record>
+}
+
+export type _Cmpi_AuthorCreateArgs = {
+  input: _Cmpi_Author_Record_Create
+}
+
+export type _Cmpi_AuthorUpdateArgs = {
+  input: _Cmpi_Author_Record_Update
+}
+
+export type _Cmpi_AuthorDeleteArgs = {
+  id: Scalars['ID']
+  revision?: Maybe<Scalars['Int']>
+}
+
+export type _Cmpi_AuthorPublishArgs = {
+  id: Scalars['ID']
+  revision: Scalars['Int']
+  publishAt?: Maybe<Scalars['DateTime']>
+  updatedAt?: Maybe<Scalars['DateTime']>
+  publishedAt?: Maybe<Scalars['DateTime']>
+}
+
+export type _Cmpi_AuthorUnpublishArgs = {
+  id: Scalars['ID']
+}
+
+export type _Cmpi_Author_Record_Content = {
+  name: Scalars['String']
+  jobTitle: Scalars['String']
+  biographicalInformation: Scalars['RichText']
+  links: Array<_Cmpi_Author_Record_Content_Links>
+}
+
+export type _Cmpi_Author_Record_Content_Links = {
+  title: Scalars['String']
+  link: Scalars['String']
+}
+
+export type _Cmpi_Author_Record_Create = {
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmpi_Author_Record_Content
+}
+
+export type _Cmpi_Author_Record_Update = {
+  id: Scalars['ID']
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmpi_Author_Record_Content
+}
+
+export type _Cmpi_MediaLibrary = {
+  __typename?: '_cmpi_mediaLibrary'
+  create: _Cmp_MediaLibrary_Record
+  update: _Cmp_MediaLibrary_Record
+  delete: Scalars['Boolean']
+  publish?: Maybe<_Cmp_MediaLibrary_Record>
+  unpublish?: Maybe<_Cmp_MediaLibrary_Record>
+}
+
+export type _Cmpi_MediaLibraryCreateArgs = {
+  input: _Cmpi_MediaLibrary_Record_Create
+}
+
+export type _Cmpi_MediaLibraryUpdateArgs = {
+  input: _Cmpi_MediaLibrary_Record_Update
+}
+
+export type _Cmpi_MediaLibraryDeleteArgs = {
+  id: Scalars['ID']
+  revision?: Maybe<Scalars['Int']>
+}
+
+export type _Cmpi_MediaLibraryPublishArgs = {
+  id: Scalars['ID']
+  revision: Scalars['Int']
+  publishAt?: Maybe<Scalars['DateTime']>
+  updatedAt?: Maybe<Scalars['DateTime']>
+  publishedAt?: Maybe<Scalars['DateTime']>
+}
+
+export type _Cmpi_MediaLibraryUnpublishArgs = {
+  id: Scalars['ID']
+}
+
+export type _Cmpi_MediaLibrary_Record_Content = {
+  media?: Maybe<Media_Input>
+  mediaI18n?: Maybe<I18n_Media_Input_Input>
+  title: I18n_String_Input
+  description: I18n_String_Input
+  source: Scalars['String']
+  license: Scalars['String']
+  authors: Array<Maybe<Ref_Input>>
+}
+
+export type _Cmpi_MediaLibrary_Record_Create = {
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmpi_MediaLibrary_Record_Content
+}
+
+export type _Cmpi_MediaLibrary_Record_Update = {
+  id: Scalars['ID']
+  title: Scalars['String']
+  shared: Scalars['Boolean']
+  content: _Cmpi_MediaLibrary_Record_Content
 }
 
 export type _Cmpi_ModelA = {
@@ -645,6 +912,7 @@ export type _Cmpi_ModelA_Record_Content = {
   myRichText: Scalars['RichText']
   myRichTextI18n: I18n_RichText_Input
   myRef?: Maybe<Ref_Input>
+  myRefI18n?: Maybe<I18n_Ref_Input_Input>
 }
 
 export type _Cmpi_ModelA_Record_Create = {
@@ -1109,6 +1377,8 @@ export type Content = {
   __typename?: 'content'
   modelA: _Cmp_ModelA
   modelB: _Cmp_ModelB
+  mediaLibrary: _Cmp_MediaLibrary
+  author: _Cmp_Author
   article: _Cmp_Article
   _all: All
 }
@@ -1117,6 +1387,8 @@ export type Content_Mutations = {
   __typename?: 'content_mutations'
   modelA: _Cmpi_ModelA
   modelB: _Cmpi_ModelB
+  mediaLibrary: _Cmpi_MediaLibrary
+  author: _Cmpi_Author
   article: _Cmpi_Article
   _all: AllMutations
 }
@@ -1176,6 +1448,8 @@ export enum ContentStateEnum {
 export enum ContentTypeEnum {
   ModelA = 'modelA',
   ModelB = 'modelB',
+  MediaLibrary = 'mediaLibrary',
+  Author = 'author',
   Article = 'article'
 }
 
@@ -1277,6 +1551,28 @@ export type GalleryImageEdge = {
 export type GalleryImageEdgeInput = {
   caption?: Maybe<Scalars['String']>
   imageID?: Maybe<Scalars['ID']>
+}
+
+export type I18n_Media = {
+  __typename?: 'i18n_media'
+  en?: Maybe<Media>
+  de?: Maybe<Media>
+}
+
+export type I18n_Media_Input_Input = {
+  en?: Maybe<Media_Input>
+  de?: Maybe<Media_Input>
+}
+
+export type I18n_Ref_Input_Input = {
+  en?: Maybe<Ref_Input>
+  de?: Maybe<Ref_Input>
+}
+
+export type I18n_Ref_ModelA_ModelB__Media = {
+  __typename?: 'i18n_ref_modelA_modelB__media'
+  en?: Maybe<Ref_ModelA_ModelB__Media>
+  de?: Maybe<Ref_ModelA_ModelB__Media>
 }
 
 export type I18n_RichText = {
@@ -1530,6 +1826,43 @@ export type ListicleItemInput = {
   title: Scalars['String']
   imageID?: Maybe<Scalars['ID']>
   richText: Scalars['RichText']
+}
+
+export type Media = {
+  __typename?: 'media'
+  focalPoint?: Maybe<Point>
+  media?: Maybe<Media_Detail>
+}
+
+export type Media_Detail = {
+  __typename?: 'media_detail'
+  id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  modifiedAt: Scalars['DateTime']
+  filename?: Maybe<Scalars['String']>
+  fileSize: Scalars['Int']
+  extension: Scalars['String']
+  mimeType: Scalars['String']
+  url?: Maybe<Scalars['String']>
+  transformURL?: Maybe<Scalars['String']>
+  image?: Maybe<Media_Media_Image>
+}
+
+export type Media_DetailTransformUrlArgs = {
+  input?: Maybe<ImageTransformation>
+}
+
+export type Media_Input = {
+  file?: Maybe<Scalars['Upload']>
+  focalPoint?: Maybe<InputPoint>
+  media?: Maybe<Scalars['Unknown']>
+}
+
+export type Media_Media_Image = {
+  __typename?: 'media_media_image'
+  format: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
 }
 
 export type MemberPlan = {
@@ -2418,6 +2751,15 @@ export type Ref_Article_Page = {
   contentType: Scalars['ID']
   peerId?: Maybe<Scalars['ID']>
   record?: Maybe<_Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef>
+  peer?: Maybe<Peer>
+}
+
+export type Ref_Author = {
+  __typename?: 'ref_author'
+  recordId: Scalars['ID']
+  contentType: Scalars['ID']
+  peerId?: Maybe<Scalars['ID']>
+  record?: Maybe<_Cmp_Author_Record>
   peer?: Maybe<Peer>
 }
 

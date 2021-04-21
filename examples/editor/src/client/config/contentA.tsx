@@ -5,7 +5,6 @@ import {
   RichTextBlockValue,
   Reference,
   RefSelectModal,
-  MediaReferenceType,
   ReferenceButton,
   ConfigContext
 } from '@wepublish/editor'
@@ -141,7 +140,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
                   ref: {
                     modelA: {scope: ContentContextEnum.Local},
                     modelB: {scope: ContentContextEnum.Local},
-                    [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                    mediaLibrary: {scope: ContentContextEnum.Local}
                   }
                 }}
               />
@@ -171,8 +170,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
                     url: true,
                     ref: {
                       modelA: {scope: ContentContextEnum.Local},
-                      modelB: {scope: ContentContextEnum.Local},
-                      [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                      modelB: {scope: ContentContextEnum.Local}
                     }
                   }}
                 />
@@ -197,8 +195,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
                   url: true,
                   ref: {
                     modelA: {scope: ContentContextEnum.Local},
-                    modelB: {scope: ContentContextEnum.Local},
-                    [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                    modelB: {scope: ContentContextEnum.Local}
                   }
                 }}
               />
@@ -224,8 +221,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
         <RefSelectModal
           config={{
             modelA: {scope: ContentContextEnum.Local},
-            modelB: {scope: ContentContextEnum.Local},
-            [MediaReferenceType]: {scope: ContentContextEnum.Local}
+            modelB: {scope: ContentContextEnum.Local}
           }}
           onClose={() => setChooseModalOpen(false)}
           onSelectRef={ref => {
