@@ -99,7 +99,7 @@ export function ContentList({configs}: ArticleEditorProps) {
             appearance="primary"
             disabled={isLoading}
             route={ContentCreateRoute.create({type})}>
-            {`New ${type}`}
+            {`New ${config.nameSingular}`}
           </ButtonLink>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={24} style={{marginTop: '20px'}}>

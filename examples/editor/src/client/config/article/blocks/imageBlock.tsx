@@ -9,18 +9,18 @@ import {ImageRefFragment} from '../api'
 import {ImageBlockValue} from './types'
 
 import {useTranslation} from 'react-i18next'
-import {ImagedEditPanel, ImageSelectPanel, Reference} from '@wepublish/editor'
+import {ImagedEditPanel} from '@wepublish/editor'
 import {useImageQuery} from '@wepublish/editor/lib/client/api'
 
 // TODO: Handle disabled prop
-export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockValue>) {
+export function ImageBlock({value, autofocus}: BlockProps<ImageBlockValue>) {
   const {image, caption} = value
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const {data} = useImageQuery({
     skip: image?.record || !image?.recordId,
     variables: {
-      id: image?.recordId!
+      id: image?.recordId || ''
     }
   })
 
@@ -32,9 +32,9 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
     }
   }, [])
 
-  function handleImageChange(image: Reference | null) {
-    //onChange({...value, image})
-  }
+  // function handleImageChange(image: Reference | null) {
+  //   onChange({...value, image})
+  // }
 
   const imageRecord: ImageRefFragment = image?.record || data?.image
   let imageComponent = null
@@ -86,18 +86,20 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
         placeholder={t('blocks.image.overview.caption')}
         value={caption}
         onChange={e => {
-          //onChange({...value, caption: e.target.value})
+          // onChange({...value, caption: e.target.value})
         }}
       />
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+        {/* <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
-          onSelect={value => {}}
-          onSelectRef={value => {
+          onSelect={value => {
+            //
+          }}
+          onSelectRef={(value: any) => {
             setChooseModalOpen(false)
             handleImageChange(value)
           }}
-        />
+        /> */}
       </Drawer>
       {image && (
         <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>

@@ -1,17 +1,23 @@
 import React from 'react'
-import {ContentModelSchemaFieldList} from '../../interfaces/contentModelSchema'
+import {
+  ContentModelSchemaFieldList,
+  ContentModelSchemaTypes
+} from '../../interfaces/contentModelSchema'
 import {Icon, IconButton, List} from 'rsuite'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
+import BlockTags from './BlockTags'
 
-export function BlockList({
-  dispatch,
-  model,
-  languageContext,
-  value,
-  schemaPath
-}: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
+export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
+  if (
+    props.model.contentType.type === ContentModelSchemaTypes.reference &&
+    Object.keys(props.model.contentType.types).length === 1
+  ) {
+    return <BlockTags {...props} model={props.model.contentType} />
+  }
+
+  const {dispatch, model, languageContext, value, schemaPath} = props
   const childSchemaPath = [...schemaPath]
 
   const content = value.map((item, index, array) => {

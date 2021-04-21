@@ -7,13 +7,7 @@ import {LinkPageBreakBlockValue} from './types'
 import {useTranslation} from 'react-i18next'
 import {LinkPageBreakEditPanel} from '../panel/linkPageBreakEditPanel'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {
-  createDefaultValue,
-  ImagedEditPanel,
-  ImageSelectPanel,
-  Reference,
-  RichTextBlock
-} from '@wepublish/editor'
+import {createDefaultValue, ImagedEditPanel, RichTextBlock} from '@wepublish/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
 import {isFunctionalUpdate} from '@karma.run/react'
 export type LinkPageBreakBlockProps = BlockProps<LinkPageBreakBlockValue>
@@ -34,9 +28,9 @@ export function LinkPageBreakBlock({
     if (autofocus) focusRef.current?.focus()
   }, [])
 
-  function handleImageChange(image: Reference | undefined) {
-    // onChange({...value, image})
-  }
+  // function handleImageChange(image: Reference | undefined) {
+  //   // onChange({...value, image})
+  // }
 
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
@@ -95,7 +89,7 @@ export function LinkPageBreakBlock({
         </div>
       </div>
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+        {/* <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
             //
@@ -104,7 +98,7 @@ export function LinkPageBreakBlock({
             setChooseModalOpen(false)
             handleImageChange(value)
           }}
-        />
+        /> */}
       </Drawer>
       {image && (
         <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>

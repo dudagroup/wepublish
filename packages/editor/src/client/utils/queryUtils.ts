@@ -5,7 +5,7 @@ import {
   ContentModelSchemas
 } from '@wepublish/api'
 import gql from 'graphql-tag'
-import {ContentModelSchemaTypes} from '../interfaces/apiTypes'
+import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {Configs} from '../interfaces/extensionConfig'
 
 export const ContentModelPrefix = '_cm'
@@ -15,70 +15,6 @@ const SEPARATOR = '_'
 
 export function nameJoin(...slug: string[]) {
   return slug.join(SEPARATOR)
-}
-
-export function getCrudQueries(schema: ContentModel) {
-  return {
-    delete: getDeleteMutation(schema)
-  }
-}
-
-export function getCreateMutation(configs: Configs, schema: ContentModel) {
-  return gql`
-  ${getFragment(configs, schema)}
-
-  mutation CreateContent_${schema.identifier}($input: ${nameJoin(
-    ContentModelPrefixPrivateInput,
-    schema.identifier,
-    'record',
-    'create'
-  )}!) {
-    content {
-      ${schema.identifier} {
-        create(input: $input) {
-          ...Content_${schema.identifier}
-        }
-      }
-    }
-  }
-  `
-}
-
-export function getReadQuery(configs: Configs, schema: ContentModel) {
-  return gql`
-  ${getFragment(configs, schema)}
-
-    query ReadContent_${schema.identifier}($id: ID!) {
-      content {
-        ${schema.identifier} {
-          read(id: $id) {
-            ...Content_${schema.identifier}
-          }
-        }
-      }
-    }
-  `
-}
-
-export function getUpdateMutation(configs: Configs, schema: ContentModel) {
-  return gql`
-  ${getFragment(configs, schema)}
-
-  mutation UpdateContent_${schema.identifier}($input: ${nameJoin(
-    ContentModelPrefixPrivateInput,
-    schema.identifier,
-    'record',
-    'update'
-  )}!) {
-    content {
-      ${schema.identifier} {
-        update(input: $input) {
-          ...Content_${schema.identifier}
-        }
-      }
-    }
-  }  
-  `
 }
 
 export function getDeleteMutation(schema: ContentModel) {
@@ -91,46 +27,6 @@ export function getDeleteMutation(schema: ContentModel) {
       }
     }
   `
-}
-
-function getFragment(configs: Configs, schema: ContentModel) {
-  const fragmentName = nameJoin(ContentModelPrefixPrivate, schema.identifier, 'record')
-  const fragment = `
-    fragment Content_${schema.identifier} on ${fragmentName} {
-      id
-      revision
-      state
-      createdAt
-      modifiedAt
-      publicationDate
-      dePublicationDate
-      title
-      shared
-      ${getFragmentSchema(configs, schema.schema, fragmentName)}
-    }
-  `
-  return fragment
-}
-
-function getFragmentSchema(
-  configs: Configs,
-  contentModelSchemas: ContentModelSchema,
-  fragmentName: string
-) {
-  return Object.entries(contentModelSchemas).reduce((accu, [key, val]) => {
-    const n = nameJoin(fragmentName, key)
-    const children = Object.entries(val).reduce((accu, [key, val]) => {
-      accu += `${key} ${getFragmentSchemaRecursive(
-        configs,
-        val as ContentModelSchemas,
-        nameJoin(n, key)
-      )}\n`
-      return accu
-    }, '')
-
-    accu += `${key} {\n${children}}`
-    return accu
-  }, '')
 }
 
 function getFragmentSchemaRecursive(
@@ -206,6 +102,110 @@ function getFragmentSchemaRecursive(
       }
       return ''
   }
+}
+
+function getFragmentSchema(
+  configs: Configs,
+  contentModelSchemas: ContentModelSchema,
+  fragmentName: string
+) {
+  return Object.entries(contentModelSchemas).reduce((accu, [key, val]) => {
+    const n = nameJoin(fragmentName, key)
+    const children = Object.entries(val).reduce((accu, [key, val]) => {
+      accu += `${key} ${getFragmentSchemaRecursive(
+        configs,
+        val as ContentModelSchemas,
+        nameJoin(n, key)
+      )}\n`
+      return accu
+    }, '')
+
+    accu += `${key} {\n${children}}`
+    return accu
+  }, '')
+}
+
+function getFragment(configs: Configs, schema: ContentModel) {
+  const fragmentName = nameJoin(ContentModelPrefixPrivate, schema.identifier, 'record')
+  const fragment = `
+    fragment Content_${schema.identifier} on ${fragmentName} {
+      id
+      revision
+      state
+      createdAt
+      modifiedAt
+      publicationDate
+      dePublicationDate
+      title
+      shared
+      ${getFragmentSchema(configs, schema.schema, fragmentName)}
+    }
+  `
+  return fragment
+}
+
+export function getCrudQueries(schema: ContentModel) {
+  return {
+    delete: getDeleteMutation(schema)
+  }
+}
+
+export function getCreateMutation(configs: Configs, schema: ContentModel) {
+  return gql`
+  ${getFragment(configs, schema)}
+
+  mutation CreateContent_${schema.identifier}($input: ${nameJoin(
+    ContentModelPrefixPrivateInput,
+    schema.identifier,
+    'record',
+    'create'
+  )}!) {
+    content {
+      ${schema.identifier} {
+        create(input: $input) {
+          ...Content_${schema.identifier}
+        }
+      }
+    }
+  }
+  `
+}
+
+export function getReadQuery(configs: Configs, schema: ContentModel) {
+  return gql`
+  ${getFragment(configs, schema)}
+
+    query ReadContent_${schema.identifier}($id: ID!) {
+      content {
+        ${schema.identifier} {
+          read(id: $id) {
+            ...Content_${schema.identifier}
+          }
+        }
+      }
+    }
+  `
+}
+
+export function getUpdateMutation(configs: Configs, schema: ContentModel) {
+  return gql`
+  ${getFragment(configs, schema)}
+
+  mutation UpdateContent_${schema.identifier}($input: ${nameJoin(
+    ContentModelPrefixPrivateInput,
+    schema.identifier,
+    'record',
+    'update'
+  )}!) {
+    content {
+      ${schema.identifier} {
+        update(input: $input) {
+          ...Content_${schema.identifier}
+        }
+      }
+    }
+  }  
+  `
 }
 
 export function stripKeysRecursive<T>(input: T, keys: string[]) {

@@ -56,6 +56,17 @@ export const contentModelA: ContentModel = {
             scope: 'local'
           }
         }
+      },
+      myRefList: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.reference,
+          types: {
+            modelB: {
+              scope: 'local'
+            }
+          }
+        }
       }
     },
     meta: {

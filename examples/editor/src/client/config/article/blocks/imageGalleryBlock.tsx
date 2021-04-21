@@ -10,7 +10,7 @@ import {ImageGalleryBlockValue} from './types'
 import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
-import {ImagedEditPanel, ImageSelectPanel} from '@wepublish/editor'
+import {ImagedEditPanel} from '@wepublish/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
 
 export function ImageGalleryBlock({
@@ -190,7 +190,7 @@ export function ImageGalleryBlock({
         }}
       />
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+        {/* <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
             //
@@ -199,7 +199,7 @@ export function ImageGalleryBlock({
             setChooseModalOpen(false)
             // handleImageChange(value)
           }}
-        />
+        /> */}
       </Drawer>
       {image && (
         <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>

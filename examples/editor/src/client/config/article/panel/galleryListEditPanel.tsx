@@ -9,7 +9,7 @@ import {GalleryImageEdge} from '../blocks/types'
 
 import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {ImagedEditPanel, ImageSelectPanel} from '@wepublish/editor'
+import {ImagedEditPanel} from '@wepublish/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
 
 export interface GalleryListEditPanelProps {
@@ -73,7 +73,7 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
   const {data} = useImageQuery({
     skip: image?.record || !image?.recordId,
     variables: {
-      id: image?.recordId!
+      id: image?.recordId || ''
     }
   })
   const imageRecord: ImageRefFragment = image?.record || data?.image
@@ -105,14 +105,14 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
       </div>
 
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+        {/* <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={image => {}}
           onSelectRef={image => {
             setChooseModalOpen(false)
             onChange(value => ({...value, image}))
           }}
-        />
+        /> */}
       </Drawer>
       {image && (
         <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>

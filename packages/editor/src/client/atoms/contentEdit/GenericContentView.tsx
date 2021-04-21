@@ -4,7 +4,7 @@ import React, {memo, useMemo, useState} from 'react'
 import {Button, Col, Form, Grid, Icon, Panel, Row, SelectPicker} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {ContentEditAction} from '../../control/contentReducer'
-import {ContentModelSchemaTypes} from '../../interfaces/apiTypes'
+import {ContentModelSchemaTypes} from '../../interfaces/contentModelSchema'
 import BlockObject from './BlockObject'
 
 interface GenericContentViewProps {
