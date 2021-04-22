@@ -1,27 +1,22 @@
 import React, {useState} from 'react'
 import nanoid from 'nanoid'
-
 import {Button, Drawer, Form, FormGroup, ControlLabel, FormControl, Modal} from 'rsuite'
-
 import {ListInput, ListValue, FieldProps} from '../atoms/listInput'
-
 import {GalleryImageEdge} from '../blocks/types'
-
 import {useTranslation} from 'react-i18next'
-import {ChooseEditImage, ImageRecord} from '../atoms/chooseEditImage'
+import {ChooseEditImage} from '../atoms/chooseEditImage'
 import {Configs, ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {ImageRecord} from '../interfaces/interfaces'
 
 export interface GalleryListEditPanelProps {
-  id?: string
-  initialImages: GalleryImageEdge[]
-
+  readonly id?: string
+  readonly initialImages: GalleryImageEdge[]
+  readonly configs: Configs
   onSave?(images: GalleryImageEdge[]): void
   onClose?(): void
-  configs: Configs
 }
 
 export function GalleryListEditPanel({
-  id,
   initialImages,
   onSave,
   onClose,
@@ -71,9 +66,9 @@ export function GalleryListItem({
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
-  const {image, caption} = value
+  const {image: imageRef, caption} = value
   const {t} = useTranslation()
-  const imageRecord = useRecordHook(image) as ImageRecord
+  const imageRecord = useRecordHook<ImageRecord>(imageRef)
 
   return (
     <>
@@ -116,7 +111,7 @@ export function GalleryListItem({
           }}
         />
       </Modal>
-      {image && (
+      {imageRef && (
         <Modal
           show={isEditModalOpen}
           size="lg"
@@ -126,7 +121,7 @@ export function GalleryListItem({
           <Modal.Body>
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
-              id={image!.recordId}
+              id={imageRef.recordId}
               type={'mediaLibrary'}
               configs={configs}></ContentEditor>
           </Modal.Body>

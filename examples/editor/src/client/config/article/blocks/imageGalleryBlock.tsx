@@ -11,6 +11,7 @@ import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
 import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {ImageRecord} from '../interfaces/interfaces'
 
 export function ImageGalleryBlock({
   value,
@@ -28,15 +29,15 @@ export function ImageGalleryBlock({
 
   const item = value.images[index]
 
-  const image = item?.image
-  const record = useRecordHook(image)
+  const imageRef = item?.image
+  const record = useRecordHook<ImageRecord>(imageRef)
 
   const caption = item?.caption ?? ''
 
   const hasPrevious = index > 0
   const hasNext = index < value.images.length - 1
 
-  const isNewIndex = !image && !caption && index >= value.images.length
+  const isNewIndex = !imageRef && !caption && index >= value.images.length
 
   const {t} = useTranslation()
 
@@ -44,7 +45,7 @@ export function ImageGalleryBlock({
     if (autofocus) {
       setGalleryListEditModalOpen(true)
     }
-  }, [])
+  }, [autofocus])
 
   return (
     <>
@@ -124,7 +125,9 @@ export function ImageGalleryBlock({
                 padding: 0,
                 position: 'relative',
                 height: '100%',
-                backgroundSize: `${record.content.media.media.height > 300 ? 'contain' : 'auto'}`,
+                backgroundSize: `${
+                  record.content.media.media.image.height > 300 ? 'contain' : 'auto'
+                }`,
                 backgroundPositionX: 'center',
                 backgroundPositionY: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -158,7 +161,7 @@ export function ImageGalleryBlock({
           onChange(
             Object.assign([], value.images, {
               [index]: {
-                image,
+                image: imageRef,
                 caption: e.target.value
               }
             }),
@@ -189,7 +192,7 @@ export function ImageGalleryBlock({
           }}
         />
       </Modal>
-      {image && (
+      {imageRef && (
         <Modal
           show={isEditModalOpen}
           size="lg"
@@ -199,7 +202,7 @@ export function ImageGalleryBlock({
           <Modal.Body>
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
-              id={image!.recordId}
+              id={imageRef.recordId}
               type={'mediaLibrary'}
               configs={configs}></ContentEditor>
           </Modal.Body>

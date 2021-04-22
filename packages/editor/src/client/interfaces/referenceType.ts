@@ -1,7 +1,7 @@
-export interface Reference {
+export interface Reference<T = any> {
   recordId: string
   contentType: string
   peerId?: string
-  record?: any
+  record?: T
   peer?: any
 }

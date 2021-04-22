@@ -8,7 +8,7 @@ export function RefSelectModal(props: RefSelectPanelProps) {
   const {t} = useTranslation()
   return (
     <>
-      <Modal.Header>
+      <Modal.Header onHide={() => props.onClose?.()}>
         <Modal.Title>Choose a reference</Modal.Title>
       </Modal.Header>
 

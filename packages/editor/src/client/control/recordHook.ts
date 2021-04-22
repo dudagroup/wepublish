@@ -5,7 +5,13 @@ import {ConfigContext} from '../Editorcontext'
 import {Reference} from '../interfaces/referenceType'
 import {getReadQuery} from '../utils/queryUtils'
 
-export function useRecordHook(reference?: Reference | null) {
+export interface RecordData {
+  content?: unknown
+  meta?: unknown
+}
+export function useRecordHook<T extends RecordData>(
+  reference?: Reference<T> | null
+): T | undefined {
   const configs = useContext(ConfigContext)
 
   const contentModelConfig = configs?.contentModelExtensionMerged.find(
@@ -27,7 +33,7 @@ export function useRecordHook(reference?: Reference | null) {
     contentModelConfig?.previewPath &&
     contentModelConfig.previewPath.length > 0
   ) {
-    const r: any = Object.values(data.content)[0]
+    const r = Object.values(data.content)[0] as {read: T}
     return r.read
   }
 

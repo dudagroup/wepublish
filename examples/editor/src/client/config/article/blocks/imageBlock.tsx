@@ -8,13 +8,14 @@ import {ImageBlockValue} from './types'
 import {useTranslation} from 'react-i18next'
 import {RefSelectModal, useRecordHook} from '@wepublish/editor'
 import {ContentEditor} from '@wepublish/editor/src'
+import {ImageRecord} from '../interfaces/interfaces'
 
 // TODO: Handle disabled prop
 export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<ImageBlockValue>) {
   const {image, caption} = value
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
-  const imageRecord = useRecordHook(image || undefined)
+  const imageRecord = useRecordHook<ImageRecord>(image || undefined)
 
   const {t} = useTranslation()
 
@@ -22,10 +23,10 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
     if (autofocus && !value.image) {
       setChooseModalOpen(true)
     }
-  }, [])
+  }, [autofocus, value.image])
 
   let imageComponent = null
-  if (imageRecord) {
+  if (imageRecord?.content?.media?.media.image) {
     imageComponent = (
       <Panel
         style={{
@@ -105,7 +106,7 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
           <Modal.Body>
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
-              id={image!.recordId}
+              id={image.recordId}
               type={'mediaLibrary'}
               configs={configs}></ContentEditor>
           </Modal.Body>

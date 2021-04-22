@@ -26,7 +26,7 @@ export function LinkPageBreakBlock({
 
   useEffect(() => {
     if (autofocus) focusRef.current?.focus()
-  }, [])
+  }, [autofocus])
 
   // function handleImageChange(image: Reference | undefined) {
   //   // onChange({...value, image})

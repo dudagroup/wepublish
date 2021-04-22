@@ -23,6 +23,9 @@ export function RecordPreview({record}: RecordPreviewProps) {
     config => config.identifier === record.contentType
   )
 
+  if (!enrichedRecord) {
+    return null
+  }
   if (
     enrichedRecord.content &&
     contentModelConfig?.previewPath &&

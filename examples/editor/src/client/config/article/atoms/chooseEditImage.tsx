@@ -2,22 +2,10 @@ import React from 'react'
 import {Dropdown, Icon, IconButton, Panel, Placeholder} from 'rsuite'
 import {PlaceholderInput} from './placeholderInput'
 import {useTranslation} from 'react-i18next'
-
-export interface ImageRecord {
-  content: {
-    media?: {
-      media: {
-        url: string
-        image: {
-          height: number
-        }
-      }
-    }
-  }
-}
+import {ImageRecord} from '../interfaces/interfaces'
 
 export interface ChooseEditImageProps {
-  image: ImageRecord
+  image?: ImageRecord
   header?: string
   disabled: boolean
   left?: number
