@@ -11,7 +11,9 @@
         "confirm": "Confirm",
         "back": "Back",
         "add": "Add",
-        "loadMore": "Load More"
+        "loadMore": "Load More",
+        "publish": "Publish",
+        "unpublish": "Unpublish"
       }
     },
     "content": {
