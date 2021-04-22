@@ -29,6 +29,7 @@ export interface ArticleEditorProps {
   readonly id?: string
   readonly type: string
   readonly configs: Configs
+  readonly onBack?: () => void
 }
 
 interface ContentBody {
@@ -46,7 +47,7 @@ interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({id, type, configs}: ArticleEditorProps) {
+export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
   const {t} = useTranslation()
   const dispatch = useRouteDispatch()
 
@@ -81,8 +82,12 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
   const intitialCustomMetadata =
     contentConfig.defaultMeta ??
     generateEmptyRootContent(contentConfig.schema.meta, configs.apiConfig.languages)
-  const [{record: customMetadata}, customMetadataDispatcher] = useReducer(contentReducer, {
-    record: intitialCustomMetadata
+  const [
+    {record: customMetadata, hasChanged: hasChangedCustomMeta},
+    customMetadataDispatcher
+  ] = useReducer(contentReducer, {
+    record: intitialCustomMetadata,
+    hasChanged: false
   })
   function setCustomMetadata(value: unknown) {
     customMetadataDispatcher({
@@ -94,7 +99,13 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
   const intitialContent =
     contentConfig.defaultContent ??
     generateEmptyRootContent(contentConfig.schema.content, configs.apiConfig.languages)
-  const [{record: contentData}, dispatcher] = useReducer(contentReducer, {record: intitialContent})
+  const [{record: contentData, hasChanged: hasChangedContent}, dispatcher] = useReducer(
+    contentReducer,
+    {
+      record: intitialContent,
+      hasChanged: false
+    }
+  )
 
   function setContentData(value: unknown) {
     dispatcher({
@@ -119,13 +130,27 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
   const pendingPublishDate = recordData?.createdAt
 
-  const [hasChanged, setChanged] = useState(false)
-  const unsavedChangesDialog = useUnsavedChangesDialog(hasChanged)
+  const [hasChanged, setHasChanged] = useState(false)
+  function setChanged(val: boolean) {
+    setHasChanged(val)
+    dispatcher({
+      type: ContentEditActionEnum.hasChanged,
+      value: val
+    })
+    customMetadataDispatcher({
+      type: ContentEditActionEnum.hasChanged,
+      value: val
+    })
+  }
+
+  console.log(hasChanged, hasChangedCustomMeta, hasChangedContent)
+  const unsavedChangesDialog = useUnsavedChangesDialog(
+    hasChanged || hasChangedCustomMeta || hasChangedContent
+  )
 
   const handleChange = useCallback(
     (contentData: React.SetStateAction<any>) => {
       setContentData(contentData)
-      setChanged(true)
     },
     [id]
   )
@@ -267,7 +292,6 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
       },
       (value: any) => {
         setCustomMetadata(value)
-        setChanged(true)
       },
       customMetadataDispatcher,
       configs,
@@ -315,13 +339,17 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
                 route={ContentListRoute.create({type})}
                 onClick={e => {
                   if (!unsavedChangesDialog()) e.preventDefault()
+                  if (onBack) {
+                    e.preventDefault()
+                    onBack()
+                  }
                 }}>
                 {t('articleEditor.overview.back')}
               </IconButtonLink>
             }
             centerChildren={
               <>
-                {metadataView ? (
+                {metadataView && (
                   <IconButton
                     icon={<Icon icon="newspaper-o" />}
                     appearance="subtle"
@@ -330,7 +358,7 @@ export function ContentEditor({id, type, configs}: ArticleEditorProps) {
                     onClick={() => setMetaVisible(true)}>
                     {t('articleEditor.overview.metadata')}
                   </IconButton>
-                ) : null}
+                )}
 
                 {isNew && createData == null ? (
                   <IconButton

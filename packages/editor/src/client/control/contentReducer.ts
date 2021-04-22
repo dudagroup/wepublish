@@ -6,7 +6,8 @@ export enum ContentEditActionEnum {
   update = 'update',
   splice = 'splice',
   push = 'push',
-  unset = 'unset'
+  unset = 'unset',
+  hasChanged = 'hasChanged'
 }
 export type ContentEditAction =
   | ContentEditActionInitial
@@ -50,18 +51,33 @@ export interface ContentEditActionUnset extends ContentEditActionBase {
   keys: SchemaPath
 }
 
-function createSpec(path: SchemaPath, spec: CustomCommands<any>) {
+export interface ContentEditActionHasChanged extends ContentEditActionBase {
+  type: ContentEditActionEnum.hasChanged
+  value: boolean
+}
+
+function createSpec(path: SchemaPath, spec: CustomCommands<any>, hasChanged = true) {
   const record = path.reverse().reduce((accu, item) => {
     return {[item]: accu}
   }, spec)
-  return {record}
+  return {record, hasChanged: {$set: hasChanged}}
 }
 
-export function contentReducer(state: any, action: ContentEditAction) {
+interface State {
+  record: any
+  hasChanged: boolean
+}
+
+export function contentReducer(state: State, action: ContentEditAction) {
   switch (action.type) {
+    case ContentEditActionEnum.hasChanged: {
+      const actionHasChanged = action as ContentEditActionHasChanged
+      return update(state, {hasChanged: {$set: actionHasChanged.value}})
+    }
+
     case ContentEditActionEnum.setInitialState: {
       const actionInitial = action as ContentEditActionInitial
-      return update(state, createSpec([], {$set: actionInitial.value}))
+      return update(state, createSpec([], {$set: actionInitial.value}, false))
     }
 
     case ContentEditActionEnum.update: {

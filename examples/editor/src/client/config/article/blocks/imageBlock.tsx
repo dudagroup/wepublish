@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Button, Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
+import {Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
@@ -95,23 +95,19 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
         />
       </Modal>
       {image && (
-        <Modal show={isEditModalOpen} size="lg" full onHide={() => setEditModalOpen(false)}>
-          <Modal.Header>
-            <Modal.Title>Choose a reference</Modal.Title>
-          </Modal.Header>
-
+        <Modal
+          show={isEditModalOpen}
+          size="lg"
+          backdrop="static"
+          full
+          onHide={() => setEditModalOpen(false)}>
           <Modal.Body>
             <ContentEditor
+              onBack={() => setEditModalOpen(false)}
               id={image!.recordId}
               type={'mediaLibrary'}
               configs={configs}></ContentEditor>
           </Modal.Body>
-
-          <Modal.Footer>
-            <Button appearance={'subtle'} onClick={() => setEditModalOpen(false)}>
-              {t('articleEditor.panels.close')}
-            </Button>
-          </Modal.Footer>
         </Modal>
       )}
     </>
