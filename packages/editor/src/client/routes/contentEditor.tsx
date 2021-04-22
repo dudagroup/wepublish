@@ -24,12 +24,14 @@ import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {ContentEditActionEnum, contentReducer} from '../control/contentReducer'
 import {generateEmptyRootContent} from '../control/contentUtil'
 import {Configs} from '../interfaces/extensionConfig'
+import {Reference} from '../interfaces/referenceType'
 
 export interface ArticleEditorProps {
   readonly id?: string
   readonly type: string
   readonly configs: Configs
   readonly onBack?: () => void
+  readonly onApply?: (ref: Reference) => void
 }
 
 interface ContentBody {
@@ -47,7 +49,7 @@ interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
+export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEditorProps) {
   const {t} = useTranslation()
   const dispatch = useRouteDispatch()
 
@@ -209,10 +211,17 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
       const {data} = await createContent({variables: {input}})
 
       if (data) {
-        dispatch({
-          type: RouteActionType.ReplaceRoute,
-          route: ContentEditRoute.create({type, id: data.content[type].create.id})
-        })
+        if (onApply) {
+          onApply({
+            contentType: type,
+            recordId: data.content[type].create.id
+          })
+        } else {
+          dispatch({
+            type: RouteActionType.ReplaceRoute,
+            route: ContentEditRoute.create({type, id: data.content[type].create.id})
+          })
+        }
       }
       setChanged(false)
       Notification.success({

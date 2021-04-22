@@ -17,6 +17,7 @@ import {RecordPreview} from '../atoms/recordPreview'
 import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
 import {Configs} from '../interfaces/extensionConfig'
+import {ContentEditor} from './contentEditor'
 
 const {Column, HeaderCell, Cell} = Table
 
@@ -36,7 +37,7 @@ export interface ArticleEditorProps {
 
 export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
   const [filter, setFilter] = useState('')
-
+  const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
@@ -101,6 +102,12 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           <ButtonLink
             appearance="primary"
             disabled={isLoading}
+            onClick={e => {
+              if (onSelectRef) {
+                e.preventDefault()
+                setEditModalOpen(true)
+              }
+            }}
             route={ContentCreateRoute.create({type})}>
             {`New ${config.nameSingular}`}
           </ButtonLink>
@@ -273,6 +280,27 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             {t('articles.panels.cancel')}
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={isEditModalOpen}
+        size="lg"
+        // eslint-disable-next-line i18next/no-literal-string
+        backdrop="static"
+        full
+        onHide={() => setEditModalOpen(false)}>
+        <Modal.Body>
+          <ContentEditor
+            onBack={() => setEditModalOpen(false)}
+            onApply={ref => {
+              setEditModalOpen(false)
+              if (onSelectRef) {
+                onSelectRef(ref)
+              }
+            }}
+            type={type}
+            configs={configs}></ContentEditor>
+        </Modal.Body>
       </Modal>
     </>
   )
