@@ -58,7 +58,7 @@ export function LinkPageBreakBlock({
         <div style={{flex: '1 0 25%', alignSelf: 'center', marginBottom: '10px'}}>
           <ChooseEditImage
             header={''}
-            image={imageRecord}
+            image={imageRecord as any}
             disabled={false}
             openChooseModalOpen={() => setChooseModalOpen(true)}
             openEditModalOpen={() => setEditModalOpen(true)}

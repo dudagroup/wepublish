@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
 import {
   useUnpublishContentMutation,
@@ -16,7 +16,7 @@ import {Content} from '@wepublish/api'
 import {RecordPreview} from '../atoms/recordPreview'
 import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
-import {ConfigContext} from '../Editorcontext'
+import {Configs} from '../interfaces/extensionConfig'
 
 const {Column, HeaderCell, Cell} = Table
 
@@ -30,18 +30,18 @@ const RecordsPerPage = 10
 export interface ArticleEditorProps {
   readonly type: string
   readonly scope?: ReferenceScope
+  readonly configs: Configs
   onSelectRef?: (ref: Reference) => void
 }
 
-export function ContentList({type, onSelectRef}: ArticleEditorProps) {
+export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
   const [filter, setFilter] = useState('')
-  const configs = useContext(ConfigContext)
 
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
 
-  const config = configs.contentModelExtensionMerged.find(config => {
+  const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
   if (!config) {

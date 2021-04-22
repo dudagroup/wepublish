@@ -10,8 +10,10 @@ import {useTranslation} from 'react-i18next'
 import {Reference} from '../../../interfaces/referenceType'
 import {ReferencePreview} from '../../../atoms/referencePreview'
 import {ContentModelSchemaFieldRefTypeMap} from '../../../interfaces/contentModelSchema'
+import {ConfigContext} from '../../../Editorcontext'
 
 export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
+  const configs = useContext(ConfigContext)
   const {t} = useTranslation()
   const editor = useSlate()
   const [selection, setSelection] = useState<Range | null>(null)
@@ -80,6 +82,7 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
       </Form>
       <RefSelectPanel
         refConfig={types}
+        configs={configs}
         onClose={() => {
           insertLink(editor, selection, reference, title || undefined)
           closeMenu()

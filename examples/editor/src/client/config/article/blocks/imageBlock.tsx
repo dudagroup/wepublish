@@ -87,6 +87,7 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
               scope: 'local'
             }
           }}
+          configs={configs}
           onClose={() => setChooseModalOpen(false)}
           onSelectRef={ref => {
             setChooseModalOpen(false)

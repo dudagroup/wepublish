@@ -20,7 +20,8 @@ export function BlockObject({
   languageContext,
   model,
   schemaPath,
-  value
+  value,
+  configs
 }: BlockAbstractProps<ContentModelSchemaFieldObject, MapType<any>>) {
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
@@ -39,6 +40,7 @@ export function BlockObject({
           <>
             <ControlLabel>{key}</ControlLabel>
             <BlockAbstract
+              configs={configs}
               schemaPath={[...childSchemaPath, langLane1]}
               dispatch={dispatch}
               model={fieldModel}
@@ -54,6 +56,7 @@ export function BlockObject({
           <>
             <ControlLabel>{key}</ControlLabel>
             <BlockAbstract
+              configs={configs}
               schemaPath={[...childSchemaPath, langLane2]}
               dispatch={dispatch}
               model={fieldModel}
@@ -70,6 +73,7 @@ export function BlockObject({
         <ControlLabel>{key}</ControlLabel>
         {
           <BlockAbstract
+            configs={configs}
             schemaPath={childSchemaPath}
             dispatch={dispatch}
             model={fieldModel}

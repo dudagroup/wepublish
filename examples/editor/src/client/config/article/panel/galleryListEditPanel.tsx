@@ -1,16 +1,15 @@
 import React, {useState} from 'react'
 import nanoid from 'nanoid'
 
-import {Button, Drawer, Form, FormGroup, ControlLabel, FormControl} from 'rsuite'
+import {Button, Drawer, Form, FormGroup, ControlLabel, FormControl, Modal} from 'rsuite'
 
 import {ListInput, ListValue, FieldProps} from '../atoms/listInput'
 
 import {GalleryImageEdge} from '../blocks/types'
 
 import {useTranslation} from 'react-i18next'
-import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {ImagedEditPanel} from '@wepublish/editor'
-import {ImageRefFragment, useImageQuery} from '../api'
+import {ChooseEditImage, ImageRecord} from '../atoms/chooseEditImage'
+import {Configs, ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
 
 export interface GalleryListEditPanelProps {
   id?: string
@@ -18,13 +17,15 @@ export interface GalleryListEditPanelProps {
 
   onSave?(images: GalleryImageEdge[]): void
   onClose?(): void
+  configs: Configs
 }
 
 export function GalleryListEditPanel({
   id,
   initialImages,
   onSave,
-  onClose
+  onClose,
+  configs
 }: GalleryListEditPanelProps) {
   const [images, setImages] = useState<ListValue<GalleryImageEdge>[]>(() =>
     initialImages.map(value => ({
@@ -46,7 +47,7 @@ export function GalleryListEditPanel({
           value={images}
           onChange={images => setImages(images)}
           defaultValue={{image: null, caption: ''}}>
-          {props => <GalleryListItem {...props} />}
+          {props => <GalleryListItem {...props} configs={configs} />}
         </ListInput>
       </Drawer.Body>
 
@@ -62,21 +63,17 @@ export function GalleryListEditPanel({
   )
 }
 
-export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>) {
+export function GalleryListItem({
+  value,
+  onChange,
+  configs
+}: FieldProps<GalleryImageEdge> & {configs: Configs}) {
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
   const {image, caption} = value
-
   const {t} = useTranslation()
-
-  const {data} = useImageQuery({
-    skip: image?.record || !image?.recordId,
-    variables: {
-      id: image?.recordId || ''
-    }
-  })
-  const imageRecord: ImageRefFragment = image?.record || data?.image
+  const imageRecord = useRecordHook(image) as ImageRecord
 
   return (
     <>
@@ -104,24 +101,36 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
         </Form>
       </div>
 
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        {/* <ImageSelectPanel
-          onClose={() => setChooseModalOpen(false)}
-          onSelect={image => {}}
-          onSelectRef={image => {
-            setChooseModalOpen(false)
-            onChange(value => ({...value, image}))
+      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
+        <RefSelectModal
+          refConfig={{
+            mediaLibrary: {
+              scope: 'local'
+            }
           }}
-        /> */}
-      </Drawer>
+          configs={configs}
+          onClose={() => setChooseModalOpen(false)}
+          onSelectRef={ref => {
+            setChooseModalOpen(false)
+            onChange(value => ({...value, image: ref}))
+          }}
+        />
+      </Modal>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
-          <ImagedEditPanel
-            id={image!.recordId}
-            onClose={() => setEditModalOpen(false)}
-            onSave={() => setEditModalOpen(false)}
-          />
-        </Drawer>
+        <Modal
+          show={isEditModalOpen}
+          size="lg"
+          backdrop="static"
+          full
+          onHide={() => setEditModalOpen(false)}>
+          <Modal.Body>
+            <ContentEditor
+              onBack={() => setEditModalOpen(false)}
+              id={image!.recordId}
+              type={'mediaLibrary'}
+              configs={configs}></ContentEditor>
+          </Modal.Body>
+        </Modal>
       )}
     </>
   )

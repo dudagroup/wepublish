@@ -50,7 +50,7 @@ export function contentForRoute(route: Route, configs?: Configs) {
       return <ArticleList />
 
     case RouteType.ContentList: {
-      return configs && <ContentList type={route.params.type} />
+      return configs && <ContentList configs={configs} type={route.params.type} />
     }
 
     case RouteType.CommentList:

@@ -17,6 +17,7 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
   ) {
     return (
       <BlockTags
+        configs={props.configs}
         dispatch={props.dispatch}
         schemaPath={props.schemaPath}
         value={props.value as Reference[]}
@@ -97,6 +98,7 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
         {buttonDown}
 
         <BlockAbstract
+          configs={props.configs}
           schemaPath={[...childSchemaPath, index]}
           dispatch={dispatch}
           model={model.contentType}

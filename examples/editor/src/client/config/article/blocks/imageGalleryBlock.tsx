@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Drawer, Dropdown, Icon, IconButton, Panel} from 'rsuite'
+import {Drawer, Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
 
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
@@ -10,14 +10,14 @@ import {ImageGalleryBlockValue} from './types'
 import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
-import {ImagedEditPanel} from '@wepublish/editor'
-import {ImageRefFragment, useImageQuery} from '../api'
+import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
 
 export function ImageGalleryBlock({
   value,
   onChange,
   autofocus,
-  disabled
+  disabled,
+  configs
 }: BlockProps<ImageGalleryBlockValue>) {
   const [isGalleryListEditModalOpen, setGalleryListEditModalOpen] = useState(false)
 
@@ -29,14 +29,7 @@ export function ImageGalleryBlock({
   const item = value.images[index]
 
   const image = item?.image
-
-  const {data} = useImageQuery({
-    skip: image?.record || !image?.recordId,
-    variables: {
-      id: image?.recordId || ''
-    }
-  })
-  const imageRecord: ImageRefFragment = image?.record || data?.image
+  const record = useRecordHook(image)
 
   const caption = item?.caption ?? ''
 
@@ -52,30 +45,6 @@ export function ImageGalleryBlock({
       setGalleryListEditModalOpen(true)
     }
   }, [])
-
-  // function handleImageChange(image: Reference | null) {
-  //   onChange({
-  //     ...value,
-  //     images: Object.assign([], value.images, {
-  //       [index]: {
-  //         image,
-  //         caption
-  //       }
-  //     })
-  //   })
-  // }
-
-  // function handleCaptionChange(caption: string) {
-  //   onChange({
-  //     ...value,
-  //     images: Object.assign([], value.images, {
-  //       [index]: {
-  //         image,
-  //         caption
-  //       }
-  //     })
-  //   })
-  // }
 
   return (
     <>
@@ -149,18 +118,18 @@ export function ImageGalleryBlock({
           marginBottom: 10
         }}>
         <PlaceholderInput onAddClick={() => setChooseModalOpen(true)}>
-          {imageRecord && (
+          {record?.content.media?.media?.image && (
             <div
               style={{
                 padding: 0,
                 position: 'relative',
                 height: '100%',
-                backgroundSize: `${imageRecord?.height > 300 ? 'contain' : 'auto'}`,
+                backgroundSize: `${record.content.media.media.height > 300 ? 'contain' : 'auto'}`,
                 backgroundPositionX: 'center',
                 backgroundPositionY: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundImage: `url(${
-                  imageRecord?.largeURL ?? 'https://via.placeholder.com/240x240'
+                  record.content.media.media.url ?? 'https://via.placeholder.com/240x240'
                 })`
               }}>
               <Dropdown
@@ -186,34 +155,65 @@ export function ImageGalleryBlock({
         value={caption}
         disabled={disabled}
         onChange={e => {
-          // handleCaptionChange(e.target.value)
+          onChange(
+            Object.assign([], value.images, {
+              [index]: {
+                image,
+                caption: e.target.value
+              }
+            }),
+            ['images']
+          )
         }}
       />
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        {/* <ImageSelectPanel
+      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
+        <RefSelectModal
+          refConfig={{
+            mediaLibrary: {
+              scope: 'local'
+            }
+          }}
+          configs={configs}
           onClose={() => setChooseModalOpen(false)}
-          onSelect={value => {
-            //
-          }}
-          onSelectRef={value => {
+          onSelectRef={ref => {
             setChooseModalOpen(false)
-            // handleImageChange(value)
+            onChange(
+              Object.assign([], value.images, {
+                [index]: {
+                  image: ref,
+                  caption
+                }
+              }),
+              ['images']
+            )
           }}
-        /> */}
-      </Drawer>
+        />
+      </Modal>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
-          <ImagedEditPanel id={image!.recordId} onClose={() => setEditModalOpen(false)} />
-        </Drawer>
+        <Modal
+          show={isEditModalOpen}
+          size="lg"
+          backdrop="static"
+          full
+          onHide={() => setEditModalOpen(false)}>
+          <Modal.Body>
+            <ContentEditor
+              onBack={() => setEditModalOpen(false)}
+              id={image!.recordId}
+              type={'mediaLibrary'}
+              configs={configs}></ContentEditor>
+          </Modal.Body>
+        </Modal>
       )}
       <Drawer
         show={isGalleryListEditModalOpen}
         size={'sm'}
         onHide={() => setGalleryListEditModalOpen(false)}>
         <GalleryListEditPanel
+          configs={configs}
           initialImages={value.images}
           onSave={images => {
-            // onChange({images})
+            onChange(Object.assign([], images), ['images'])
             setGalleryListEditModalOpen(false)
           }}
           onClose={() => setGalleryListEditModalOpen(false)}

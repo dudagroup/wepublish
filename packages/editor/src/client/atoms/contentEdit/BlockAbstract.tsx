@@ -14,6 +14,7 @@ import BlockRichText from './BlockRichText'
 import {ContentEditAction} from '../../control/contentReducer'
 import BlockDateTime from './BlockDateTime'
 import BlockMedia from './BlockMedia'
+import {Configs} from '../../interfaces/extensionConfig'
 
 export interface BlockAbstractProps<M = any, V = any> {
   readonly schemaPath: SchemaPath
@@ -21,6 +22,7 @@ export interface BlockAbstractProps<M = any, V = any> {
   readonly value: V
   readonly model: M
   readonly languageContext: LanguageContext
+  readonly configs: Configs
 }
 
 function BlockAbstract(props: BlockAbstractProps) {

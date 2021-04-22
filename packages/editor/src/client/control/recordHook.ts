@@ -5,7 +5,7 @@ import {ConfigContext} from '../Editorcontext'
 import {Reference} from '../interfaces/referenceType'
 import {getReadQuery} from '../utils/queryUtils'
 
-export function useRecordHook(reference?: Reference) {
+export function useRecordHook(reference?: Reference | null) {
   const configs = useContext(ConfigContext)
 
   const contentModelConfig = configs?.contentModelExtensionMerged.find(

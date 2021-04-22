@@ -10,7 +10,8 @@ export function BlockUnion({
   model,
   dispatch,
   languageContext,
-  schemaPath
+  schemaPath,
+  configs
 }: BlockAbstractProps<ContentModelSchemaFieldUnion, {[key: string]: unknown}>) {
   if (!(value && Object.entries(value).length === 1)) {
     return null
@@ -50,6 +51,7 @@ export function BlockUnion({
       />
       {
         <BlockAbstract
+          configs={configs}
           schemaPath={updatePath}
           dispatch={dispatch}
           model={model.cases[currentCase]}

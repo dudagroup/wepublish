@@ -19,18 +19,20 @@ export const config: EditorConfig = {
   contentModelExtension: [
     {
       identifier: 'modelA',
-      getContentView: (content, onChange, disabled, dispatch) => {
-        return <ContentAEditView value={content} dispatch={dispatch} />
+      getContentView: (content, onChange, disabled, dispatch, configs) => {
+        return <ContentAEditView value={content} dispatch={dispatch} configs={configs} />
       },
       getMetaView: (
         metadata,
         customMetadata,
         onChange,
         onChangeMetadata,
-        dispatchCustomMetadata
+        dispatchCustomMetadata,
+        configs
       ) => {
         return (
           <ContentMetadataPanel
+            configs={configs}
             defaultMetadata={metadata}
             customMetadata={customMetadata}
             onChangeDefaultMetadata={onChange}

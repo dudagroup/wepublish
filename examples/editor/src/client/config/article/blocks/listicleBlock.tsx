@@ -68,7 +68,7 @@ export function ListicleItemElement({value, onChange}: FieldProps<ListicleItem>)
           }}>
           <ChooseEditImage
             header={''}
-            image={image}
+            image={image as any}
             disabled={false}
             openChooseModalOpen={() => setChooseModalOpen(true)}
             openEditModalOpen={() => setEditModalOpen(true)}

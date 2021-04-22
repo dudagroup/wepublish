@@ -143,7 +143,6 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
     })
   }
 
-  console.log(hasChanged, hasChangedCustomMeta, hasChangedContent)
   const unsavedChangesDialog = useUnsavedChangesDialog(
     hasChanged || hasChangedCustomMeta || hasChangedContent
   )
@@ -274,6 +273,7 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
   } else {
     content = (
       <GenericContentView
+        configs={configs}
         record={contentData}
         fields={contentConfig.schema.content}
         languagesConfig={configs.apiConfig.languages}
@@ -300,6 +300,7 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
   } else {
     metadataView = (
       <ContentMetadataPanel
+        configs={configs}
         defaultMetadata={metadata}
         customMetaFields={contentConfig.schema.meta}
         customMetadata={customMetadata}

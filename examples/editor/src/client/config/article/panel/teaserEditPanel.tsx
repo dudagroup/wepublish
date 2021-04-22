@@ -86,7 +86,7 @@ export function TeaserEditPanel({
         </Panel>
 
         <ChooseEditImage
-          image={image}
+          image={image as any}
           disabled={false}
           openChooseModalOpen={() => setChooseModalOpen(true)}
           openEditModalOpen={() => setEditModalOpen(true)}

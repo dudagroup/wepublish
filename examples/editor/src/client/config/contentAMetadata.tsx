@@ -3,6 +3,7 @@ import {ControlLabel, Form, FormControl, FormGroup, Toggle, HelpBlock, Panel} fr
 import {useTranslation} from 'react-i18next'
 import {ContentAEditView, ContentAEditViewValue} from './contentA'
 import {ContentEditAction} from '@wepublish/editor/lib/client/control/contentReducer'
+import {Configs} from '@wepublish/editor'
 
 export interface DefaultMetadata {
   readonly title: string
@@ -14,13 +15,15 @@ export interface ContentMetadataPanelProps {
   readonly customMetadata: ContentAEditViewValue
   onChangeDefaultMetadata?(defaultMetadata: DefaultMetadata): void
   readonly dispatch: React.Dispatch<ContentEditAction>
+  readonly configs: Configs
 }
 
 export function ContentMetadataPanel({
   defaultMetadata,
   customMetadata,
   onChangeDefaultMetadata,
-  dispatch
+  dispatch,
+  configs
 }: ContentMetadataPanelProps) {
   const {title, shared} = defaultMetadata
   const {t} = useTranslation()
@@ -47,7 +50,7 @@ export function ContentMetadataPanel({
         </FormGroup>
       </Form>
       <hr></hr>
-      <ContentAEditView value={customMetadata} dispatch={dispatch} />
+      <ContentAEditView value={customMetadata} configs={configs} dispatch={dispatch} />
     </Panel>
   )
 }

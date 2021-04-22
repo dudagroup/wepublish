@@ -15,6 +15,7 @@ import {
   ContentEditActionEnum
 } from '@wepublish/editor/lib/client/control/contentReducer'
 import {isFunctionalUpdate} from '@karma.run/react'
+import {Configs} from '@wepublish/editor/src'
 
 export interface ContentAEditViewValue {
   readonly myString: string
@@ -31,9 +32,10 @@ export interface ContentAEditViewValue {
 export interface ContentAEditViewProps {
   readonly value: ContentAEditViewValue
   readonly dispatch: React.Dispatch<ContentEditAction>
+  readonly configs: Configs
 }
 
-export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
+export function ContentAEditView({value, dispatch, configs}: ContentAEditViewProps) {
   const config = useContext(ConfigContext)
   if (!(value && config)) {
     return null
@@ -219,6 +221,7 @@ export function ContentAEditView({value, dispatch}: ContentAEditViewProps) {
 
       <Modal show={isChooseModalOpen} size="lg" onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
+          configs={configs}
           refConfig={{
             modelA: {scope: ContentContextEnum.Local},
             modelB: {scope: ContentContextEnum.Local}

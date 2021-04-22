@@ -5,6 +5,7 @@ import {Button, Col, Form, Grid, Icon, Panel, Row, SelectPicker} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {ContentEditAction} from '../../control/contentReducer'
 import {ContentModelSchemaTypes} from '../../interfaces/contentModelSchema'
+import {Configs} from '../../interfaces/extensionConfig'
 import BlockObject from './BlockObject'
 
 interface GenericContentViewProps {
@@ -12,13 +13,15 @@ interface GenericContentViewProps {
   readonly record: MapType<unknown>
   readonly dispatch: React.Dispatch<ContentEditAction>
   readonly languagesConfig: LanguagesConfig
+  readonly configs: Configs
 }
 
 export function GenericContent({
   fields,
   languagesConfig,
   record,
-  dispatch
+  dispatch,
+  configs
 }: GenericContentViewProps) {
   const [langLane1, setLangLane1] = useState(languagesConfig.languages?.[0]?.tag)
   const [langLane2, setLangLane2] = useState(languagesConfig.languages?.[1]?.tag)
@@ -76,6 +79,7 @@ export function GenericContent({
       <Panel bordered>
         <Form fluid={true} style={{width: '100%'}}>
           <BlockObject
+            configs={configs}
             dispatch={dispatch}
             model={{
               type: ContentModelSchemaTypes.object,
