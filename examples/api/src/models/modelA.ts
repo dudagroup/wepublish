@@ -1,4 +1,4 @@
-import {ContentModel, ContentModelSchemaTypes, MediaReferenceType} from '@wepublish/api'
+import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 
 export const contentModelA: ContentModel = {
   identifier: 'modelA',
@@ -9,17 +9,23 @@ export const contentModelA: ContentModel = {
       myString: {
         type: ContentModelSchemaTypes.string,
         deprecationReason: "it's very old",
-        instructionsApi: 'this is an ordinary string',
-        instructionsEditor: {
-          en: 'this is an test instruction'
-        }
+        instructions: 'this is an ordinary string'
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         i18n: true
       },
       myRichText: {
-        type: ContentModelSchemaTypes.richText
+        type: ContentModelSchemaTypes.richText,
+        config: {
+          italic: true,
+          bold: true,
+          ref: {
+            modelB: {
+              scope: 'local'
+            }
+          }
+        }
       },
       myRichTextI18n: {
         type: ContentModelSchemaTypes.richText,
@@ -33,9 +39,29 @@ export const contentModelA: ContentModel = {
           },
           modelB: {
             scope: 'local'
-          },
-          [MediaReferenceType]: {
+          }
+        }
+      },
+      myRefI18n: {
+        type: ContentModelSchemaTypes.reference,
+        i18n: true,
+        types: {
+          modelA: {
             scope: 'local'
+          },
+          modelB: {
+            scope: 'local'
+          }
+        }
+      },
+      myRefList: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.reference,
+          types: {
+            modelB: {
+              scope: 'local'
+            }
           }
         }
       }
@@ -62,9 +88,6 @@ export const contentModelA: ContentModel = {
             scope: 'local'
           },
           modelB: {
-            scope: 'local'
-          },
-          [MediaReferenceType]: {
             scope: 'local'
           }
         }

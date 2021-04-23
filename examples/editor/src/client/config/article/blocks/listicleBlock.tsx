@@ -23,11 +23,10 @@ export function ListicleBlock({value, onChange, disabled}: BlockProps<ListicleBl
   return (
     <ListInput
       value={value.items}
-      onChange={items =>
-        onChange(value => ({
-          items: isFunctionalUpdate(items) ? items(value.items) : items
-        }))
-      }
+      onChange={items => {
+        const val = isFunctionalUpdate(items) ? items(value.items) : items
+        onChange(val, ['items'])
+      }}
       defaultValue={{image: null, richText: createDefaultValue(), title: ''}}
       disabled={disabled}>
       {props => <ListicleItemElement {...props} />}
@@ -69,7 +68,7 @@ export function ListicleItemElement({value, onChange}: FieldProps<ListicleItem>)
           }}>
           <ChooseEditImage
             header={''}
-            image={image}
+            image={image as any}
             disabled={false}
             openChooseModalOpen={() => setChooseModalOpen(true)}
             openEditModalOpen={() => setEditModalOpen(true)}

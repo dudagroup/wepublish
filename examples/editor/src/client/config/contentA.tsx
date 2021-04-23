@@ -1,19 +1,23 @@
-import React, {useCallback, useContext, useMemo, useState} from 'react'
+import React, {useContext, useMemo, useState} from 'react'
 import {Button, Icon, Col, FormControl, Grid, Modal, Row, SelectPicker, Panel} from 'rsuite'
-import {isFunctionalUpdate} from '@karma.run/react'
 import {
   RichTextBlock,
   RichTextBlockValue,
   Reference,
   RefSelectModal,
-  MediaReferenceType,
-  ReferenceButton
+  ReferenceButton,
+  ConfigContext
 } from '@wepublish/editor'
 import {ContentContextEnum} from './article/api'
-import {ConfigContext} from '@wepublish/editor'
 import {I18nWrapper} from './i18nWrapper'
+import {
+  ContentEditAction,
+  ContentEditActionEnum
+} from '@wepublish/editor/lib/client/control/contentReducer'
+import {isFunctionalUpdate} from '@karma.run/react'
+import {Configs} from '@wepublish/editor/src'
 
-export interface ContentA_EditViewValue {
+export interface ContentAEditViewValue {
   readonly myString: string
   readonly myStringI18n: {
     [lang: string]: string
@@ -25,12 +29,13 @@ export interface ContentA_EditViewValue {
   readonly myRef?: Reference | null
 }
 
-export interface ContentA_EditViewProps {
-  readonly value: ContentA_EditViewValue
-  readonly onChange: React.Dispatch<React.SetStateAction<ContentA_EditViewValue>>
+export interface ContentAEditViewProps {
+  readonly value: ContentAEditViewValue
+  readonly dispatch: React.Dispatch<ContentEditAction>
+  readonly configs: Configs
 }
 
-export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
+export function ContentAEditView({value, dispatch, configs}: ContentAEditViewProps) {
   const config = useContext(ConfigContext)
   if (!(value && config)) {
     return null
@@ -40,33 +45,6 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
 
   const {myString, myStringI18n, myRichText, myRichTextI18n, myRef} = value
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
-  const handleRichTextChange = useCallback(
-    (richText: React.SetStateAction<RichTextBlockValue>) => {
-      onChange(value => {
-        return {
-          ...value,
-          myRichText: isFunctionalUpdate(richText) ? richText(value.myRichText) : richText
-        }
-      })
-    },
-    [onChange]
-  )
-
-  const handleRichTextChangeI18n = useCallback(
-    (richText: React.SetStateAction<RichTextBlockValue>) => {
-      onChange(value => {
-        const newVal = isFunctionalUpdate(richText)
-          ? richText(value.myRichTextI18n[editLang])
-          : richText
-
-        return {
-          ...value,
-          myRichTextI18n: {...value.myRichTextI18n, [editLang]: newVal}
-        }
-      })
-    },
-    [onChange, editLang]
-  )
 
   const languages = config.apiConfig.languages.languages.map(v => {
     return {
@@ -117,7 +95,16 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
         {header}
         <Panel bordered>
           <I18nWrapper label="myString" value={myString}>
-            <FormControl value={myString} onChange={myString => onChange?.({...value, myString})} />
+            <FormControl
+              value={myString}
+              onChange={value => {
+                dispatch({
+                  type: ContentEditActionEnum.update,
+                  path: ['myString'],
+                  value
+                })
+              }}
+            />
           </I18nWrapper>
 
           <I18nWrapper
@@ -126,9 +113,13 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
             display={myStringI18n[viewLang]}>
             <FormControl
               value={myStringI18n[editLang]}
-              onChange={val =>
-                onChange?.({...value, myStringI18n: {...myStringI18n, [editLang]: val}})
-              }
+              onChange={value => {
+                dispatch({
+                  type: ContentEditActionEnum.update,
+                  path: ['myStringI18n', editLang],
+                  value
+                })
+              }}
             />
           </I18nWrapper>
 
@@ -136,7 +127,14 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
             <Panel bordered>
               <RichTextBlock
                 value={myRichText}
-                onChange={handleRichTextChange}
+                onChange={richText => {
+                  const value = isFunctionalUpdate(richText) ? richText(myRichText) : richText
+                  dispatch({
+                    type: ContentEditActionEnum.update,
+                    path: ['myRichText'],
+                    value
+                  })
+                }}
                 config={{
                   bold: true,
                   italic: true,
@@ -144,7 +142,7 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
                   ref: {
                     modelA: {scope: ContentContextEnum.Local},
                     modelB: {scope: ContentContextEnum.Local},
-                    [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                    mediaLibrary: {scope: ContentContextEnum.Local}
                   }
                 }}
               />
@@ -157,7 +155,16 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
               <Panel bordered>
                 <RichTextBlock
                   value={myRichTextI18n[viewLang]}
-                  onChange={handleRichTextChangeI18n}
+                  onChange={richText => {
+                    const value = isFunctionalUpdate(richText)
+                      ? richText(myRichTextI18n[viewLang])
+                      : richText
+                    dispatch({
+                      type: ContentEditActionEnum.update,
+                      path: ['myRichTextI18n', viewLang],
+                      value
+                    })
+                  }}
                   displayOnly={true}
                   config={{
                     bold: true,
@@ -165,8 +172,7 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
                     url: true,
                     ref: {
                       modelA: {scope: ContentContextEnum.Local},
-                      modelB: {scope: ContentContextEnum.Local},
-                      [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                      modelB: {scope: ContentContextEnum.Local}
                     }
                   }}
                 />
@@ -175,15 +181,23 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
             <Panel bordered>
               <RichTextBlock
                 value={myRichTextI18n[editLang]}
-                onChange={handleRichTextChangeI18n}
+                onChange={richText => {
+                  const value = isFunctionalUpdate(richText)
+                    ? richText(myRichTextI18n[editLang])
+                    : richText
+                  dispatch({
+                    type: ContentEditActionEnum.update,
+                    path: ['myRichTextI18n', editLang],
+                    value
+                  })
+                }}
                 config={{
                   bold: true,
                   italic: true,
                   url: true,
                   ref: {
                     modelA: {scope: ContentContextEnum.Local},
-                    modelB: {scope: ContentContextEnum.Local},
-                    [MediaReferenceType]: {scope: ContentContextEnum.Local}
+                    modelB: {scope: ContentContextEnum.Local}
                   }
                 }}
               />
@@ -195,7 +209,11 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
               reference={myRef}
               onClick={() => setChooseModalOpen(true)}
               onClose={() => {
-                onChange?.({...value, myRef: null})
+                dispatch({
+                  type: ContentEditActionEnum.update,
+                  path: ['myRef'],
+                  value: null
+                })
               }}></ReferenceButton>
           </I18nWrapper>
         </Panel>
@@ -203,15 +221,19 @@ export function ContentA_EditView({value, onChange}: ContentA_EditViewProps) {
 
       <Modal show={isChooseModalOpen} size="lg" onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
-          config={{
+          configs={configs}
+          refConfig={{
             modelA: {scope: ContentContextEnum.Local},
-            modelB: {scope: ContentContextEnum.Local},
-            [MediaReferenceType]: {scope: ContentContextEnum.Local}
+            modelB: {scope: ContentContextEnum.Local}
           }}
           onClose={() => setChooseModalOpen(false)}
           onSelectRef={ref => {
             setChooseModalOpen(false)
-            onChange?.({...value, myRef: ref})
+            dispatch({
+              type: ContentEditActionEnum.update,
+              path: ['myRef'],
+              value: ref
+            })
           }}
         />
       </Modal>

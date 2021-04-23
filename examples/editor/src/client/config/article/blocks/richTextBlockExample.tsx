@@ -17,7 +17,7 @@ export function RichTextBlockExampleBlock({
     <RichTextBlock
       value={richText}
       onChange={val => {
-        onChange({richText: val as any})
+        onChange(val, ['richText'])
       }}
       autofocus={autofocus}
       disabled={disabled}

@@ -1,8 +1,8 @@
 import React from 'react'
 import {SelectPicker} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
+import {generateEmptyContent} from '../../control/contentUtil'
 import {ContentModelSchemaFieldUnion} from '../../interfaces/contentModelSchema'
-import {generateEmptyContent} from '../../routes/contentEditor'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 
 export function BlockUnion({
@@ -10,7 +10,8 @@ export function BlockUnion({
   model,
   dispatch,
   languageContext,
-  schemaPath
+  schemaPath,
+  configs
 }: BlockAbstractProps<ContentModelSchemaFieldUnion, {[key: string]: unknown}>) {
   if (!(value && Object.entries(value).length === 1)) {
     return null
@@ -43,13 +44,14 @@ export function BlockUnion({
                   languageContext.languagesConfig
                 )
               },
-              schemaPath
+              path: schemaPath
             })
           }
         }}
       />
       {
         <BlockAbstract
+          configs={configs}
           schemaPath={updatePath}
           dispatch={dispatch}
           model={model.cases[currentCase]}

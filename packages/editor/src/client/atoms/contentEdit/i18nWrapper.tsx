@@ -1,5 +1,5 @@
 import React, {memo, ReactElement} from 'react'
-import {FormGroup, Tooltip, Row, Col} from 'rsuite'
+import {FormGroup, Row, Col} from 'rsuite'
 
 export interface ArticleMetadataProperty {
   readonly key: string
@@ -31,15 +31,6 @@ export interface I18nProps {
   readonly lane1: ReactElement | null
   readonly lane2: ReactElement | null
 }
-
-export const tooltip = (
-  <Tooltip>
-    <p>
-      Translate text with <b>Deepl</b>.<br />
-      Attention: All formatting will be lost
-    </p>
-  </Tooltip>
-)
 
 export const I18nWrapper = memo(function I18nWrapper({lane1, lane2}: I18nProps) {
   return (

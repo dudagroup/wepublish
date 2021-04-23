@@ -26,7 +26,7 @@ function BlockEnum({
         dispatch({
           type: ContentEditActionEnum.update,
           value: val,
-          schemaPath
+          path: schemaPath
         })
       }}
     />

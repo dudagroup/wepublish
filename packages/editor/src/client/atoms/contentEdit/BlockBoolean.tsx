@@ -13,7 +13,7 @@ function BlockBoolean({
     <Toggle
       checked={value}
       onChange={val =>
-        dispatch({type: ContentEditActionEnum.update, value: Boolean(val), schemaPath})
+        dispatch({type: ContentEditActionEnum.update, value: Boolean(val), path: schemaPath})
       }
     />
   )

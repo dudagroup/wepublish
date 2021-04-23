@@ -80,7 +80,8 @@ export enum EmbedType {
   VimeoVideo = 'vimeoVideo',
   YouTubeVideo = 'youTubeVideo',
   SoundCloudTrack = 'soundCloudTrack',
-  Other = 'other'
+  Other = 'other',
+  Undefined = ''
 }
 
 export interface FacebookPostEmbed {
@@ -130,6 +131,15 @@ export interface OtherEmbed {
   styleCustom?: string
 }
 
+export interface UndefinedEmbed {
+  type: EmbedType.Undefined
+  url?: string
+  title?: string
+  width?: number
+  height?: number
+  styleCustom?: string
+}
+
 export type EmbedBlockValue =
   | FacebookPostEmbed
   | FacebookVideoEmbed
@@ -139,6 +149,7 @@ export type EmbedBlockValue =
   | YouTubeVideoEmbed
   | SoundCloudTrackEmbed
   | OtherEmbed
+  | UndefinedEmbed
 
 export enum TeaserType {
   Article = 'article',

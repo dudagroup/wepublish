@@ -7,9 +7,18 @@ import {
   CanDeleteContent,
   CanPublishContent
 } from '../graphql/permissions'
-import {ContentModelSchemas, ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
+import {
+  ContentModelSchema,
+  ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldRef,
+  ContentModelSchemas,
+  ContentModelSchemaTypes
+} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
-import {MediaReferenceType, Reference} from '../interfaces/referenceType'
+import {Reference} from '../interfaces/referenceType'
+import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
+import {destructUnionCase} from '../utility'
+import {LanguageConfig} from '../interfaces/languageConfig'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -131,63 +140,183 @@ async function validateRecursive(
   schema: ContentModelSchemas,
   data: unknown
 ) {
+  async function handleRef(data: unknown, schema: ContentModelSchemaFieldRef) {
+    const ref = data as Reference
+    if (ref?.recordId) {
+      let record
+      try {
+        const content = await validatorContext.context.loaders.content.load(ref.recordId)
+        if (Object.keys(schema.types).some(type => type === content?.contentType)) {
+          record = content
+        }
+      } catch (error) {}
+      if (!record) {
+        throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
+      }
+
+      delete ref.record
+      delete ref.peer
+    }
+  }
+
+  async function handleMedia(data: unknown) {
+    const mediaInput = data as MediaInput
+    const mediaDb = data as MediaPersisted
+
+    if (mediaInput?.file) {
+      const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
+      mediaDb.id = image.id
+      mediaDb.createdAt = new Date()
+      mediaDb.modifiedAt = new Date()
+      mediaDb.filename = image.filename
+      mediaDb.fileSize = image.fileSize
+      mediaDb.extension = image.extension
+      mediaDb.mimeType = image.mimeType
+      if (image.format && image.width && image.height) {
+        mediaDb.image = {
+          format: image.format,
+          height: image.width,
+          width: image.height
+        }
+      } else {
+        mediaDb.image = null
+      }
+
+      delete mediaInput.file
+      delete mediaInput.media
+    }
+  }
+
   switch (schema.type) {
-    case ContentModelSchemaTypes.object:
+    case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
-      for (let [key, val] of Object.entries(obj)) {
+      for (const [key, val] of Object.entries(obj)) {
         await validateRecursive(validatorContext, schema.fields[key], val)
       }
       break
+    }
 
-    case ContentModelSchemaTypes.list:
+    case ContentModelSchemaTypes.list: {
       const list = data as unknown[]
       for (const item of list) {
         await validateRecursive(validatorContext, schema.contentType, item)
       }
       break
+    }
 
-    case ContentModelSchemaTypes.union:
+    case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
       await validateRecursive(validatorContext, schema.cases[unionCase], val)
       break
+    }
 
-    case ContentModelSchemaTypes.reference:
-      const ref = data as Reference
-      if (ref?.recordId) {
-        let record
-        try {
-          if (ref.contentType === MediaReferenceType) {
-            const image = await validatorContext.context.loaders.images.load(ref.recordId)
-            if (Object.keys(schema.types).some(type => type === MediaReferenceType)) {
-              record = image
-            }
-          } else {
-            const content = await validatorContext.context.loaders.content.load(ref.recordId)
-            if (Object.keys(schema.types).some(type => type === content?.contentType)) {
-              record = content
-            }
-          }
-        } catch (error) {}
-        if (!record) {
-          throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
+    case ContentModelSchemaTypes.reference: {
+      if (schema.i18n) {
+        for (const val of Object.values(data as any)) {
+          await handleRef(val, schema)
         }
-
-        delete ref.record
-        delete ref.peer
+        break
       }
-
+      await handleRef(data, schema)
       break
+    }
+
+    case ContentModelSchemaTypes.media: {
+      if (schema.i18n) {
+        for (const val of Object.values(data as any)) {
+          await handleMedia(val)
+        }
+        break
+      }
+      await handleMedia(data)
+      break
+    }
 
     default:
       break
   }
 }
 
-function destructUnionCase(value: any) {
-  const unionCase = Object.keys(value)[0]
-  return {
-    unionCase,
-    val: value[unionCase]
+interface flattenI18nLeafFieldsContext {
+  languageId: string
+}
+
+function flattenI18nLeafFields(
+  validatorContext: flattenI18nLeafFieldsContext,
+  schema: ContentModelSchemas,
+  data: any
+) {
+  switch (schema.type) {
+    case ContentModelSchemaTypes.object: {
+      const obj = data as MapType<any>
+      for (const [key, val] of Object.entries(obj)) {
+        obj[key] = flattenI18nLeafFields(validatorContext, schema.fields[key], val)
+      }
+      break
+    }
+
+    case ContentModelSchemaTypes.list: {
+      const list = data as unknown[]
+      for (const i in list) {
+        list[i] = flattenI18nLeafFields(validatorContext, schema.contentType, list[i])
+      }
+      break
+    }
+
+    case ContentModelSchemaTypes.union: {
+      const union = data as MapType<any>
+      const {unionCase, val} = destructUnionCase(union)
+      union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
+      break
+    }
+
+    default:
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return data[validatorContext.languageId]
+      }
+      return data
+  }
+}
+
+function flattenI18nLeafFieldsOnRecord(
+  validatorContext: flattenI18nLeafFieldsContext,
+  modelSchema: ContentModelSchema,
+  record: any
+) {
+  flattenI18nLeafFields(
+    validatorContext,
+    {
+      type: ContentModelSchemaTypes.object,
+      fields: modelSchema.content
+    },
+    record?.content
+  )
+  if (modelSchema.meta) {
+    flattenI18nLeafFields(
+      validatorContext,
+      {
+        type: ContentModelSchemaTypes.object,
+        fields: modelSchema.meta
+      },
+      record?.meta
+    )
+  }
+}
+
+export function flattenI18nLeafFieldsMap(
+  languageConfig: LanguageConfig,
+  modelSchema: ContentModelSchema,
+  language: string
+) {
+  const currentLang = languageConfig.languages.find(l => l.tag === language)
+  let languageId: string
+  if (currentLang) {
+    languageId = currentLang.tag // TODO switch to id
+  } else {
+    languageId = 'en' // languageConfig.defaultLanguageId
+  }
+  return (record: any) => {
+    return flattenI18nLeafFieldsOnRecord({languageId}, modelSchema, record)
   }
 }

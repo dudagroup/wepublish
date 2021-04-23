@@ -2,6 +2,7 @@
   "translation": {
     "global": {
       "buttons": {
+        "dropMedia": "Drop Media Here",
         "delete": "Delete",
         "deleteNow": "Delete now",
         "cancel": "Cancel",
@@ -9,7 +10,44 @@
         "close": "Close",
         "confirm": "Confirm",
         "back": "Back",
-        "add": "Add"
+        "add": "Add",
+        "loadMore": "Load More"
+      }
+    },
+    "content": {
+      "overview": {
+        "title": "Title",
+        "preview": "Preview",
+        "created": "Created",
+        "updated": "Modified",
+        "states": "States",
+        "authors": "Authors",
+        "articles": "Articles",
+        "action": "Action",
+        "newArticle": "New Article",
+        "search": "Search",
+        "loadMore": "Load More",
+        "noArticlesFound": "No Articles found",
+        "untitled": "Untitled",
+        "draft": "Draft",
+        "pending": "Pending",
+        "published": "Published"
+      },
+      "panels": {
+        "cancel": "Cancel",
+        "close": "Close",
+        "delete": "Delete",
+        "deleteArticle": "Delete Article?",
+        "unpublishArticle": "Unpublish Article?",
+        "duplicateArticle": "Duplicate Article?",
+        "confirm": "Confirm",
+        "unpublish": "Unpublish",
+        "title": "Title",
+        "untitled": "Untitled",
+        "lead": "Lead",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "publishedAt": "Published At"
       }
     },
     "articles": {

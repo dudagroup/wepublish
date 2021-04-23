@@ -17,9 +17,12 @@ import {Context, ContextOptions} from '../../context'
 import {InputCursor, Limit, SortOrder} from '../../db/common'
 import {SessionType} from '../../db/session'
 import {NotAuthorisedError} from '../../error'
-import {GraphQLContentSateEnum} from './contentUtils'
 import {
+  getGraphQLContentConnection,
+  getGraphQLLanguagesEnum,
+  getGraphQLPeerCustomContent,
   GraphQLContentFilter,
+  GraphQLContentSateEnum,
   GraphQLContentSort,
   GraphQLPublicContentFilter,
   GraphQLPublicContentSort
@@ -36,77 +39,73 @@ import {
   CanGetSharedContents,
   isAuthorised
 } from '../permissions'
-import {getGraphQLContentConnection, getGraphQLPeerCustomContent} from './contentUtils'
 import {ContentSort} from './contentInterfaces'
 
-import {
-  base64Decode,
-  base64Encode,
-  createProxyingResolver,
-  delegateToPeerSchema
-} from '../../utility'
-import {GraphQLSlug} from '../slug'
+import {base64Decode, base64Encode, delegateToPeerSchema} from '../../utility'
+
 import {WrapQuery} from 'graphql-tools'
 import {
-  generateInputSchema,
-  generateSchema,
   nameJoin,
   ContentModelPrefix,
   ContentModelPrefixPrivate,
   ContentModelPrefixPrivateInput
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
+import {generateInputSchema, generateSchema} from './contentGraphQlGenericTypes'
+import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
 
 export interface PeerContent {
   peerID: string
   content: any
 }
 
-export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: ContextOptions) {
+export function getGraphQLContent(contextOptions: ContextOptions) {
   if (!(contextOptions?.contentModels && contextOptions.contentModels.length > 0)) {
     return
   }
-  let query: GraphQLFieldConfigMap<any, Context, any> = {}
-  let queryPublic: GraphQLFieldConfigMap<any, Context, any> = {}
-  let mutation: GraphQLFieldConfigMap<any, Context, any> = {}
+  const graphQlLanguages = getGraphQLLanguagesEnum(contextOptions.languageConfig.languages)
+  const query: GraphQLFieldConfigMap<unknown, Context> = {}
+  const queryPublic: GraphQLFieldConfigMap<unknown, Context> = {}
+  const mutation: GraphQLFieldConfigMap<unknown, Context> = {}
 
   const contentModelsPrivate: MapType<GraphQLObjectType> = {}
   const contentModelsPublic: MapType<GraphQLObjectType> = {}
 
-  contextOptions.contentModels.forEach(item => {
-    const idPublic = nameJoin(ContentModelPrefix, item.identifier)
-    const idPrivate = nameJoin(ContentModelPrefixPrivate, item.identifier)
-    const idPrivateInput = nameJoin(ContentModelPrefixPrivateInput, item.identifier)
+  contextOptions.contentModels.forEach(model => {
+    const idPublic = nameJoin(ContentModelPrefix, model.identifier)
+    const idPrivate = nameJoin(ContentModelPrefixPrivate, model.identifier)
+    const idPrivateInput = nameJoin(ContentModelPrefixPrivateInput, model.identifier)
     const typePublic = generateSchema(
       contextOptions.languageConfig,
-      item.identifier,
+      model.identifier,
       nameJoin(idPublic, 'record'),
-      item.schema,
-      contentModelsPublic
+      model.schema,
+      contentModelsPublic,
+      true
     )
     const typePrivate = generateSchema(
       contextOptions.languageConfig,
-      item.identifier,
+      model.identifier,
       nameJoin(idPrivate, 'record'),
-      item.schema,
+      model.schema,
       contentModelsPrivate
     )
     const {create: inputTypeCreate, update: inputTypeUpdate} = generateInputSchema(
       contextOptions.languageConfig,
       nameJoin(idPrivateInput, 'record'),
-      item.schema
+      model.schema
     )
 
     // ************************************************************************************************************************
     // Public Query
-    queryPublic[item.identifier] = {
+    queryPublic[model.identifier] = {
       type: GraphQLNonNull(
         new GraphQLObjectType<undefined, Context>({
           name: idPublic,
           fields: {
             read: {
               type: typePublic,
-              args: {id: {type: GraphQLID}},
+              args: {id: {type: GraphQLID}, language: {type: GraphQLNonNull(graphQlLanguages)}},
               async resolve(root, {id}, {session, loaders}) {
                 const content = await loaders.publicContent.load(id)
 
@@ -124,7 +123,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                   name: nameJoin(idPublic, 'list'),
                   fields: {
                     nodes: {
-                      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(typePrivate)))
+                      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(typePublic)))
                     },
                     pageInfo: {type: GraphQLNonNull(GraphQLPageInfo)},
                     totalCount: {type: GraphQLNonNull(GraphQLInt)}
@@ -132,6 +131,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 })
               ),
               args: {
+                language: {type: graphQlLanguages},
                 after: {type: GraphQLID},
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
@@ -143,15 +143,23 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 },
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
-              resolve(root, {filter, sort, order, after, before, first, last}, {dbAdapter}) {
-                return dbAdapter.content.getContents({
-                  type: item.identifier,
+              resolve: async (
+                source,
+                {filter, sort, order, after, before, first, last, language},
+                {dbAdapter}
+              ) => {
+                const result = await dbAdapter.content.getContents({
+                  type: model.identifier,
                   filter,
                   sort,
                   order,
                   cursor: InputCursor(after, before),
                   limit: Limit(first, last)
                 })
+                result.nodes.map(
+                  flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
+                )
+                return result
               }
             }
           }
@@ -164,7 +172,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
 
     // ************************************************************************************************************************
     // Private Mutation
-    mutation[item.identifier] = {
+    mutation[model.identifier] = {
       type: GraphQLNonNull(
         new GraphQLObjectType<undefined, Context>({
           name: idPrivateInput,
@@ -177,7 +185,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 }
               },
               async resolve(root, {input}, {business}) {
-                return business.createContent(item.identifier, input)
+                return business.createContent(model.identifier, input)
               }
             },
 
@@ -189,7 +197,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 }
               },
               async resolve(root, {input}, {business}) {
-                return business.updateContent(item.identifier, input)
+                return business.updateContent(model.identifier, input)
               }
             },
 
@@ -199,7 +207,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 id: {type: GraphQLNonNull(GraphQLID)},
                 revision: {type: GraphQLInt}
               },
-              async resolve(root, {id, revision}, {business}) {
+              async resolve(root, {id}, {business}) {
                 return business.deleteContent(id)
               }
             },
@@ -235,7 +243,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
 
     // ************************************************************************************************************************
     // Private Query
-    query[item.identifier] = {
+    query[model.identifier] = {
       type: GraphQLNonNull(
         new GraphQLObjectType<undefined, Context>({
           name: idPrivate,
@@ -267,7 +275,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                               kind: Kind.FIELD,
                               name: {
                                 kind: Kind.NAME,
-                                value: item.identifier
+                                value: model.identifier
                               },
                               selectionSet: {
                                 kind: Kind.SELECTION_SET,
@@ -290,7 +298,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                           ]
                         }),
                         result => {
-                          return result[item.identifier].read
+                          return result[model.identifier].read
                         }
                       )
                     ]
@@ -340,7 +348,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 }
 
                 return dbAdapter.content.getContents({
-                  type: item.identifier,
+                  type: model.identifier,
                   filter: {...filter, shared: !canGetContents ? true : undefined},
                   sort,
                   order,
@@ -376,7 +384,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
     }
   })
 
-  const GraphQLContentModelSummary = new GraphQLObjectType<any, Context>({
+  const GraphQLContentModelSummary = new GraphQLObjectType<unknown, Context>({
     name: `ContentModelSummary`,
     fields: {
       id: {type: GraphQLNonNull(GraphQLID)},
@@ -393,7 +401,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
       dePublicationDate: {type: GraphQLDateTime}
     }
   })
-  query['_all'] = {
+  query._all = {
     type: GraphQLNonNull(
       new GraphQLObjectType<undefined, Context>({
         name: `All`,
@@ -480,7 +488,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 }
 
                 const contentss = await Promise.all(
-                  peers.map((peer: any) => {
+                  peers.map(peer => {
                     try {
                       if (after && after[peer.id] == null) return null
                       return delegateToPeerSchema(peer.id, true, context, {
@@ -554,23 +562,23 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
                 )
 
                 const totalCount = contentss.reduce(
-                  (prev, result: any) => prev + (result?.totalCount ?? 0),
+                  (prev, result) => prev + (result?.totalCount ?? 0),
                   0
                 )
 
                 const cursors = Object.fromEntries(
-                  contentss.map((result: any, index) => [
+                  contentss.map((result, index) => [
                     peers[index].id,
                     result?.pageInfo.endCursor ?? null
                   ])
                 )
 
                 const hasNextPage = contentss.reduce(
-                  (prev, result: any) => prev || (result?.pageInfo.hasNextPage ?? false),
+                  (prev, result) => prev || (result?.pageInfo.hasNextPage ?? false),
                   false
                 )
 
-                const peerContents = contentss.flatMap<PeerContent>((result: any, index) => {
+                const peerContents = contentss.flatMap<PeerContent>((result, index) => {
                   const peer = peers[index]
                   return (
                     result?.nodes.map((content: any) =>
@@ -663,7 +671,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
               peerID: {type: GraphQLID},
               id: {type: GraphQLNonNull(GraphQLID)}
             },
-            async resolve(root, {peerID, id}, context, info) {
+            async resolve(root, {peerID, id}, context) {
               if (peerID) {
                 const {authenticate} = context
                 const {roles} = authenticate()
@@ -700,41 +708,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
     }
   }
 
-  let GraphQlAllCustomContentsRevision = new GraphQLObjectType<any, Context>({
-    name: `AllCustomContentsRevision`,
-    fields: {
-      revision: {type: GraphQLNonNull(GraphQLInt)},
-      createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
-      publishAt: {type: GraphQLDateTime},
-      updatedAt: {type: GraphQLDateTime},
-      publishedAt: {type: GraphQLDateTime},
-      title: {type: GraphQLNonNull(GraphQLString)},
-      slug: {type: GraphQLNonNull(GraphQLSlug)}
-    }
-  })
-
-  const GraphQlAllCustomContents = new GraphQLObjectType<any, Context>({
-    name: `AllCustomContents`,
-    fields: {
-      id: {type: GraphQLNonNull(GraphQLID)},
-      shared: {type: GraphQLNonNull(GraphQLBoolean)},
-      createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
-      modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
-
-      draft: {type: GraphQlAllCustomContentsRevision},
-      published: {type: GraphQlAllCustomContentsRevision},
-      pending: {type: GraphQlAllCustomContentsRevision},
-
-      latest: {
-        type: GraphQLNonNull(GraphQlAllCustomContentsRevision),
-        resolve: createProxyingResolver(({draft, pending, published}, {}, {}, info) => {
-          return draft ?? pending ?? published
-        })
-      }
-    }
-  })
-
-  mutation['_all'] = {
+  mutation._all = {
     type: GraphQLNonNull(
       new GraphQLObjectType<undefined, Context>({
         name: `AllMutations`,
@@ -749,7 +723,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
             }
           },
           publish: {
-            type: GraphQlAllCustomContents,
+            type: GraphQLNonNull(GraphQLContentModelSummary),
             args: {
               id: {type: GraphQLNonNull(GraphQLID)},
               publishAt: {type: GraphQLDateTime},
@@ -761,7 +735,7 @@ export function getGraphQLContent<TSource, TContext, TArgs>(contextOptions: Cont
             }
           },
           unpublish: {
-            type: GraphQlAllCustomContents,
+            type: GraphQLNonNull(GraphQLContentModelSummary),
             args: {id: {type: GraphQLNonNull(GraphQLID)}},
             async resolve(root, {id}, {business}) {
               return business.unpublishContent(id, 1)

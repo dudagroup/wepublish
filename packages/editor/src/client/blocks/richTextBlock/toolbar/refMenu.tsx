@@ -7,10 +7,13 @@ import {WepublishEditor} from '../editor/wepublishEditor'
 import {InlineFormat} from '../editor/formats'
 import {Button, ButtonToolbar, ControlLabel, Form, FormControl, FormGroup} from 'rsuite'
 import {useTranslation} from 'react-i18next'
-import {ContentModelSchemaFieldRefTypeMap, Reference} from '../../../interfaces/referenceType'
+import {Reference} from '../../../interfaces/referenceType'
 import {ReferencePreview} from '../../../atoms/referencePreview'
+import {ContentModelSchemaFieldRefTypeMap} from '../../../interfaces/contentModelSchema'
+import {ConfigContext} from '../../../Editorcontext'
 
 export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
+  const configs = useContext(ConfigContext)
   const {t} = useTranslation()
   const editor = useSlate()
   const [selection, setSelection] = useState<Range | null>(null)
@@ -78,7 +81,8 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
         </ButtonToolbar>
       </Form>
       <RefSelectPanel
-        config={types}
+        refConfig={types}
+        configs={configs}
         onClose={() => {
           insertLink(editor, selection, reference, title || undefined)
           closeMenu()

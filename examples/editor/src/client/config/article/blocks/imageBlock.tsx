@@ -1,28 +1,21 @@
 import React, {useState, useEffect} from 'react'
 
-import {Drawer, Dropdown, Icon, IconButton, Panel} from 'rsuite'
+import {Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
-import {ImageRefFragment} from '../api'
-
 import {ImageBlockValue} from './types'
-
 import {useTranslation} from 'react-i18next'
-import {ImagedEditPanel, ImageSelectPanel, Reference} from '@wepublish/editor'
-import {useImageQuery} from '@wepublish/editor/lib/client/api'
+import {RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {ContentEditor} from '@wepublish/editor/src'
+import {ImageRecord} from '../interfaces/interfaces'
 
 // TODO: Handle disabled prop
-export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockValue>) {
+export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<ImageBlockValue>) {
   const {image, caption} = value
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
-  const {data} = useImageQuery({
-    skip: image?.record || !image?.recordId,
-    variables: {
-      id: image?.recordId!
-    }
-  })
+  const imageRecord = useRecordHook<ImageRecord>(image || undefined)
 
   const {t} = useTranslation()
 
@@ -30,26 +23,25 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
     if (autofocus && !value.image) {
       setChooseModalOpen(true)
     }
-  }, [])
+  }, [autofocus, value.image])
 
-  function handleImageChange(image: Reference | null) {
-    onChange({...value, image})
-  }
-
-  const imageRecord: ImageRefFragment = image?.record || data?.image
   let imageComponent = null
-  if (imageRecord) {
+  if (imageRecord?.content?.media?.media.image) {
     imageComponent = (
       <Panel
         style={{
           padding: 0,
           position: 'relative',
           height: '100%',
-          backgroundSize: `${imageRecord.height > 300 ? 'contain' : 'auto'}`,
+          backgroundSize: `${
+            imageRecord.content.media.media.image.height > 300 ? 'contain' : 'auto'
+          }`,
           backgroundPositionX: 'center',
           backgroundPositionY: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundImage: `url(${imageRecord?.largeURL ?? 'https://via.placeholder.com/240x240'})`
+          backgroundImage: `url(${
+            imageRecord.content.media.media.url ?? 'https://via.placeholder.com/240x240'
+          })`
         }}>
         <Dropdown
           renderTitle={() => {
@@ -86,23 +78,39 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
         placeholder={t('blocks.image.overview.caption')}
         value={caption}
         onChange={e => {
-          onChange({...value, caption: e.target.value})
+          onChange(e.target.value, ['caption'])
         }}
       />
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
+        <RefSelectModal
+          refConfig={{
+            mediaLibrary: {
+              scope: 'local'
+            }
+          }}
+          configs={configs}
           onClose={() => setChooseModalOpen(false)}
-          onSelect={value => {}}
-          onSelectRef={value => {
+          onSelectRef={ref => {
             setChooseModalOpen(false)
-            handleImageChange(value)
+            onChange(ref, ['image'])
           }}
         />
-      </Drawer>
+      </Modal>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
-          <ImagedEditPanel id={image!.recordId} onClose={() => setEditModalOpen(false)} />
-        </Drawer>
+        <Modal
+          show={isEditModalOpen}
+          size="lg"
+          backdrop="static"
+          full
+          onHide={() => setEditModalOpen(false)}>
+          <Modal.Body>
+            <ContentEditor
+              onBack={() => setEditModalOpen(false)}
+              id={image.recordId}
+              type={'mediaLibrary'}
+              configs={configs}></ContentEditor>
+          </Modal.Body>
+        </Modal>
       )}
     </>
   )

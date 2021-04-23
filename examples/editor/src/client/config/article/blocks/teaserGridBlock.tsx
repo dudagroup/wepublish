@@ -1,5 +1,4 @@
 import React, {useState, ReactNode} from 'react'
-import nanoid from 'nanoid'
 
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {PlaceholderImage} from '../atoms/placeholderImage'
@@ -10,7 +9,6 @@ import {Typography} from '../atoms/typography'
 import {IconButton, Drawer, Panel, Icon, Avatar} from 'rsuite'
 
 import {SortableElement, SortableContainer, SortEnd} from 'react-sortable-hoc'
-import arrayMove from 'array-move'
 
 import {TeaserGridBlockValue, Teaser, TeaserType} from './types'
 
@@ -52,14 +50,14 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
 
   const {teasers, numColumns} = value
 
-  function handleTeaserLinkChange(index: number, teaserLink: Teaser | null) {
-    onChange({
-      numColumns,
-      teasers: Object.assign([], teasers, {
-        [index]: [nanoid(), teaserLink || null]
-      })
-    })
-  }
+  // function handleTeaserLinkChange(index: number, teaserLink: Teaser | null) {
+  //   onChange({
+  //     numColumns,
+  //     teasers: Object.assign([], teasers, {
+  //       [index]: [nanoid(), teaserLink || null]
+  //     })
+  //   })
+  // }
 
   function handleSortStart() {
     document.documentElement.style.cursor = 'grabbing'
@@ -70,10 +68,10 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
     document.documentElement.style.cursor = ''
     document.body.style.pointerEvents = ''
 
-    onChange({
-      numColumns,
-      teasers: arrayMove(teasers, oldIndex, newIndex)
-    })
+    // onChange({
+    //   numColumns,
+    //   teasers: arrayMove(teasers, oldIndex, newIndex)
+    // })
   }
 
   return (
@@ -101,7 +99,7 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
               setChooseModalOpen(true)
             }}
             onRemove={() => {
-              handleTeaserLinkChange(index, null)
+              // handleTeaserLinkChange(index, null)
             }}
           />
         ))}
@@ -112,7 +110,7 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
           onClose={() => setEditModalOpen(false)}
           onConfirm={teaser => {
             setEditModalOpen(false)
-            handleTeaserLinkChange(editIndex, teaser)
+            // handleTeaserLinkChange(editIndex, teaser)
           }}
         />
       </Drawer>
@@ -121,7 +119,7 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
           onClose={() => setChooseModalOpen(false)}
           onSelect={teaser => {
             setChooseModalOpen(false)
-            handleTeaserLinkChange(editIndex, teaser)
+            // handleTeaserLinkChange(editIndex, teaser)
           }}
         />
       </Drawer>

@@ -1,10 +1,10 @@
 import {isFunctionalUpdate} from '@karma.run/react'
 import React from 'react'
 import {Panel, Toggle} from 'rsuite'
-import {ContentContextEnum} from '../../api'
 import {RichTextBlock} from '../../blocks/richTextBlock/richTextBlock'
+import {RichTextBlockValue} from '../../blocks/types'
 import {ContentEditActionEnum} from '../../control/contentReducer'
-import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
+import {ContentModelSchemaFieldRichText} from '../../interfaces/contentModelSchema'
 import {isNullOrUndefined} from '../../utility'
 import {BlockAbstractProps} from './BlockAbstract'
 
@@ -13,7 +13,7 @@ function BlockRichText({
   schemaPath,
   model,
   value
-}: BlockAbstractProps<ContentModelSchemaFieldString, any>) {
+}: BlockAbstractProps<ContentModelSchemaFieldRichText, RichTextBlockValue>) {
   const empty = [
     {
       type: 'paragraph',
@@ -36,9 +36,9 @@ function BlockRichText({
           checked={isActive}
           onChange={() => {
             if (isActive) {
-              dispatch({type: ContentEditActionEnum.update, value: null, schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: null, path: schemaPath})
             } else {
-              dispatch({type: ContentEditActionEnum.update, value: empty, schemaPath})
+              dispatch({type: ContentEditActionEnum.update, value: empty, path: schemaPath})
             }
           }}
         />
@@ -59,14 +59,10 @@ function BlockRichText({
           dispatch({
             type: ContentEditActionEnum.update,
             value: update,
-            schemaPath
+            path: schemaPath
           })
         }}
-        config={{
-          ref: {
-            modelA: {scope: ContentContextEnum.Local}
-          }
-        }}
+        config={model.config}
       />
     </Panel>
   )

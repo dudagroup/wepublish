@@ -5,6 +5,7 @@ import startMediaServer from '@karma.run/media'
 import LocalStorageBackend from '@karma.run/media-storage-local'
 import SharpImageBackend from '@karma.run/media-image-sharp'
 
+console.log('does this work????')
 if (cluster.isMaster) {
   const numClusters = process.env.NUM_CLUSTERS
     ? parseInt(process.env.NUM_CLUSTERS)

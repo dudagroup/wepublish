@@ -2,6 +2,7 @@ import nanoid from 'nanoid'
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {DocumentNode, OperationDefinitionNode} from 'graphql'
 import {PaymentPeriodicity, SortOrder} from './api'
+import {MapType} from '@wepublish/editor/lib/client/interfaces/utilTypes'
 
 export enum LocalStorageKey {
   SessionToken = 'sessionToken'
@@ -166,3 +167,11 @@ export const ALL_PAYMENT_PERIODICITIES: PaymentPeriodicity[] = [
   PaymentPeriodicity.Biannual,
   PaymentPeriodicity.Yearly
 ]
+
+export function destructUnionCase<T>(value: MapType<T>): {unionCase: string; value: T} {
+  const unionCase = Object.keys(value)[0]
+  return {
+    unionCase,
+    value: value[unionCase]
+  }
+}

@@ -2,11 +2,12 @@ import {MapType} from './utilTypes'
 
 export interface ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes
-  nameGUI?: string
-  indexed?: boolean
-  instructionsApi?: string
-  instructionsEditor?: {
-    [lang: string]: string
+  instructions?: string
+  editor?: {
+    name?: string
+    instructions?: {
+      [lang: string]: string
+    }
   }
   public?: boolean
   optional?: boolean
@@ -15,6 +16,7 @@ export interface ContentModelSchemaFieldBase {
 
 export interface ContentModelSchemaFieldLeaf extends ContentModelSchemaFieldBase {
   i18n?: boolean
+  argument?: boolean
 }
 
 export enum ContentModelSchemaTypes {
@@ -25,6 +27,7 @@ export enum ContentModelSchemaTypes {
   float = 'float',
   enum = 'enum',
   dateTime = 'dateTime',
+  media = 'media',
   richText = 'richText',
   reference = 'reference',
   list = 'list',
@@ -42,6 +45,7 @@ export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLe
   validations?: {
     maxCharacters: number
   }
+  searchable?: boolean
 }
 
 export interface ContentModelSchemaFieldBoolean extends ContentModelSchemaFieldLeaf {
@@ -99,6 +103,11 @@ export interface RichTextConfig {
 export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.richText
   config?: RichTextConfig
+  searchable?: boolean
+}
+
+export interface ContentModelSchemaFieldMedia extends ContentModelSchemaFieldLeaf {
+  type: ContentModelSchemaTypes.media
 }
 
 export type ReferenceScope = 'local' | 'peers' | 'all'
@@ -137,6 +146,7 @@ export type ContentModelSchemas =
   | ContentModelSchemaFieldBoolean
   | ContentModelSchemaFieldDate
   | ContentModelSchemaFieldRichText
+  | ContentModelSchemaFieldMedia
   | ContentModelSchemaFieldRef
   | ContentModelSchemaFieldEnum
   | ContentModelSchemaFieldList

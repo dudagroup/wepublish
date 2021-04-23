@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
-import {useRoute} from '../route'
 import {
   useUnpublishContentMutation,
   PageRefFragment,
@@ -13,9 +12,14 @@ import {useTranslation} from 'react-i18next'
 import {FlexboxGrid, Input, InputGroup, Icon, IconButton, Table, Modal, Button} from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
-const {Column, HeaderCell, Cell} = Table
 import {Content} from '@wepublish/api'
+import {RecordPreview} from '../atoms/recordPreview'
+import {ReferenceScope} from '../interfaces/contentModelSchema'
+import {Reference} from '../interfaces/referenceType'
 import {Configs} from '../interfaces/extensionConfig'
+import {ContentEditor} from './contentEditor'
+
+const {Column, HeaderCell, Cell} = Table
 
 enum ConfirmAction {
   Delete = 'delete',
@@ -25,19 +29,20 @@ enum ConfirmAction {
 const RecordsPerPage = 10
 
 export interface ArticleEditorProps {
+  readonly type: string
+  readonly scope?: ReferenceScope
   readonly configs: Configs
+  onSelectRef?: (ref: Reference) => void
 }
 
-export function ContentList({configs}: ArticleEditorProps) {
-  const {current} = useRoute()
-  const type = (current?.params as any).type || ''
+export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
   const [filter, setFilter] = useState('')
-
+  const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
 
-  const config = configs.contentModelExtensionMerged.find(config => {
+  const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
   if (!config) {
@@ -49,7 +54,7 @@ export function ContentList({configs}: ArticleEditorProps) {
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(getDeleteMutation(config))
 
-  const listVariables = {type, filter: filter || undefined, first: RecordsPerPage}
+  const listVariables = {type: type as any, filter: filter || undefined, first: RecordsPerPage}
   const {data, fetchMore, loading: isLoading, refetch} = useContentListQuery({
     variables: listVariables,
     skip: !type,
@@ -97,8 +102,14 @@ export function ContentList({configs}: ArticleEditorProps) {
           <ButtonLink
             appearance="primary"
             disabled={isLoading}
+            onClick={e => {
+              if (onSelectRef) {
+                e.preventDefault()
+                setEditModalOpen(true)
+              }
+            }}
             route={ContentCreateRoute.create({type})}>
-            {`New ${type}`}
+            {`New ${config.nameSingular}`}
           </ButtonLink>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={24} style={{marginTop: '20px'}}>
@@ -113,41 +124,59 @@ export function ContentList({configs}: ArticleEditorProps) {
 
       <Table style={{marginTop: '20px'}} loading={isLoading} data={articles}>
         <Column flexGrow={3} align="left">
-          <HeaderCell>{t('articles.overview.title')}</HeaderCell>
+          <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
             {(rowData: ContentListRefFragment) => {
               return (
-                <Link route={ContentEditRoute.create({type, id: rowData.id})}>
-                  {rowData.title || t('articles.overview.untitled')}
+                <Link
+                  route={ContentEditRoute.create({type, id: rowData.id})}
+                  onClick={e => {
+                    if (onSelectRef) {
+                      e.preventDefault()
+                      onSelectRef({
+                        contentType: type,
+                        recordId: rowData.id
+                      })
+                    }
+                  }}>
+                  {rowData.title || t('content.overview.untitled')}
                 </Link>
               )
             }}
           </Cell>
         </Column>
+        <Column flexGrow={3} align="left">
+          <HeaderCell>{t('content.overview.preview')}</HeaderCell>
+          <Cell>
+            {(rowData: ContentListRefFragment) => {
+              return <RecordPreview record={rowData}></RecordPreview>
+            }}
+          </Cell>
+        </Column>
         <Column flexGrow={2} minWidth={140} align="left">
-          <HeaderCell>{t('articles.overview.created')}</HeaderCell>
+          <HeaderCell>{t('content.overview.created')}</HeaderCell>
           <Cell dataKey="createdAt" />
         </Column>
         <Column flexGrow={2} minWidth={140} align="left">
-          <HeaderCell>{t('articles.overview.updated')}</HeaderCell>
+          <HeaderCell>{t('content.overview.updated')}</HeaderCell>
           <Cell dataKey="modifiedAt" />
         </Column>
         <Column flexGrow={2} align="left">
-          <HeaderCell>{t('articles.overview.states')}</HeaderCell>
+          <HeaderCell>{t('content.overview.states')}</HeaderCell>
           <Cell>
             {(rowData: PageRefFragment) => {
               const states = []
 
-              if (rowData.draft) states.push(t('articles.overview.draft'))
-              if (rowData.pending) states.push(t('articles.overview.pending'))
-              if (rowData.published) states.push(t('articles.overview.published'))
+              if (rowData.draft) states.push(t('content.overview.draft'))
+              if (rowData.pending) states.push(t('content.overview.pending'))
+              if (rowData.published) states.push(t('content.overview.published'))
 
               return <div>{states.join(' / ')}</div>
             }}
           </Cell>
         </Column>
         <Column width={90} align="right" fixed="right">
-          <HeaderCell>{t('articles.overview.action')}</HeaderCell>
+          <HeaderCell>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 0'}}>
             {(rowData: Content) => (
               <>
@@ -181,8 +210,8 @@ export function ContentList({configs}: ArticleEditorProps) {
       </Table>
 
       {data?.content._all.list.pageInfo.hasNextPage && (
-        <Button style={{height: '80px'}} label={t('articles.overview.loadMore')} onClick={loadMore}>
-          load more
+        <Button style={{height: '80px'}} label={t('content.overview.loadMore')} onClick={loadMore}>
+          {t('buttons.loadMore')}
         </Button>
       )}
 
@@ -251,6 +280,27 @@ export function ContentList({configs}: ArticleEditorProps) {
             {t('articles.panels.cancel')}
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={isEditModalOpen}
+        size="lg"
+        // eslint-disable-next-line i18next/no-literal-string
+        backdrop="static"
+        full
+        onHide={() => setEditModalOpen(false)}>
+        <Modal.Body>
+          <ContentEditor
+            onBack={() => setEditModalOpen(false)}
+            onApply={ref => {
+              setEditModalOpen(false)
+              if (onSelectRef) {
+                onSelectRef(ref)
+              }
+            }}
+            type={type}
+            configs={configs}></ContentEditor>
+        </Modal.Body>
       </Modal>
     </>
   )

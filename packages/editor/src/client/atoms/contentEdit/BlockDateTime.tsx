@@ -15,13 +15,13 @@ function BlockDateTime({
   return (
     <>
       <DatePicker
-        value={isActive ? new Date(value!) : undefined}
+        value={value && isActive ? new Date(value) : undefined}
         cleanable={model.optional}
         onChange={val => {
           dispatch({
             type: ContentEditActionEnum.update,
             value: val ? val.toISOString() : null,
-            schemaPath
+            path: schemaPath
           })
         }}
       />

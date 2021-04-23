@@ -5,7 +5,7 @@ import {
   ContentModelSchemas
 } from '@wepublish/api'
 import gql from 'graphql-tag'
-import {ContentModelSchemaTypes} from '../interfaces/apiTypes'
+import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {Configs} from '../interfaces/extensionConfig'
 
 export const ContentModelPrefix = '_cm'
@@ -15,6 +15,133 @@ const SEPARATOR = '_'
 
 export function nameJoin(...slug: string[]) {
   return slug.join(SEPARATOR)
+}
+
+export function getDeleteMutation(schema: ContentModel) {
+  return gql`
+    mutation DeleteContent_${schema.identifier}($id: ID!) {
+      content {
+        ${schema.identifier} {
+          delete(id: $id)
+        }
+      }
+    }
+  `
+}
+
+function getFragmentSchemaRecursive(
+  configs: Configs,
+  schema: ContentModelSchemas,
+  name = ''
+): string {
+  switch (schema.type) {
+    case ContentModelSchemaTypes.object:
+      return `{
+        ${Object.entries(schema.fields)
+          .map(([key, val]) => {
+            const ObjectName = nameJoin(name, key)
+            return `${key} ${getFragmentSchemaRecursive(configs, val, ObjectName)}`
+          })
+          .join('\n')}
+      }`
+    case ContentModelSchemaTypes.list:
+      return getFragmentSchemaRecursive(configs, schema.contentType, name)
+    case ContentModelSchemaTypes.reference: {
+      const q = `{
+          recordId
+          contentType
+          peerId
+        }`
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return `{${configs.apiConfig.languages.languages.map(v => `${v.tag} ${q}`).join('\n')}}`
+      }
+      return q
+    }
+    case ContentModelSchemaTypes.media: {
+      const q = `{
+        focalPoint {
+          x
+          y
+        }
+        media {
+          id
+          createdAt
+          modifiedAt
+          filename
+          fileSize
+          extension
+          mimeType
+          url
+          transformURL
+          image {
+            format
+            width
+            height
+          }
+        }
+      }`
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return `{${configs.apiConfig.languages.languages.map(v => `${v.tag} ${q}`).join('\n')}}`
+      }
+      return q
+    }
+    case ContentModelSchemaTypes.union:
+      return `{
+        ${Object.entries(schema.cases)
+          .map(([unionCase, val]) => {
+            const unionCaseName = nameJoin(name, unionCase)
+            return `... on ${unionCaseName} {
+              ${unionCase} ${getFragmentSchemaRecursive(configs, val, unionCaseName)}
+            }`
+          })
+          .join('\n')}
+      }`
+    default:
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return `{${configs.apiConfig.languages.languages.map(v => v.tag).join('\n')}}`
+      }
+      return ''
+  }
+}
+
+function getFragmentSchema(
+  configs: Configs,
+  contentModelSchemas: ContentModelSchema,
+  fragmentName: string
+) {
+  return Object.entries(contentModelSchemas).reduce((accu, [key, val]) => {
+    const n = nameJoin(fragmentName, key)
+    const children = Object.entries(val).reduce((accu, [key, val]) => {
+      accu += `${key} ${getFragmentSchemaRecursive(
+        configs,
+        val as ContentModelSchemas,
+        nameJoin(n, key)
+      )}\n`
+      return accu
+    }, '')
+
+    accu += `${key} {\n${children}}`
+    return accu
+  }, '')
+}
+
+function getFragment(configs: Configs, schema: ContentModel) {
+  const fragmentName = nameJoin(ContentModelPrefixPrivate, schema.identifier, 'record')
+  const fragment = `
+    fragment Content_${schema.identifier} on ${fragmentName} {
+      id
+      revision
+      state
+      createdAt
+      modifiedAt
+      publicationDate
+      dePublicationDate
+      title
+      shared
+      ${getFragmentSchema(configs, schema.schema, fragmentName)}
+    }
+  `
+  return fragment
 }
 
 export function getCrudQueries(schema: ContentModel) {
@@ -81,115 +208,25 @@ export function getUpdateMutation(configs: Configs, schema: ContentModel) {
   `
 }
 
-export function getDeleteMutation(schema: ContentModel) {
-  return gql`
-    mutation DeleteContent_${schema.identifier}($id: ID!) {
-      content {
-        ${schema.identifier} {
-          delete(id: $id)
-        }
-      }
-    }
-  `
-}
-
-function getFragment(configs: Configs, schema: ContentModel) {
-  const fragmentName = nameJoin(ContentModelPrefixPrivate, schema.identifier, 'record')
-  const fragment = `
-    fragment Content_${schema.identifier} on ${fragmentName} {
-      id
-      revision
-      state
-      createdAt
-      modifiedAt
-      publicationDate
-      dePublicationDate
-      title
-      shared
-      ${getFragmentSchema(configs, schema.schema, fragmentName)}
-    }
-  `
-  return fragment
-}
-
-function getFragmentSchema(
-  configs: Configs,
-  contentModelSchemas: ContentModelSchema,
-  fragmentName: string
-) {
-  return Object.entries(contentModelSchemas).reduce((accu, [key, val]) => {
-    const n = nameJoin(fragmentName, key)
-    const children = Object.entries(val).reduce((accu, [key, val]) => {
-      accu += `${key} ${getFragmentSchemaRecursive(
-        configs,
-        val as ContentModelSchemas,
-        nameJoin(n, key)
-      )}\n`
-      return accu
-    }, '')
-
-    accu += `${key} {\n${children}}`
-    return accu
-  }, '')
-}
-
-function getFragmentSchemaRecursive(
-  configs: Configs,
-  schema: ContentModelSchemas,
-  name: string = ''
-): string {
-  switch (schema.type) {
-    case ContentModelSchemaTypes.object:
-      return `{
-        ${Object.entries(schema.fields)
-          .map(([key, val]) => {
-            const ObjectName = nameJoin(name, key)
-            return `${key} ${getFragmentSchemaRecursive(configs, val, ObjectName)}`
-          })
-          .join('\n')}
-      }`
-    case ContentModelSchemaTypes.list:
-      return getFragmentSchemaRecursive(configs, schema.contentType, name)
-    case ContentModelSchemaTypes.reference:
-      return `{
-        recordId
-        contentType
-        peerId
-      }`
-    case ContentModelSchemaTypes.union:
-      return `{
-        ${Object.entries(schema.cases)
-          .map(([unionCase, val]) => {
-            const unionCaseName = nameJoin(name, unionCase)
-            return `... on ${unionCaseName} {
-              ${unionCase} ${getFragmentSchemaRecursive(configs, val, unionCaseName)}
-            }`
-          })
-          .join('\n')}
-      }`
-    default:
-      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
-        return `{${configs.apiConfig.languages.languages.map(v => v.tag).join('\n')}}`
-      }
-      return ''
-  }
-}
-
-export function stripTypename<T>(input: T) {
-  if (typeof input === 'string' || input instanceof String) {
+export function stripKeysRecursive<T>(input: T, keys: string[]) {
+  if (typeof input === 'string' || input instanceof String || input instanceof File) {
     return input
   }
   const newish = {...input}
 
   for (const prop in newish) {
-    if (prop === '__typename') delete newish[prop]
+    if (keys.some(v => v === prop)) delete newish[prop]
     else if (newish[prop] === null) {
     } else if (Array.isArray(newish[prop])) {
       for (const next in newish[prop]) {
-        newish[prop][next] = stripTypename(newish[prop][next])
+        try {
+          newish[prop][next] = stripKeysRecursive(newish[prop][next], keys)
+        } catch (error) {
+          // ignore readonly props
+        }
       }
     } else if (typeof newish[prop] === 'object') {
-      newish[prop] = stripTypename(newish[prop])
+      newish[prop] = stripKeysRecursive(newish[prop], keys)
     }
   }
 

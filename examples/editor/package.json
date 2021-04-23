@@ -102,5 +102,26 @@
     "webpack-dev-server": "^3.9.0"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "eslintConfig": {
+    "plugins": [
+      "i18next",
+      "react-hooks"
+    ],
+    "rules": {
+      "react/display-name": [
+        0
+      ],
+      "react/prop-types": [
+        0
+      ]
+    },
+    "extends": [
+      "../../package.json",
+      "plugin:react-hooks/recommended"
+    ],
+    "ignorePatterns": [
+      "src/client/api/index.ts"
+    ]
+  }
 }

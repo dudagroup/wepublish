@@ -2,9 +2,10 @@ import React from 'react'
 import {Dropdown, Icon, IconButton, Panel, Placeholder} from 'rsuite'
 import {PlaceholderInput} from './placeholderInput'
 import {useTranslation} from 'react-i18next'
+import {ImageRecord} from '../interfaces/interfaces'
 
 export interface ChooseEditImageProps {
-  image: any
+  image?: ImageRecord
   header?: string
   disabled: boolean
   left?: number
@@ -28,7 +29,7 @@ export function ChooseEditImage({
   header = header ?? t('chooseEditImage.header')
   return (
     <Panel header={header} bodyFill={true} style={{height: 240, marginBottom: 10}}>
-      {!image && disabled === true && <Placeholder.Graph/>}
+      {!image && disabled === true && <Placeholder.Graph />}
       <PlaceholderInput onAddClick={() => openChooseModalOpen?.()}>
         {image && (
           <div
@@ -41,7 +42,7 @@ export function ChooseEditImage({
             }}>
             <img
               style={{maxHeight: '240'}}
-              src={image?.largeURL ?? '/static/placeholder-240x240.png'}
+              src={image?.content.media?.media.url ?? '/static/placeholder-240x240.png'}
             />
             {(openChooseModalOpen || openEditModalOpen || removeImage) && (
               <div style={{position: 'absolute', left: left, top: top}}>

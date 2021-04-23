@@ -7,6 +7,7 @@ import {
 import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
+import {MapType} from '../../interfaces/utilTypes'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -19,13 +20,15 @@ export function BlockObject({
   languageContext,
   model,
   schemaPath,
-  value
-}: BlockAbstractProps<ContentModelSchemaFieldObject, {[key: string]: any}>) {
+  value,
+  configs
+}: BlockAbstractProps<ContentModelSchemaFieldObject, MapType<any>>) {
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
   const content = Object.entries(model.fields).map(item => {
     const [key, fieldModel] = item
-    let v = value[key]
+    const v = value[key]
+    const instructions = null // TODO
 
     const childSchemaPath = [...schemaPath]
     childSchemaPath.push(key)
@@ -34,24 +37,32 @@ export function BlockObject({
       let componentLane1 = null
       if (langLane1) {
         componentLane1 = (
-          <BlockAbstract
-            schemaPath={[...childSchemaPath, langLane1]}
-            dispatch={dispatch}
-            model={fieldModel}
-            languageContext={languageContext}
-            value={v[langLane1]}></BlockAbstract>
+          <>
+            <ControlLabel>{key}</ControlLabel>
+            <BlockAbstract
+              configs={configs}
+              schemaPath={[...childSchemaPath, langLane1]}
+              dispatch={dispatch}
+              model={fieldModel}
+              languageContext={languageContext}
+              value={v[langLane1]}></BlockAbstract>
+          </>
         )
       }
 
       let componentLane2 = null
       if (langLane2) {
         componentLane2 = (
-          <BlockAbstract
-            schemaPath={[...childSchemaPath, langLane2]}
-            dispatch={dispatch}
-            model={fieldModel}
-            languageContext={languageContext}
-            value={v[langLane2]}></BlockAbstract>
+          <>
+            <ControlLabel>{key}</ControlLabel>
+            <BlockAbstract
+              configs={configs}
+              schemaPath={[...childSchemaPath, langLane2]}
+              dispatch={dispatch}
+              model={fieldModel}
+              languageContext={languageContext}
+              value={v[langLane2]}></BlockAbstract>
+          </>
         )
       }
       return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />
@@ -62,13 +73,14 @@ export function BlockObject({
         <ControlLabel>{key}</ControlLabel>
         {
           <BlockAbstract
+            configs={configs}
             schemaPath={childSchemaPath}
             dispatch={dispatch}
             model={fieldModel}
             languageContext={languageContext}
             value={v}></BlockAbstract>
         }
-        <HelpBlock tooltip>Example Instructions</HelpBlock>
+        <HelpBlock tooltip>{instructions}</HelpBlock>
       </FormGroup>
     )
   })

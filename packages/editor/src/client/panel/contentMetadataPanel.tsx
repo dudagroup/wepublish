@@ -5,6 +5,7 @@ import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {LanguagesConfig} from '../api'
 import {ContentModelSchemas} from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
+import {Configs} from '../interfaces/extensionConfig'
 
 export interface DefaultMetadata {
   readonly title: string
@@ -18,6 +19,7 @@ export interface ContentMetadataPanelProps {
   readonly customMetadataDispatcher: React.Dispatch<any>
   readonly languagesConfig: LanguagesConfig
   readonly customMetaFields: MapType<ContentModelSchemas>
+  readonly configs: Configs
 }
 
 export function ContentMetadataPanel({
@@ -26,7 +28,8 @@ export function ContentMetadataPanel({
   onChangeDefaultMetadata,
   customMetadataDispatcher,
   languagesConfig,
-  customMetaFields
+  customMetaFields,
+  configs
 }: ContentMetadataPanelProps) {
   const {title, shared} = defaultMetadata
   const {t} = useTranslation()
@@ -55,6 +58,7 @@ export function ContentMetadataPanel({
       <hr></hr>
       {customMetaFields && customMetadata && (
         <GenericContentView
+          configs={configs}
           record={customMetadata}
           fields={customMetaFields}
           languagesConfig={languagesConfig}

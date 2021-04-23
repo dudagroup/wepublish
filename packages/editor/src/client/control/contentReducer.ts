@@ -6,7 +6,8 @@ export enum ContentEditActionEnum {
   update = 'update',
   splice = 'splice',
   push = 'push',
-  unset = 'unset'
+  unset = 'unset',
+  hasChanged = 'hasChanged'
 }
 export type ContentEditAction =
   | ContentEditActionInitial
@@ -26,73 +27,94 @@ export interface ContentEditActionInitial extends ContentEditActionBase {
 
 export interface ContentEditActionUpdate extends ContentEditActionBase {
   type: ContentEditActionEnum.update
-  schemaPath: SchemaPath
+  path: SchemaPath
   value: unknown
 }
 
 export interface ContentEditActionSplice extends ContentEditActionBase {
   type: ContentEditActionEnum.splice
-  schemaPath: SchemaPath
+  path: SchemaPath
   start: number
-  delete: number
-  insert: any[]
+  delete?: number
+  insert?: unknown[]
 }
 
 export interface ContentEditActionPush extends ContentEditActionBase {
   type: ContentEditActionEnum.push
-  schemaPath: SchemaPath
-  insert: any[]
+  path: SchemaPath
+  insert: unknown[]
 }
 
 export interface ContentEditActionUnset extends ContentEditActionBase {
   type: ContentEditActionEnum.unset
-  schemaPath: SchemaPath
+  path: SchemaPath
   keys: SchemaPath
 }
 
-export function contentReducer(state: any, action: ContentEditAction) {
+export interface ContentEditActionHasChanged extends ContentEditActionBase {
+  type: ContentEditActionEnum.hasChanged
+  value: boolean
+}
+
+function createSpec(path: SchemaPath, spec: CustomCommands<any>, hasChanged = true) {
+  const record = path.reverse().reduce((accu, item) => {
+    return {[item]: accu}
+  }, spec)
+  return {record, hasChanged: {$set: hasChanged}}
+}
+
+interface State {
+  record: any
+  hasChanged: boolean
+}
+
+export function contentReducer(state: State, action: ContentEditAction) {
   switch (action.type) {
-    case ContentEditActionEnum.setInitialState:
+    case ContentEditActionEnum.hasChanged: {
+      const actionHasChanged = action as ContentEditActionHasChanged
+      return update(state, {hasChanged: {$set: actionHasChanged.value}})
+    }
+
+    case ContentEditActionEnum.setInitialState: {
       const actionInitial = action as ContentEditActionInitial
-      return actionInitial.value
+      return update(state, createSpec([], {$set: actionInitial.value}, false))
+    }
 
-    case ContentEditActionEnum.update:
+    case ContentEditActionEnum.update: {
       const actionUpdate = action as ContentEditActionUpdate
-      let updateOperation: CustomCommands<any> = {$set: actionUpdate.value}
-      updateOperation = actionUpdate.schemaPath.reverse().reduce((accu, item) => {
-        return {[item]: accu}
-      }, updateOperation)
-      return update(state, updateOperation)
+      return update(state, createSpec(actionUpdate.path, {$set: actionUpdate.value}))
+    }
 
-    case ContentEditActionEnum.splice:
+    case ContentEditActionEnum.splice: {
       const actionSplice = action as ContentEditActionSplice
-      let spliceOperation: CustomCommands<any> = {
-        $splice: [[actionSplice.start, actionSplice.delete, ...actionSplice.insert]]
-      }
-      spliceOperation = actionSplice.schemaPath.reverse().reduce((accu, item) => {
-        return {[item]: accu}
-      }, spliceOperation)
-      return update(state, spliceOperation)
+      const insert = actionSplice.insert || []
+      return update(
+        state,
+        createSpec(actionSplice.path, {
+          $splice: [[actionSplice.start, actionSplice.delete || 0, ...insert]]
+        })
+      )
+    }
 
-    case ContentEditActionEnum.push:
+    case ContentEditActionEnum.push: {
       const actionPush = action as ContentEditActionPush
-      let pushOperation: CustomCommands<any> = {
-        $push: actionPush.insert
-      }
-      pushOperation = actionPush.schemaPath.reverse().reduce((accu, item) => {
-        return {[item]: accu}
-      }, pushOperation)
-      return update(state, pushOperation)
+      return update(
+        state,
+        createSpec(actionPush.path, {
+          $push: actionPush.insert
+        })
+      )
+    }
 
-    case ContentEditActionEnum.unset:
+    case ContentEditActionEnum.unset: {
       const actionUnset = action as ContentEditActionUnset
-      let unsetOperation: CustomCommands<any> = {
-        $unset: actionUnset.keys
-      }
-      pushOperation = actionUnset.schemaPath.reverse().reduce((accu, item) => {
-        return {[item]: accu}
-      }, pushOperation)
-      return update(state, unsetOperation)
+      return update(
+        state,
+        createSpec(actionUnset.path, {
+          $unset: actionUnset.keys
+        })
+      )
+    }
 
     default:
       throw new Error()

@@ -48,6 +48,7 @@
     "watch:server:start": "nodemon -r dotenv/config --inspect=0.0.0.0:9230 ./dist/server/index.js",
     "watch:server:build": "tsc -b ./src/shared ./src/server --watch",
     "watch:generate": "yarn generate:api --watch \"./src/**/*.graphql\"",
+    "watch:client-lib": "tsc --project tsconfig-lib.json --watch",
     "crlf": "crlf --set=LF dist/**/*",
     "clean": "shx rm -rf ./dist ./assets ./lib",
     "cleanDevEnv": "shx rm -rf ./node_modules .env",
@@ -123,6 +124,7 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
     "enzyme-to-json": "^3.6.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "fork-ts-checker-webpack-plugin": "^4.1.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.4.2",
@@ -143,7 +145,8 @@
   },
   "eslintConfig": {
     "plugins": [
-      "i18next"
+      "i18next",
+      "react-hooks"
     ],
     "rules": {
       "react/display-name": [

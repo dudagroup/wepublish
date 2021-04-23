@@ -164,5 +164,19 @@ function deriveInputFromEmbedBlockValue(embed: EmbedBlockValue) {
           }/>`
         : ''
     }
+
+    case EmbedType.Undefined: {
+      const hasTitle = !!embed.title
+      const hasHeight = !!embed.height
+      const hasWidth = !!embed.width
+      const hasStyles = !!embed.styleCustom
+      return embed.url
+        ? `<iframe src="${embed.url}"${hasTitle ? ` title="${embed.title}"` : ''}${
+            hasWidth ? ` width="${embed.width}"` : ''
+          }${hasHeight ? ` height="${embed.height}"` : ''}${
+            hasStyles ? ` style="${embed.styleCustom}"` : ''
+          }/>`
+        : ''
+    }
   }
 }

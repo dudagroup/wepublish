@@ -1,7 +1,9 @@
 import React from 'react'
 import {ControlLabel, Form, FormControl, FormGroup, Toggle, HelpBlock, Panel} from 'rsuite'
 import {useTranslation} from 'react-i18next'
-import {ContentA_EditView, ContentA_EditViewValue} from './contentA'
+import {ContentAEditView, ContentAEditViewValue} from './contentA'
+import {ContentEditAction} from '@wepublish/editor/lib/client/control/contentReducer'
+import {Configs} from '@wepublish/editor'
 
 export interface DefaultMetadata {
   readonly title: string
@@ -10,16 +12,18 @@ export interface DefaultMetadata {
 
 export interface ContentMetadataPanelProps {
   readonly defaultMetadata: DefaultMetadata
-  readonly customMetadata: ContentA_EditViewValue
+  readonly customMetadata: ContentAEditViewValue
   onChangeDefaultMetadata?(defaultMetadata: DefaultMetadata): void
-  onChangeCustomMetadata?(customMetadata: ContentA_EditViewValue): void
+  readonly dispatch: React.Dispatch<ContentEditAction>
+  readonly configs: Configs
 }
 
 export function ContentMetadataPanel({
   defaultMetadata,
   customMetadata,
   onChangeDefaultMetadata,
-  onChangeCustomMetadata
+  dispatch,
+  configs
 }: ContentMetadataPanelProps) {
   const {title, shared} = defaultMetadata
   const {t} = useTranslation()
@@ -46,7 +50,7 @@ export function ContentMetadataPanel({
         </FormGroup>
       </Form>
       <hr></hr>
-      <ContentA_EditView value={customMetadata} onChange={onChangeCustomMetadata as any} />
+      <ContentAEditView value={customMetadata} configs={configs} dispatch={dispatch} />
     </Panel>
   )
 }

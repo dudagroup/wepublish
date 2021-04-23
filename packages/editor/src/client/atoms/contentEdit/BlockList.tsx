@@ -1,17 +1,33 @@
 import React from 'react'
-import {ContentModelSchemaFieldList} from '../../interfaces/contentModelSchema'
+import {
+  ContentModelSchemaFieldList,
+  ContentModelSchemaTypes
+} from '../../interfaces/contentModelSchema'
 import {Icon, IconButton, List} from 'rsuite'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
-import {generateEmptyContent} from '../../routes/contentEditor'
 import {ContentEditActionEnum} from '../../control/contentReducer'
+import {generateEmptyContent} from '../../control/contentUtil'
+import BlockTags from './BlockTags'
+import {Reference} from '../../interfaces/referenceType'
 
-export function BlockList({
-  dispatch,
-  model,
-  languageContext,
-  value,
-  schemaPath
-}: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
+export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
+  if (
+    props.model.contentType.type === ContentModelSchemaTypes.reference &&
+    Object.keys(props.model.contentType.types).length === 1
+  ) {
+    return (
+      <BlockTags
+        configs={props.configs}
+        dispatch={props.dispatch}
+        schemaPath={props.schemaPath}
+        value={props.value as Reference[]}
+        languageContext={props.languageContext}
+        model={props.model.contentType}
+      />
+    )
+  }
+
+  const {dispatch, model, languageContext, value, schemaPath} = props
   const childSchemaPath = [...schemaPath]
 
   const content = value.map((item, index, array) => {
@@ -23,7 +39,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index - 1,
               delete: 2,
               insert: [item, array[index - 1]]
@@ -40,7 +56,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index,
               delete: 2,
               insert: [array[index + 1], item]
@@ -57,7 +73,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index + 1,
               delete: 0,
               insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
@@ -70,7 +86,7 @@ export function BlockList({
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
-              schemaPath: childSchemaPath,
+              path: childSchemaPath,
               start: index,
               delete: 1,
               insert: []
@@ -82,6 +98,7 @@ export function BlockList({
         {buttonDown}
 
         <BlockAbstract
+          configs={props.configs}
           schemaPath={[...childSchemaPath, index]}
           dispatch={dispatch}
           model={model.contentType}
@@ -99,7 +116,7 @@ export function BlockList({
         onClick={() => {
           dispatch({
             type: ContentEditActionEnum.push,
-            schemaPath: childSchemaPath,
+            path: childSchemaPath,
             insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
           })
         }}

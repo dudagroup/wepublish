@@ -1,28 +1,21 @@
-import React, {useRef, useEffect, useState, useCallback} from 'react'
+import React, {useRef, useEffect, useState} from 'react'
 
 import {Drawer, IconButton, Icon, Input} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {LinkPageBreakBlockValue} from './types'
-import {isFunctionalUpdate} from '@karma.run/react'
 
 import {useTranslation} from 'react-i18next'
 import {LinkPageBreakEditPanel} from '../panel/linkPageBreakEditPanel'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {
-  createDefaultValue,
-  ImagedEditPanel,
-  ImageSelectPanel,
-  Reference,
-  RichTextBlock,
-  RichTextBlockValue
-} from '@wepublish/editor'
+import {createDefaultValue, ImagedEditPanel, RichTextBlock} from '@wepublish/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
+import {isFunctionalUpdate} from '@karma.run/react'
 export type LinkPageBreakBlockProps = BlockProps<LinkPageBreakBlockValue>
 
 export function LinkPageBreakBlock({
   value,
-  onChange,
   autofocus,
+  onChange,
   disabled
 }: LinkPageBreakBlockProps) {
   const {text, richText, image} = value
@@ -33,20 +26,11 @@ export function LinkPageBreakBlock({
 
   useEffect(() => {
     if (autofocus) focusRef.current?.focus()
-  }, [])
+  }, [autofocus])
 
-  const handleRichTextChange = useCallback(
-    (richText: React.SetStateAction<RichTextBlockValue>) =>
-      onChange(value => ({
-        ...value,
-        richText: isFunctionalUpdate(richText) ? richText(value.richText) : richText
-      })),
-    [onChange]
-  )
-
-  function handleImageChange(image: Reference | undefined) {
-    onChange({...value, image})
-  }
+  // function handleImageChange(image: Reference | undefined) {
+  //   // onChange({...value, image})
+  // }
 
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
@@ -54,7 +38,7 @@ export function LinkPageBreakBlock({
   const {data} = useImageQuery({
     skip: image?.record || !image?.recordId,
     variables: {
-      id: image?.recordId!
+      id: image?.recordId || ''
     }
   })
   const imageRecord: ImageRefFragment = image?.record || data?.image
@@ -74,11 +58,13 @@ export function LinkPageBreakBlock({
         <div style={{flex: '1 0 25%', alignSelf: 'center', marginBottom: '10px'}}>
           <ChooseEditImage
             header={''}
-            image={imageRecord}
+            image={imageRecord as any}
             disabled={false}
             openChooseModalOpen={() => setChooseModalOpen(true)}
             openEditModalOpen={() => setEditModalOpen(true)}
-            removeImage={() => onChange(value => ({...value, image: undefined}))}
+            removeImage={() => {
+              onChange(undefined, ['image'])
+            }}
           />
         </div>
         <div style={{flex: '1 0 70%'}}>
@@ -88,21 +74,31 @@ export function LinkPageBreakBlock({
             style={{fontSize: '24px', marginBottom: 20}}
             value={text}
             disabled={disabled}
-            onChange={text => onChange({...value, text})}
+            onChange={text => {
+              onChange(text, ['text'])
+            }}
           />
 
-          <RichTextBlock value={richText || createDefaultValue()} onChange={handleRichTextChange} />
+          <RichTextBlock
+            value={richText || createDefaultValue()}
+            onChange={richText => {
+              const v = isFunctionalUpdate(richText) ? richText(value.richText) : richText
+              onChange(v, ['richText'])
+            }}
+          />
         </div>
       </div>
       <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
-        <ImageSelectPanel
+        {/* <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
-          onSelect={value => {}}
+          onSelect={value => {
+            //
+          }}
           onSelectRef={value => {
             setChooseModalOpen(false)
             handleImageChange(value)
           }}
-        />
+        /> */}
       </Drawer>
       {image && (
         <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
@@ -117,7 +113,9 @@ export function LinkPageBreakBlock({
         <LinkPageBreakEditPanel
           value={value}
           onClose={() => setEditPanelOpen(false)}
-          onChange={onChange}
+          onChange={onChange => {
+            //
+          }}
         />
       </Drawer>
     </>

@@ -1,4 +1,5 @@
 import {ContentConfig, Config} from '../api'
+import {ContentEditAction} from '../control/contentReducer'
 import {DefaultMetadata} from '../panel/contentMetadataPanel'
 
 export interface ExtensionBase {
@@ -29,14 +30,29 @@ export interface EditorConfig {
 export interface ContentModelExtension<M = any> extends ExtensionBase {
   defaultContent?: any
   defaultMeta?: any
-  getMetaView?: (
-    metadata: DefaultMetadata,
-    customMetadata: M,
-    onChangeMetaData: (defaultMetadata: DefaultMetadata) => void,
-    onChangeCustomMetaData: (customMetadata: M) => void
-  ) => any
-  getContentView?: (content: any, onChange: any, disabled: any) => any
+  previewPath?: string[]
+  getMetaView?: getMetaViewFunction<M>
+  getContentView?: getContentViewFunction
 }
+
+export type getContentViewFunction = (
+  content: any,
+  onChange: any,
+  disabled: any,
+  dispatch: React.Dispatch<ContentEditAction>,
+  configs: Configs,
+  contentModelConfigMerged: ContentModelConfigMerged
+) => JSX.Element
+
+export type getMetaViewFunction<M = any> = (
+  metadata: DefaultMetadata,
+  customMetadata: M,
+  onChangeMetaData: (defaultMetadata: DefaultMetadata) => void,
+  onChangeCustomMetaData: (customMetadata: M) => void,
+  dispatchCustomMetaData: React.Dispatch<ContentEditAction>,
+  configs: Configs,
+  contentModelConfigMerged: ContentModelConfigMerged
+) => JSX.Element
 
 export type ContentModelConfigMerged = ContentConfig & Partial<ContentModelExtension>
 export interface Configs {

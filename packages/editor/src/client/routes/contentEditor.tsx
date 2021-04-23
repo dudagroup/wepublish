@@ -1,18 +1,13 @@
+/* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
 import {Modal, Notification, Icon, IconButton} from 'rsuite'
 import {NavigationBar} from '../atoms/navigationBar'
 import {RouteActionType} from '@karma.run/react'
 
-import {
-  useRouteDispatch,
-  IconButtonLink,
-  ContentListRoute,
-  useRoute,
-  ContentEditRoute
-} from '../route'
+import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
 
 import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPanel'
-import {LanguagesConfig, usePublishContentMutation} from '../api'
+import {usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
 import {PublishCustomContentPanel} from '../panel/contentPublishPanel'
@@ -21,24 +16,22 @@ import {
   getCreateMutation,
   getUpdateMutation,
   getReadQuery,
-  stripTypename
+  stripKeysRecursive
 } from '../utils/queryUtils'
-import {Configs} from '../interfaces/extensionConfig'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
-import {
-  ContentModelSchemaFieldBase,
-  ContentModelSchemaFieldEnum,
-  ContentModelSchemaFieldLeaf,
-  ContentModelSchemaFieldObject,
-  ContentModelSchemaFieldUnion,
-  ContentModelSchemaTypes
-} from '../interfaces/contentModelSchema'
+
 import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {ContentEditActionEnum, contentReducer} from '../control/contentReducer'
+import {generateEmptyRootContent} from '../control/contentUtil'
+import {Configs} from '../interfaces/extensionConfig'
+import {Reference} from '../interfaces/referenceType'
 
 export interface ArticleEditorProps {
   readonly id?: string
+  readonly type: string
   readonly configs: Configs
+  readonly onBack?: () => void
+  readonly onApply?: (ref: Reference) => void
 }
 
 interface ContentBody {
@@ -56,11 +49,9 @@ interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({id, configs}: ArticleEditorProps) {
+export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEditorProps) {
   const {t} = useTranslation()
-  const {current} = useRoute()
   const dispatch = useRouteDispatch()
-  const type = (current?.params as any).type || ''
 
   const contentConfig = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type
@@ -91,12 +82,15 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   })
 
   const intitialCustomMetadata =
-    contentConfig.defaultContent ??
+    contentConfig.defaultMeta ??
     generateEmptyRootContent(contentConfig.schema.meta, configs.apiConfig.languages)
-  const [customMetadata, customMetadataDispatcher] = useReducer(
-    contentReducer,
-    intitialCustomMetadata
-  )
+  const [
+    {record: customMetadata, hasChanged: hasChangedCustomMeta},
+    customMetadataDispatcher
+  ] = useReducer(contentReducer, {
+    record: intitialCustomMetadata,
+    hasChanged: false
+  })
   function setCustomMetadata(value: unknown) {
     customMetadataDispatcher({
       type: ContentEditActionEnum.setInitialState,
@@ -107,7 +101,13 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   const intitialContent =
     contentConfig.defaultContent ??
     generateEmptyRootContent(contentConfig.schema.content, configs.apiConfig.languages)
-  const [contentData, dispatcher] = useReducer(contentReducer, intitialContent)
+  const [{record: contentData, hasChanged: hasChangedContent}, dispatcher] = useReducer(
+    contentReducer,
+    {
+      record: intitialContent,
+      hasChanged: false
+    }
+  )
 
   function setContentData(value: unknown) {
     dispatcher({
@@ -132,20 +132,33 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
   const pendingPublishDate = recordData?.createdAt
 
-  const [hasChanged, setChanged] = useState(false)
-  const unsavedChangesDialog = useUnsavedChangesDialog(hasChanged)
+  const [hasChanged, setHasChanged] = useState(false)
+  function setChanged(val: boolean) {
+    setHasChanged(val)
+    dispatcher({
+      type: ContentEditActionEnum.hasChanged,
+      value: val
+    })
+    customMetadataDispatcher({
+      type: ContentEditActionEnum.hasChanged,
+      value: val
+    })
+  }
+
+  const unsavedChangesDialog = useUnsavedChangesDialog(
+    hasChanged || hasChangedCustomMeta || hasChangedContent
+  )
 
   const handleChange = useCallback(
     (contentData: React.SetStateAction<any>) => {
       setContentData(contentData)
-      setChanged(true)
     },
     [id]
   )
 
   useEffect(() => {
     if (recordData) {
-      const {shared, title, content, meta} = stripTypename(recordData)
+      const {shared, title, content, meta} = stripKeysRecursive(recordData, ['__typename'])
       const publishedAt = new Date()
       if (publishedAt) setPublishedAt(new Date(publishedAt))
 
@@ -168,9 +181,8 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
   }, [createError, updateError, publishError])
 
   function createInput(): any {
-    let {__typename, ...content} = contentData
-
-    let meta = undefined
+    const content = stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
+    let meta
     if (customMetadata) {
       const {__typename: waste, ...rest} = customMetadata
       meta = rest
@@ -199,10 +211,17 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
       const {data} = await createContent({variables: {input}})
 
       if (data) {
-        dispatch({
-          type: RouteActionType.ReplaceRoute,
-          route: ContentEditRoute.create({type, id: data.content[type].create.id})
-        })
+        if (onApply) {
+          onApply({
+            contentType: type,
+            recordId: data.content[type].create.id
+          })
+        } else {
+          dispatch({
+            type: RouteActionType.ReplaceRoute,
+            route: ContentEditRoute.create({type, id: data.content[type].create.id})
+          })
+        }
       }
       setChanged(false)
       Notification.success({
@@ -252,10 +271,18 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
 
   let content = null
   if (contentConfig.getContentView) {
-    content = contentConfig.getContentView(contentData, handleChange, isLoading || isDisabled)
+    content = contentConfig.getContentView(
+      contentData,
+      handleChange,
+      isLoading || isDisabled,
+      dispatcher,
+      configs,
+      contentConfig
+    )
   } else {
     content = (
       <GenericContentView
+        configs={configs}
         record={contentData}
         fields={contentConfig.schema.content}
         languagesConfig={configs.apiConfig.languages}
@@ -274,12 +301,15 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
       },
       (value: any) => {
         setCustomMetadata(value)
-        setChanged(true)
-      }
+      },
+      customMetadataDispatcher,
+      configs,
+      contentConfig
     )
   } else {
     metadataView = (
       <ContentMetadataPanel
+        configs={configs}
         defaultMetadata={metadata}
         customMetaFields={contentConfig.schema.meta}
         customMetadata={customMetadata}
@@ -319,13 +349,17 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
                 route={ContentListRoute.create({type})}
                 onClick={e => {
                   if (!unsavedChangesDialog()) e.preventDefault()
+                  if (onBack) {
+                    e.preventDefault()
+                    onBack()
+                  }
                 }}>
                 {t('articleEditor.overview.back')}
               </IconButtonLink>
             }
             centerChildren={
               <>
-                {metadataView ? (
+                {metadataView && (
                   <IconButton
                     icon={<Icon icon="newspaper-o" />}
                     appearance="subtle"
@@ -334,7 +368,7 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
                     onClick={() => setMetaVisible(true)}>
                     {t('articleEditor.overview.metadata')}
                   </IconButton>
-                ) : null}
+                )}
 
                 {isNew && createData == null ? (
                   <IconButton
@@ -420,89 +454,4 @@ export function ContentEditor({id, configs}: ArticleEditorProps) {
       </Modal>
     </>
   )
-}
-
-export function generateEmptyRootContent(schema: any, lang: LanguagesConfig): unknown {
-  return generateEmptyContent(
-    {
-      type: ContentModelSchemaTypes.object,
-      fields: schema
-    } as any,
-    lang
-  )
-}
-
-export function generateEmptyContent(
-  field: ContentModelSchemaFieldBase,
-  languagesConfig: LanguagesConfig
-): unknown {
-  function defaultVal(defaultVal: unknown) {
-    if ((field as ContentModelSchemaFieldLeaf).i18n) {
-      return languagesConfig?.languages.reduce((accu, lang) => {
-        accu[lang.tag] = defaultVal
-        return accu
-      }, {} as any)
-    }
-    return defaultVal
-  }
-
-  if (!field) {
-    return undefined
-  }
-  if (field.type === ContentModelSchemaTypes.object) {
-    const schema = field as ContentModelSchemaFieldObject
-    if (!schema.fields) {
-      return undefined
-    }
-    const r: {[key: string]: unknown} = {}
-    return Object.entries(schema.fields).reduce((accu, item) => {
-      const [key, val] = item
-      accu[key] = generateEmptyContent(val, languagesConfig)
-      return accu
-    }, r)
-  }
-  if (field.type === ContentModelSchemaTypes.string) {
-    return defaultVal('')
-  }
-  if (field.type === ContentModelSchemaTypes.richText) {
-    return defaultVal([
-      {
-        type: 'paragraph',
-        children: [
-          {
-            text: ''
-          }
-        ]
-      }
-    ])
-  }
-  if (field.type === ContentModelSchemaTypes.enum) {
-    const schema = field as ContentModelSchemaFieldEnum
-    return defaultVal(schema.values[0].value)
-  }
-  if (field.type === ContentModelSchemaTypes.int) {
-    return defaultVal(0)
-  }
-  if (field.type === ContentModelSchemaTypes.float) {
-    return defaultVal(0)
-  }
-  if (field.type === ContentModelSchemaTypes.boolean) {
-    return defaultVal(true)
-  }
-  if (field.type === ContentModelSchemaTypes.dateTime) {
-    return defaultVal(new Date().toISOString())
-  }
-  if (field.type === ContentModelSchemaTypes.list) {
-    return []
-  }
-  if (field.type === ContentModelSchemaTypes.reference) {
-    return defaultVal(null)
-  }
-  if (field.type === ContentModelSchemaTypes.union) {
-    const schema = field as ContentModelSchemaFieldUnion
-    const [key, val] = Object.entries(schema.cases)[0]
-    return {[key]: generateEmptyContent(val, languagesConfig)}
-  }
-
-  return {}
 }

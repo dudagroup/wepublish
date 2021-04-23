@@ -95,37 +95,37 @@ export class MongoDBContentAdapter implements DBContentAdapter {
         }
       : {}
 
-    let stateFilter: FilterQuery<any> = {}
+    const stateFilter: FilterQuery<any> = {}
     let textFilter: FilterQuery<any> = {}
 
-    let metaFilters: FilterQuery<any> = []
+    const metaFilters: FilterQuery<any> = []
 
-    if (filter?.title != undefined) {
-      function cleanupUserInput(string: string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
-      }
+    function cleanupUserInput(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
+    }
+    if (filter?.title !== undefined) {
       textFilter = {title: {$regex: cleanupUserInput(filter.title), $options: 'i'}}
     }
 
-    if (filter?.published != undefined) {
-      stateFilter['published'] = {[filter.published ? '$ne' : '$eq']: null}
+    if (filter?.published !== undefined) {
+      stateFilter.published = {[filter.published ? '$ne' : '$eq']: null}
     }
 
-    if (filter?.draft != undefined) {
-      stateFilter['draft'] = {[filter.draft ? '$ne' : '$eq']: null}
+    if (filter?.draft !== undefined) {
+      stateFilter.draft = {[filter.draft ? '$ne' : '$eq']: null}
     }
 
-    if (filter?.pending != undefined) {
-      stateFilter['pending'] = {[filter.pending ? '$ne' : '$eq']: null}
+    if (filter?.pending !== undefined) {
+      stateFilter.pending = {[filter.pending ? '$ne' : '$eq']: null}
     }
 
-    if (filter?.shared != undefined) {
-      stateFilter['shared'] = {[filter.shared ? '$ne' : '$eq']: false}
+    if (filter?.shared !== undefined) {
+      stateFilter.shared = {[filter.shared ? '$ne' : '$eq']: false}
     }
 
-    let typeFilter: FilterQuery<any> = {}
+    const typeFilter: FilterQuery<any> = {}
     if (type) {
-      typeFilter['contentType'] = {$eq: type}
+      typeFilter.contentType = {$eq: type}
     }
 
     // TODO: Check index usage
@@ -159,15 +159,11 @@ export class MongoDBContentAdapter implements DBContentAdapter {
       limit.type === LimitType.First
         ? contents.length > limitCount
         : cursor.type === InputCursorType.Before
-        ? true
-        : false
 
     const hasPreviousPage =
       limit.type === LimitType.Last
         ? contents.length > limitCount
         : cursor.type === InputCursorType.After
-        ? true
-        : false
 
     const firstContent = nodes[0]
     const lastContent = nodes[nodes.length - 1]

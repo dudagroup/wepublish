@@ -2,9 +2,9 @@ import {
   ContentModel,
   ContentModelSchemaFieldEnum,
   ContentModelSchemaFieldObject,
-  ContentModelSchemaTypes,
-  MediaReferenceType
+  ContentModelSchemaTypes
 } from '@wepublish/api'
+import {typeMediaLibrary} from './modelMediaLibrary'
 
 const title: ContentModelSchemaFieldObject = {
   type: ContentModelSchemaTypes.object,
@@ -33,7 +33,7 @@ const image: ContentModelSchemaFieldObject = {
     image: {
       type: ContentModelSchemaTypes.reference,
       types: {
-        [MediaReferenceType]: {
+        [typeMediaLibrary]: {
           scope: 'local'
         }
       }
@@ -66,7 +66,7 @@ const blockListicleItem: ContentModelSchemaFieldObject = {
     image: {
       type: ContentModelSchemaTypes.reference,
       types: {
-        [MediaReferenceType]: {
+        mediaLibrary: {
           scope: 'local'
         }
       }
@@ -79,7 +79,15 @@ const listicle: ContentModelSchemaFieldObject = {
   fields: {
     items: {
       type: ContentModelSchemaTypes.list,
-      contentType: blockListicleItem
+      contentType: {
+        type: ContentModelSchemaTypes.object,
+        fields: {
+          id: {
+            type: ContentModelSchemaTypes.id
+          },
+          value: blockListicleItem
+        }
+      }
     }
   }
 }
@@ -183,7 +191,7 @@ const linkPageBreak: ContentModelSchemaFieldObject = {
       type: ContentModelSchemaTypes.reference,
       optional: true,
       types: {
-        [MediaReferenceType]: {
+        [typeMediaLibrary]: {
           scope: 'local'
         }
       }
@@ -224,7 +232,7 @@ const teaserGrid: ContentModelSchemaFieldObject = {
           imageID: {
             type: ContentModelSchemaTypes.reference,
             types: {
-              [MediaReferenceType]: {
+              [typeMediaLibrary]: {
                 scope: 'local'
               }
             }
@@ -277,6 +285,43 @@ export const contentModelArticle: ContentModel = {
             teaserGrid
           }
         }
+      }
+    },
+    meta: {
+      title: {
+        type: ContentModelSchemaTypes.string
+      },
+      preTitle: {
+        type: ContentModelSchemaTypes.string
+      },
+      lead: {
+        type: ContentModelSchemaTypes.string
+      },
+      seoTitle: {
+        type: ContentModelSchemaTypes.string
+      },
+      slug: {
+        type: ContentModelSchemaTypes.string
+      },
+      authors: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.reference,
+          types: {
+            author: {
+              scope: 'local'
+            }
+          }
+        }
+      },
+      hideAuthors: {
+        type: ContentModelSchemaTypes.boolean
+      },
+      breaking: {
+        type: ContentModelSchemaTypes.boolean
+      },
+      peering: {
+        type: ContentModelSchemaTypes.boolean
       }
     }
   }

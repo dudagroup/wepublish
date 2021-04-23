@@ -1,17 +1,7 @@
-import {ContentContextEnum} from '../api'
-
-export const MediaReferenceType = '_media'
-
-export interface Reference {
+export interface Reference<T = any> {
   recordId: string
   contentType: string
   peerId?: string
-  record?: any
+  record?: T
   peer?: any
-}
-
-export interface ContentModelSchemaFieldRefTypeMap {
-  [contentType: string]: {
-    scope: ContentContextEnum
-  }
 }
