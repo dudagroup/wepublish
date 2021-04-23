@@ -6,9 +6,9 @@ import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
 import {ImageBlockValue} from './types'
 import {useTranslation} from 'react-i18next'
-import {RefSelectModal, useRecordHook} from '@wepublish/editor'
-import {ContentEditor} from '@wepublish/editor/src'
+import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
+import {MODEL_MEDIA_LIBRARY} from '../../config'
 
 // TODO: Handle disabled prop
 export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<ImageBlockValue>) {
@@ -84,7 +84,7 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
       <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           refConfig={{
-            mediaLibrary: {
+            [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
             }
           }}
@@ -107,7 +107,7 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
               id={image.recordId}
-              type={'mediaLibrary'}
+              type={MODEL_MEDIA_LIBRARY}
               configs={configs}></ContentEditor>
           </Modal.Body>
         </Modal>

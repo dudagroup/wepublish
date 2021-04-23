@@ -12,6 +12,7 @@ import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 import {useTranslation} from 'react-i18next'
 import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
+import {MODEL_MEDIA_LIBRARY} from '../../config'
 
 export function ImageGalleryBlock({
   value,
@@ -172,7 +173,7 @@ export function ImageGalleryBlock({
       <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           refConfig={{
-            mediaLibrary: {
+            [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
             }
           }}
@@ -203,7 +204,7 @@ export function ImageGalleryBlock({
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
               id={imageRef.recordId}
-              type={'mediaLibrary'}
+              type={MODEL_MEDIA_LIBRARY}
               configs={configs}></ContentEditor>
           </Modal.Body>
         </Modal>

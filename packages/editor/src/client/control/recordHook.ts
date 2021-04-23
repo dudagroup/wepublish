@@ -28,11 +28,7 @@ export function useRecordHook<T extends RecordData>(
     variables: {id: reference?.recordId}
   })
 
-  if (
-    data?.content &&
-    contentModelConfig?.previewPath &&
-    contentModelConfig.previewPath.length > 0
-  ) {
+  if (data?.content) {
     const r = Object.values(data.content)[0] as {read: T}
     return r.read
   }
