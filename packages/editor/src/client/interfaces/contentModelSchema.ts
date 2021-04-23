@@ -45,7 +45,7 @@ export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLe
   validations?: {
     maxCharacters: number
   }
-  searchable: boolean
+  searchable?: boolean
 }
 
 export interface ContentModelSchemaFieldBoolean extends ContentModelSchemaFieldLeaf {
@@ -103,7 +103,7 @@ export interface RichTextConfig {
 export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.richText
   config?: RichTextConfig
-  searchable: boolean
+  searchable?: boolean
 }
 
 export interface ContentModelSchemaFieldMedia extends ContentModelSchemaFieldLeaf {
