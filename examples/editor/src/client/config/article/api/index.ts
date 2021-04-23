@@ -101,7 +101,7 @@ export type _Cmp_Article_Record_Content_Blocks_Image = {
 
 export type _Cmp_Article_Record_Content_Blocks_Image_Content = {
   __typename?: '_cmp_article_record_content_blocks_image_content'
-  image?: Maybe<Ref__Media>
+  image?: Maybe<Ref_MediaLibrary>
   caption: Scalars['String']
 }
 
@@ -117,7 +117,7 @@ export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Content = {
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Images = {
   __typename?: '_cmp_article_record_content_blocks_imageGallery_images'
-  image?: Maybe<Ref__Media>
+  image?: Maybe<Ref_MediaLibrary>
   caption: Scalars['String']
 }
 
@@ -137,7 +137,7 @@ export type _Cmp_Article_Record_Content_Blocks_LinkPageBreak_Content = {
   styleOption?: Maybe<Scalars['String']>
   layoutOption?: Maybe<Scalars['String']>
   templateOption?: Maybe<Scalars['String']>
-  image?: Maybe<Ref__Media>
+  image?: Maybe<Ref_MediaLibrary>
 }
 
 export type _Cmp_Article_Record_Content_Blocks_Listicle = {
@@ -160,7 +160,7 @@ export type _Cmp_Article_Record_Content_Blocks_Listicle_Items_Value = {
   __typename?: '_cmp_article_record_content_blocks_listicle_items_value'
   title: Scalars['String']
   richText: Scalars['RichText']
-  image?: Maybe<Ref__Media>
+  image?: Maybe<Ref_MediaLibrary>
 }
 
 export type _Cmp_Article_Record_Content_Blocks_Quote = {
@@ -208,7 +208,7 @@ export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Content = {
 export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers = {
   __typename?: '_cmp_article_record_content_blocks_teaserGrid_teasers'
   style: _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_Style
-  imageID?: Maybe<Ref__Media>
+  imageID?: Maybe<Ref_MediaLibrary>
   preTitle: Scalars['String']
   title: Scalars['String']
   lead: Scalars['String']
@@ -447,19 +447,14 @@ export type _Cmp_ModelA_Record_Content = {
   myStringI18n: I18n_String
   myRichText: Scalars['RichText']
   myRichTextI18n: I18n_RichText
-  myRef?: Maybe<Ref_ModelA_ModelB__Media>
-  myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB__Media>
+  myRef?: Maybe<Ref_ModelA_ModelB>
+  myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB>
+  myRefList: Array<Maybe<Ref_ModelB>>
 }
 
 export type _Cmp_ModelA_Record_Content_MyRef =
   | _Cmp_ModelA_Record_Content_MyRef_ModelA
   | _Cmp_ModelA_Record_Content_MyRef_ModelB
-  | _Cmp_ModelA_Record_Content_MyRef__Media
-
-export type _Cmp_ModelA_Record_Content_MyRef__Media = {
-  __typename?: '_cmp_modelA_record_content_myRef__media'
-  _media?: Maybe<Image>
-}
 
 export type _Cmp_ModelA_Record_Content_MyRef_ModelA = {
   __typename?: '_cmp_modelA_record_content_myRef_modelA'
@@ -477,7 +472,7 @@ export type _Cmp_ModelA_Record_Meta = {
   myStringI18n: I18n_String
   myRichText: Scalars['RichText']
   myRichTextI18n: I18n_RichText
-  myRef?: Maybe<Ref_ModelA_ModelB__Media>
+  myRef?: Maybe<Ref_ModelA_ModelB>
 }
 
 export type _Cmp_ModelAConnection = {
@@ -913,6 +908,7 @@ export type _Cmpi_ModelA_Record_Content = {
   myRichTextI18n: I18n_RichText_Input
   myRef?: Maybe<Ref_Input>
   myRefI18n?: Maybe<I18n_Ref_Input_Input>
+  myRefList: Array<Maybe<Ref_Input>>
 }
 
 export type _Cmpi_ModelA_Record_Create = {
@@ -1557,44 +1553,52 @@ export type I18n_Media = {
   __typename?: 'i18n_media'
   en?: Maybe<Media>
   de?: Maybe<Media>
+  fr?: Maybe<Media>
 }
 
 export type I18n_Media_Input_Input = {
   en?: Maybe<Media_Input>
   de?: Maybe<Media_Input>
+  fr?: Maybe<Media_Input>
 }
 
 export type I18n_Ref_Input_Input = {
   en?: Maybe<Ref_Input>
   de?: Maybe<Ref_Input>
+  fr?: Maybe<Ref_Input>
 }
 
-export type I18n_Ref_ModelA_ModelB__Media = {
-  __typename?: 'i18n_ref_modelA_modelB__media'
-  en?: Maybe<Ref_ModelA_ModelB__Media>
-  de?: Maybe<Ref_ModelA_ModelB__Media>
+export type I18n_Ref_ModelA_ModelB = {
+  __typename?: 'i18n_ref_modelA_modelB'
+  en?: Maybe<Ref_ModelA_ModelB>
+  de?: Maybe<Ref_ModelA_ModelB>
+  fr?: Maybe<Ref_ModelA_ModelB>
 }
 
 export type I18n_RichText = {
   __typename?: 'i18n_RichText'
   en?: Maybe<Scalars['RichText']>
   de?: Maybe<Scalars['RichText']>
+  fr?: Maybe<Scalars['RichText']>
 }
 
 export type I18n_RichText_Input = {
   en?: Maybe<Scalars['RichText']>
   de?: Maybe<Scalars['RichText']>
+  fr?: Maybe<Scalars['RichText']>
 }
 
 export type I18n_String = {
   __typename?: 'i18n_String'
   en?: Maybe<Scalars['String']>
   de?: Maybe<Scalars['String']>
+  fr?: Maybe<Scalars['String']>
 }
 
 export type I18n_String_Input = {
   en?: Maybe<Scalars['String']>
   de?: Maybe<Scalars['String']>
+  fr?: Maybe<Scalars['String']>
 }
 
 export type Image = {
@@ -2736,15 +2740,6 @@ export type QuoteBlockInput = {
   author?: Maybe<Scalars['String']>
 }
 
-export type Ref__Media = {
-  __typename?: 'ref__media'
-  recordId: Scalars['ID']
-  contentType: Scalars['ID']
-  peerId?: Maybe<Scalars['ID']>
-  record?: Maybe<Image>
-  peer?: Maybe<Peer>
-}
-
 export type Ref_Article_Page = {
   __typename?: 'ref_article_page'
   recordId: Scalars['ID']
@@ -2771,6 +2766,15 @@ export type Ref_Input = {
   peer?: Maybe<Scalars['Unknown']>
 }
 
+export type Ref_MediaLibrary = {
+  __typename?: 'ref_mediaLibrary'
+  recordId: Scalars['ID']
+  contentType: Scalars['ID']
+  peerId?: Maybe<Scalars['ID']>
+  record?: Maybe<_Cmp_MediaLibrary_Record>
+  peer?: Maybe<Peer>
+}
+
 export type Ref_ModelA = {
   __typename?: 'ref_modelA'
   recordId: Scalars['ID']
@@ -2780,12 +2784,21 @@ export type Ref_ModelA = {
   peer?: Maybe<Peer>
 }
 
-export type Ref_ModelA_ModelB__Media = {
-  __typename?: 'ref_modelA_modelB__media'
+export type Ref_ModelA_ModelB = {
+  __typename?: 'ref_modelA_modelB'
   recordId: Scalars['ID']
   contentType: Scalars['ID']
   peerId?: Maybe<Scalars['ID']>
   record?: Maybe<_Cmp_ModelA_Record_Content_MyRef>
+  peer?: Maybe<Peer>
+}
+
+export type Ref_ModelB = {
+  __typename?: 'ref_modelB'
+  recordId: Scalars['ID']
+  contentType: Scalars['ID']
+  peerId?: Maybe<Scalars['ID']>
+  record?: Maybe<_Cmp_ModelB_Record>
   peer?: Maybe<Peer>
 }
 

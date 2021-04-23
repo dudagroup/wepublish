@@ -8,6 +8,8 @@ import {
   CanPublishContent
 } from '../graphql/permissions'
 import {
+  ContentModelSchema,
+  ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldRef,
   ContentModelSchemas,
   ContentModelSchemaTypes
@@ -15,6 +17,8 @@ import {
 import {MapType} from '../interfaces/utilTypes'
 import {Reference} from '../interfaces/referenceType'
 import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
+import {destructUnionCase} from '../utility'
+import {LanguageConfig} from '../interfaces/languageConfig'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -234,10 +238,85 @@ async function validateRecursive(
   }
 }
 
-function destructUnionCase(value: any) {
-  const unionCase = Object.keys(value)[0]
-  return {
-    unionCase,
-    val: value[unionCase]
+interface flattenI18nLeafFieldsContext {
+  languageId: string
+}
+
+function flattenI18nLeafFields(
+  validatorContext: flattenI18nLeafFieldsContext,
+  schema: ContentModelSchemas,
+  data: any
+) {
+  switch (schema.type) {
+    case ContentModelSchemaTypes.object: {
+      const obj = data as MapType<any>
+      for (const [key, val] of Object.entries(obj)) {
+        obj[key] = flattenI18nLeafFields(validatorContext, schema.fields[key], val)
+      }
+      break
+    }
+
+    case ContentModelSchemaTypes.list: {
+      const list = data as unknown[]
+      for (const i in list) {
+        list[i] = flattenI18nLeafFields(validatorContext, schema.contentType, list[i])
+      }
+      break
+    }
+
+    case ContentModelSchemaTypes.union: {
+      const union = data as MapType<any>
+      const {unionCase, val} = destructUnionCase(union)
+      union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
+      break
+    }
+
+    default:
+      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
+        return data[validatorContext.languageId]
+      }
+      return data
+  }
+}
+
+function flattenI18nLeafFieldsOnRecord(
+  validatorContext: flattenI18nLeafFieldsContext,
+  modelSchema: ContentModelSchema,
+  record: any
+) {
+  flattenI18nLeafFields(
+    validatorContext,
+    {
+      type: ContentModelSchemaTypes.object,
+      fields: modelSchema.content
+    },
+    record?.content
+  )
+  if (modelSchema.meta) {
+    flattenI18nLeafFields(
+      validatorContext,
+      {
+        type: ContentModelSchemaTypes.object,
+        fields: modelSchema.meta
+      },
+      record?.meta
+    )
+  }
+}
+
+export function flattenI18nLeafFieldsMap(
+  languageConfig: LanguageConfig,
+  modelSchema: ContentModelSchema,
+  language: string
+) {
+  const currentLang = languageConfig.languages.find(l => l.tag === language)
+  let languageId: string
+  if (currentLang) {
+    languageId = currentLang.tag // TODO switch to id
+  } else {
+    languageId = 'en' // languageConfig.defaultLanguageId
+  }
+  return (record: any) => {
+    return flattenI18nLeafFieldsOnRecord({languageId}, modelSchema, record)
   }
 }

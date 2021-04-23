@@ -9,10 +9,7 @@ export const contentModelA: ContentModel = {
       myString: {
         type: ContentModelSchemaTypes.string,
         deprecationReason: "it's very old",
-        instructionsApi: 'this is an ordinary string',
-        instructionsEditor: {
-          en: 'this is an test instruction'
-        }
+        instructions: 'this is an ordinary string'
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
