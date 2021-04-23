@@ -7,6 +7,8 @@ import {getContentView} from './article/articleContentView'
 import {ContentMetadataPanel} from './contentAMetadata'
 import {EditorConfig} from '@wepublish/editor'
 
+export const MODEL_MEDIA_LIBRARY = 'mediaLibrary'
+
 export const config: EditorConfig = {
   navigationBar: {
     articlesActive: false,
@@ -47,8 +49,8 @@ export const config: EditorConfig = {
       getContentView: getContentView
     },
     {
-      identifier: 'mediaLibrary',
-      previewPath: ['media']
+      identifier: MODEL_MEDIA_LIBRARY,
+      previewPath: ['mediaI18n']
     }
   ],
   cusomExtension: [

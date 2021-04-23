@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
 import {Configs, ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
+import {MODEL_MEDIA_LIBRARY} from '../../config'
 
 export interface GalleryListEditPanelProps {
   readonly id?: string
@@ -99,7 +100,7 @@ export function GalleryListItem({
       <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           refConfig={{
-            mediaLibrary: {
+            [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
             }
           }}
@@ -122,7 +123,7 @@ export function GalleryListItem({
             <ContentEditor
               onBack={() => setEditModalOpen(false)}
               id={imageRef.recordId}
-              type={'mediaLibrary'}
+              type={MODEL_MEDIA_LIBRARY}
               configs={configs}></ContentEditor>
           </Modal.Body>
         </Modal>

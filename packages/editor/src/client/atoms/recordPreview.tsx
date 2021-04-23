@@ -26,13 +26,23 @@ export function RecordPreview({record}: RecordPreviewProps) {
   if (!enrichedRecord) {
     return null
   }
+
   if (
     enrichedRecord.content &&
     contentModelConfig?.previewPath &&
     contentModelConfig.previewPath.length > 0
   ) {
-    const previewObject = enrichedRecord.content[contentModelConfig?.previewPath[0]]
-    if (previewObject?.media.image) {
+    // TODO resolve full preview path and support also metha paths
+    const schemaContent = contentModelConfig?.schema.content[contentModelConfig?.previewPath[0]]
+    let previewObject = enrichedRecord.content[contentModelConfig?.previewPath[0]]
+    if (schemaContent.i18n) {
+      const lang = configs.apiConfig.languages.languages.find(
+        l => l.id === configs.apiConfig.languages.defaultLanguageId
+      )
+      previewObject = previewObject[lang?.tag || '']
+    }
+
+    if (previewObject?.media?.image) {
       return <img src={previewObject?.media.url} />
     }
 

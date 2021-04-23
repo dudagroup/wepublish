@@ -6,7 +6,8 @@ import {
   Reference,
   RefSelectModal,
   ReferenceButton,
-  ConfigContext
+  ConfigContext,
+  Configs
 } from '@wepublish/editor'
 import {ContentContextEnum} from './article/api'
 import {I18nWrapper} from './i18nWrapper'
@@ -15,7 +16,7 @@ import {
   ContentEditActionEnum
 } from '@wepublish/editor/lib/client/control/contentReducer'
 import {isFunctionalUpdate} from '@karma.run/react'
-import {Configs} from '@wepublish/editor/src'
+import {MODEL_MEDIA_LIBRARY} from './config'
 
 export interface ContentAEditViewValue {
   readonly myString: string
@@ -37,9 +38,7 @@ export interface ContentAEditViewProps {
 
 export function ContentAEditView({value, dispatch, configs}: ContentAEditViewProps) {
   const config = useContext(ConfigContext)
-  if (!(value && config)) {
-    return null
-  }
+
   const [editLang, setEditLang] = useState(config.apiConfig.languages.languages[0].tag)
   const [viewLang, setViewLang] = useState(config.apiConfig.languages.languages[1].tag)
 
@@ -142,7 +141,7 @@ export function ContentAEditView({value, dispatch, configs}: ContentAEditViewPro
                   ref: {
                     modelA: {scope: ContentContextEnum.Local},
                     modelB: {scope: ContentContextEnum.Local},
-                    mediaLibrary: {scope: ContentContextEnum.Local}
+                    [MODEL_MEDIA_LIBRARY]: {scope: ContentContextEnum.Local}
                   }
                 }}
               />
