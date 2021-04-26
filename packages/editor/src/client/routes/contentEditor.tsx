@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
-import {Modal, Notification, Icon, IconButton} from 'rsuite'
-import {NavigationBar} from '../atoms/navigationBar'
+import {Modal, Notification, Icon, IconButton, Divider} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -316,6 +315,7 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
   return (
     <>
       <div
+        className="wep-editor-container"
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -323,43 +323,51 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
           minHeight: '100%'
         }}>
         <div
+          className="wep-editor-navigation"
           style={{
             display: 'flex',
             position: 'sticky',
             top: 0,
             zIndex: 10,
+            background: '#f7f7fa',
             width: '100%'
           }}>
-          <NavigationBar
-            leftChildren={
-              <IconButtonLink
-                size={'lg'}
-                appearance="subtle"
-                icon={<Icon icon="angle-left" />}
-                route={ContentListRoute.create({type})}
-                onClick={e => {
-                  if (!unsavedChangesDialog()) e.preventDefault()
-                  if (onBack) {
-                    e.preventDefault()
-                    onBack()
-                  }
-                }}>
-                {t('articleEditor.overview.back')}
-              </IconButtonLink>
-            }
-            centerChildren={
-              <>
-                {metadataView && (
-                  <IconButton
-                    icon={<Icon icon="newspaper-o" />}
-                    appearance="subtle"
-                    size={'lg'}
-                    disabled={isDisabled}
-                    onClick={() => setMetaVisible(true)}>
-                    {t('articleEditor.overview.metadata')}
-                  </IconButton>
-                )}
-
+          <div
+            className="wep-editor-navigation-content"
+            style={{
+              display: 'flex',
+              width: 1260,
+              justifyContent: 'space-between'
+            }}>
+            <IconButtonLink
+              size={'lg'}
+              appearance="subtle"
+              style={{
+                marginLeft: '30px'
+              }}
+              icon={<Icon icon="angle-left" />}
+              route={ContentListRoute.create({type})}
+              onClick={e => {
+                if (!unsavedChangesDialog()) e.preventDefault()
+                if (onBack) {
+                  e.preventDefault()
+                  onBack()
+                }
+              }}>
+              {t('articleEditor.overview.back')}
+            </IconButtonLink>
+            <>
+              {metadataView && (
+                <IconButton
+                  icon={<Icon icon="file-text-o" />}
+                  appearance="subtle"
+                  size={'lg'}
+                  disabled={isDisabled}
+                  onClick={() => setMetaVisible(true)}>
+                  {t('articleEditor.overview.metadata')}
+                </IconButton>
+              )}
+              <div className="wep-navi-publishcontrols">
                 {isNew && createData == null ? (
                   <IconButton
                     style={{
@@ -367,7 +375,7 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
                     }}
                     appearance="subtle"
                     size={'lg'}
-                    icon={<Icon icon="save" />}
+                    icon={<Icon icon="magic" />}
                     disabled={isDisabled}
                     onClick={() => handleSave()}>
                     {t('articleEditor.overview.create')}
@@ -385,39 +393,41 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
+
                     <IconButton
                       style={{
                         marginLeft: '20px'
                       }}
                       appearance="subtle"
                       size={'lg'}
-                      icon={<Icon icon="cloud-upload" />}
+                      icon={<Icon icon="file-upload" />}
                       disabled={isDisabled}
                       onClick={() => setPublishDialogOpen(true)}>
                       {t('articleEditor.overview.publish')}
                     </IconButton>
                   </>
                 )}
-              </>
-            }
-          />
+              </div>
+            </>
+          </div>
         </div>
         <div
           style={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'left',
             alignItems: 'center',
-            width: '100%',
-            paddingTop: 40,
-            paddingBottom: 60,
-            paddingLeft: 40,
-            paddingRight: 40
+            width: '100%'
           }}>
           <div
+            className="wep-editor-content"
             style={{
               display: 'flex',
               width: '100%',
-              maxWidth: 880 + 40
+              maxWidth: 960 + 40,
+              paddingTop: 40,
+              paddingRight: 40,
+              paddingBottom: 60,
+              paddingLeft: 40
             }}>
             {content}
           </div>
