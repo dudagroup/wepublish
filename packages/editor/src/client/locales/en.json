@@ -13,12 +13,16 @@
         "add": "Add",
         "loadMore": "Load More",
         "publish": "Publish",
-        "unpublish": "Unpublish"
+        "unpublish": "Unpublish",
+        "yes": "Yes",
+        "no": "No"
       }
     },
     "content": {
       "overview": {
         "title": "Title",
+        "internalTitle": "Internal search title",
+        "internalTitlePlaceholder": "e.g. article title, page title, name of person, media title",
         "preview": "Preview",
         "created": "Created",
         "updated": "Modified",
@@ -127,7 +131,7 @@
         "chooseArticle": "Choose Article",
         "peering": "Peering",
         "peerShare": "Share with peers",
-        "allowPeerPublishing": "Allow peers to publish this article.",
+        "allowPeerPublishing": "Allow peers to publish this article",
         "noAuthorsFound": "No Authors found",
         "loading": "Loading ...",
         "loadMore": "Load More",

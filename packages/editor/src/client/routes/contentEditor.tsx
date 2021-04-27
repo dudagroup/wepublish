@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
-import {Modal, Notification, Icon, IconButton, Divider} from 'rsuite'
+import {Modal, Notification, Icon, IconButton} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -327,6 +327,7 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
           style={{
             display: 'flex',
             position: 'sticky',
+            justifyContent: 'center',
             top: 0,
             zIndex: 10,
             background: '#f7f7fa',
@@ -414,20 +415,29 @@ export function ContentEditor({id, type, configs, onBack}: ArticleEditorProps) {
         <div
           style={{
             display: 'flex',
-            justifyContent: 'left',
+            flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
             width: '100%'
           }}>
           <div
+            className="wep-editor-metalight"
+            style={{
+              width: '100%',
+              maxWidth: 1140,
+              marginTop: 20,
+              border: '1px dashed #e5e5ea',
+              borderRadius: 6
+            }}>
+            {metadataView}
+          </div>
+          <div
             className="wep-editor-content"
             style={{
-              display: 'flex',
-              width: '100%',
-              maxWidth: 960 + 40,
-              paddingTop: 40,
-              paddingRight: 40,
-              paddingBottom: 60,
-              paddingLeft: 40
+              paddingTop: 20,
+              paddingBottom: 20,
+              marginLeft: 30,
+              marginRight: 30
             }}>
             {content}
           </div>
