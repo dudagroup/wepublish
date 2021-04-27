@@ -37,7 +37,7 @@ export function RecordPreview({record}: RecordPreviewProps) {
     let previewObject = enrichedRecord.content[contentModelConfig?.previewPath[0]]
     if (schemaContent.i18n) {
       const lang = configs.apiConfig.languages.languages.find(
-        l => l.id === configs.apiConfig.languages.defaultLanguageId
+        l => l.tag === configs.apiConfig.languages.defaultLanguageTag
       )
       previewObject = previewObject[lang?.tag || '']
     }

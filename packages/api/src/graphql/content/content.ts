@@ -53,6 +53,7 @@ import {
 import {MapType} from '../../interfaces/utilTypes'
 import {generateInputSchema, generateSchema} from './contentGraphQlGenericTypes'
 import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
+import {getFilter} from './contentGraphQLFilter'
 
 export interface PeerContent {
   peerID: string
@@ -95,6 +96,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       nameJoin(idPrivateInput, 'record'),
       model.schema
     )
+    const filter = getFilter(contextOptions.languageConfig, model.identifier, model.schema, false)
 
     // ************************************************************************************************************************
     // Public Query
@@ -331,7 +333,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
-                filter: {type: GraphQLContentFilter},
+                filter: {type: filter},
                 sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
@@ -401,6 +403,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       dePublicationDate: {type: GraphQLDateTime}
     }
   })
+
   query._all = {
     type: GraphQLNonNull(
       new GraphQLObjectType<undefined, Context>({

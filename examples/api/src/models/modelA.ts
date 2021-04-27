@@ -1,5 +1,7 @@
 import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 
+export const MODEL_A = 'modelA'
+
 export const contentModelA: ContentModel = {
   identifier: 'modelA',
   nameSingular: 'Model A',

@@ -1,4 +1,5 @@
 import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
+import {MODEL_A} from './modelA'
 
 export const contentModelB: ContentModel = {
   identifier: 'modelB',
@@ -7,26 +8,50 @@ export const contentModelB: ContentModel = {
   schema: {
     content: {
       myString: {
-        type: ContentModelSchemaTypes.string
+        type: ContentModelSchemaTypes.string,
+        filterable: true,
+        searchable: true
+      },
+      myStringI18n: {
+        type: ContentModelSchemaTypes.string,
+        filterable: true,
+        searchable: true,
+        i18n: true
       },
       myRichText: {
-        type: ContentModelSchemaTypes.richText
+        type: ContentModelSchemaTypes.richText,
+        searchable: true,
+        config: {
+          bold: true,
+          h1: true,
+          orderedList: true,
+          ref: {
+            [MODEL_A]: {
+              scope: 'local'
+            }
+          }
+        }
       },
       myInt: {
-        type: ContentModelSchemaTypes.int
+        type: ContentModelSchemaTypes.int,
+        filterable: true
       },
       myFloat: {
-        type: ContentModelSchemaTypes.float
+        type: ContentModelSchemaTypes.float,
+        filterable: true
       },
       myBoolean: {
-        type: ContentModelSchemaTypes.boolean
+        type: ContentModelSchemaTypes.boolean,
+        filterable: true
       },
       myDateTime: {
         type: ContentModelSchemaTypes.dateTime,
-        optional: true
+        optional: true,
+        filterable: true
       },
       myEnum: {
         type: ContentModelSchemaTypes.enum,
+        filterable: true,
         values: [
           {
             value: 'foo',
@@ -68,10 +93,11 @@ export const contentModelB: ContentModel = {
       myRef: {
         type: ContentModelSchemaTypes.reference,
         types: {
-          modelA: {
+          [MODEL_A]: {
             scope: 'local'
           }
-        }
+        },
+        filterable: true
       }
     }
   }

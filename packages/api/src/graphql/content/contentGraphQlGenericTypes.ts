@@ -33,7 +33,7 @@ import {GraphQLMedia, GraphQLMediaInput} from './media'
 import {nameJoin} from './contentUtils'
 import {GraphQLContentSateEnum} from './contentGraphQLTypes'
 
-interface GenerateTypeConfig {
+interface Context {
   language: LanguageConfig
   isInput: boolean
   isPublic: boolean
@@ -41,7 +41,7 @@ interface GenerateTypeConfig {
 }
 
 function getLeaf(
-  config: GenerateTypeConfig,
+  config: Context,
   contentModelSchemas: ContentModelSchemas,
   graphQLType: GraphQLInputType | GraphQLOutputType
 ) {
@@ -55,44 +55,40 @@ function getLeaf(
   return graphQLType
 }
 
-function generateType(
-  config: GenerateTypeConfig,
-  contentModelSchemas: ContentModelSchemas,
-  name = ''
-) {
+function generateType(context: Context, contentModelSchemas: ContentModelSchemas, name = '') {
   let type: any
 
   switch (contentModelSchemas.type) {
     case ContentModelSchemaTypes.id:
-      type = getLeaf(config, contentModelSchemas, GraphQLID)
+      type = getLeaf(context, contentModelSchemas, GraphQLID)
       break
     case ContentModelSchemaTypes.string:
-      type = getLeaf(config, contentModelSchemas, GraphQLString)
+      type = getLeaf(context, contentModelSchemas, GraphQLString)
       break
     case ContentModelSchemaTypes.boolean:
-      type = getLeaf(config, contentModelSchemas, GraphQLBoolean)
+      type = getLeaf(context, contentModelSchemas, GraphQLBoolean)
       break
     case ContentModelSchemaTypes.int:
-      type = getLeaf(config, contentModelSchemas, GraphQLInt)
+      type = getLeaf(context, contentModelSchemas, GraphQLInt)
       break
     case ContentModelSchemaTypes.float:
-      type = getLeaf(config, contentModelSchemas, GraphQLFloat)
+      type = getLeaf(context, contentModelSchemas, GraphQLFloat)
       break
     case ContentModelSchemaTypes.dateTime:
-      type = getLeaf(config, contentModelSchemas, GraphQLDateTime)
+      type = getLeaf(context, contentModelSchemas, GraphQLDateTime)
       break
     case ContentModelSchemaTypes.list:
-      type = GraphQLList(generateType(config, contentModelSchemas.contentType, name))
+      type = GraphQLList(generateType(context, contentModelSchemas.contentType, name))
       break
     case ContentModelSchemaTypes.union:
       // Let's evaluate and maybe switch to the new tagged type https://github.com/graphql/graphql-spec/pull/733
-      if (config.isInput) {
+      if (context.isInput) {
         type = new GraphQLInputObjectType({
           name,
           fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
             val.optional = true
             accu[`${key}`] = {
-              type: generateType(config, val, nameJoin(name, key))
+              type: generateType(context, val, nameJoin(name, key))
             }
             return accu
           }, {} as GraphQLInputFieldConfigMap)
@@ -110,7 +106,7 @@ function generateType(
                     name: nameJoin(unionCaseName, 'content'),
                     fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
                       accu[`${key}`] = {
-                        type: generateType(config, val, nameJoin(unionCaseName, key)),
+                        type: generateType(context, val, nameJoin(unionCaseName, key)),
                         deprecationReason: val.deprecationReason,
                         description: val.instructions
                       }
@@ -138,12 +134,12 @@ function generateType(
       })
       break
     case ContentModelSchemaTypes.object:
-      if (config.isInput) {
+      if (context.isInput) {
         type = new GraphQLInputObjectType({
           name,
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
             accu[`${key}`] = {
-              type: generateType(config, val, nameJoin(name, key)),
+              type: generateType(context, val, nameJoin(name, key)),
               description: val.instructions
             }
             return accu
@@ -154,7 +150,7 @@ function generateType(
           name,
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
             accu[`${key}`] = {
-              type: generateType(config, val, nameJoin(name, key)),
+              type: generateType(context, val, nameJoin(name, key)),
               deprecationReason: val.deprecationReason,
               description: val.instructions
             }
@@ -165,28 +161,28 @@ function generateType(
       break
 
     case ContentModelSchemaTypes.richText:
-      type = getLeaf(config, contentModelSchemas, GraphQLRichText)
+      type = getLeaf(context, contentModelSchemas, GraphQLRichText)
       break
 
     case ContentModelSchemaTypes.reference:
       contentModelSchemas.optional = true
-      if (config.isInput) {
-        type = getLeaf(config, contentModelSchemas, GraphQLReferenceInput)
+      if (context.isInput) {
+        type = getLeaf(context, contentModelSchemas, GraphQLReferenceInput)
       } else {
         type = getLeaf(
-          config,
+          context,
           contentModelSchemas,
-          getReference(name, contentModelSchemas, config.contentModels)
+          getReference(name, contentModelSchemas, context.contentModels)
         )
       }
       break
 
     case ContentModelSchemaTypes.media:
       contentModelSchemas.optional = true
-      if (config.isInput) {
-        type = getLeaf(config, contentModelSchemas, GraphQLMediaInput)
+      if (context.isInput) {
+        type = getLeaf(context, contentModelSchemas, GraphQLMediaInput)
       } else {
-        type = getLeaf(config, contentModelSchemas, GraphQLMedia)
+        type = getLeaf(context, contentModelSchemas, GraphQLMedia)
       }
       break
   }

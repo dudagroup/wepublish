@@ -10,15 +10,13 @@ import {
 import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
-  ContentModelSchemaFieldRef,
   ContentModelSchemas,
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
 import {MapType} from '../interfaces/utilTypes'
-import {Reference} from '../interfaces/referenceType'
-import {MediaInput, MediaPersisted} from '../interfaces/mediaType'
 import {destructUnionCase} from '../utility'
 import {LanguageConfig} from '../interfaces/languageConfig'
+import {validateInput, ValidatorContext} from './contentModelBusinessInputValidation'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -39,8 +37,9 @@ export class BusinessLogic {
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
-    await validateInput({context: this.context}, schema.schema.content, input.content)
-    await validateInput({context: this.context}, schema.schema.meta, input.meta)
+    const validatorContext: ValidatorContext = {context: this.context, searchTerms: {}}
+    await validateInput(validatorContext, schema.schema.content, input.content)
+    await validateInput(validatorContext, schema.schema.meta, input.meta)
 
     return this.context.dbAdapter.content.createContent({
       input: {
@@ -52,7 +51,8 @@ export class BusinessLogic {
         createdAt: new Date(),
         modifiedAt: new Date(),
         publicationDate: undefined,
-        dePublicationDate: undefined
+        dePublicationDate: undefined,
+        searchIndex: validatorContext.searchTerms
       }
     })
   }
@@ -65,8 +65,9 @@ export class BusinessLogic {
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
-    await validateInput({context: this.context}, schema.schema.content, input.content)
-    await validateInput({context: this.context}, schema.schema.meta, input.meta)
+    const validatorContext: ValidatorContext = {context: this.context, searchTerms: {}}
+    await validateInput(validatorContext, schema.schema.content, input.content)
+    await validateInput(validatorContext, schema.schema.meta, input.meta)
 
     return this.context.dbAdapter.content.updateContent({
       input: {
@@ -74,7 +75,8 @@ export class BusinessLogic {
         contentType: identifier,
         revision: 1,
         state: DBContentState.Draft,
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
+        searchIndex: validatorContext.searchTerms
       }
     })
   }
@@ -118,123 +120,6 @@ export class BusinessLogic {
         modifiedAt: new Date()
       }
     })
-  }
-}
-
-interface ValidatorContext {
-  context: Omit<Context, 'business'>
-}
-async function validateInput(
-  validatorContext: ValidatorContext,
-  schema?: MapType<ContentModelSchemas>,
-  data?: MapType<any>
-) {
-  if (!(data && schema)) return
-  for (const [key, val] of Object.entries(schema)) {
-    await validateRecursive(validatorContext, val, data[key])
-  }
-}
-
-async function validateRecursive(
-  validatorContext: ValidatorContext,
-  schema: ContentModelSchemas,
-  data: unknown
-) {
-  async function handleRef(data: unknown, schema: ContentModelSchemaFieldRef) {
-    const ref = data as Reference
-    if (ref?.recordId) {
-      let record
-      try {
-        const content = await validatorContext.context.loaders.content.load(ref.recordId)
-        if (Object.keys(schema.types).some(type => type === content?.contentType)) {
-          record = content
-        }
-      } catch (error) {}
-      if (!record) {
-        throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
-      }
-
-      delete ref.record
-      delete ref.peer
-    }
-  }
-
-  async function handleMedia(data: unknown) {
-    const mediaInput = data as MediaInput
-    const mediaDb = data as MediaPersisted
-
-    if (mediaInput?.file) {
-      const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
-      mediaDb.id = image.id
-      mediaDb.createdAt = new Date()
-      mediaDb.modifiedAt = new Date()
-      mediaDb.filename = image.filename
-      mediaDb.fileSize = image.fileSize
-      mediaDb.extension = image.extension
-      mediaDb.mimeType = image.mimeType
-      if (image.format && image.width && image.height) {
-        mediaDb.image = {
-          format: image.format,
-          height: image.width,
-          width: image.height
-        }
-      } else {
-        mediaDb.image = null
-      }
-
-      delete mediaInput.file
-      delete mediaInput.media
-    }
-  }
-
-  switch (schema.type) {
-    case ContentModelSchemaTypes.object: {
-      const obj = data as MapType<any>
-      for (const [key, val] of Object.entries(obj)) {
-        await validateRecursive(validatorContext, schema.fields[key], val)
-      }
-      break
-    }
-
-    case ContentModelSchemaTypes.list: {
-      const list = data as unknown[]
-      for (const item of list) {
-        await validateRecursive(validatorContext, schema.contentType, item)
-      }
-      break
-    }
-
-    case ContentModelSchemaTypes.union: {
-      const union = data as MapType<any>
-      const {unionCase, val} = destructUnionCase(union)
-      await validateRecursive(validatorContext, schema.cases[unionCase], val)
-      break
-    }
-
-    case ContentModelSchemaTypes.reference: {
-      if (schema.i18n) {
-        for (const val of Object.values(data as any)) {
-          await handleRef(val, schema)
-        }
-        break
-      }
-      await handleRef(data, schema)
-      break
-    }
-
-    case ContentModelSchemaTypes.media: {
-      if (schema.i18n) {
-        for (const val of Object.values(data as any)) {
-          await handleMedia(val)
-        }
-        break
-      }
-      await handleMedia(data)
-      break
-    }
-
-    default:
-      break
   }
 }
 
@@ -314,7 +199,7 @@ export function flattenI18nLeafFieldsMap(
   if (currentLang) {
     languageId = currentLang.tag // TODO switch to id
   } else {
-    languageId = 'en' // languageConfig.defaultLanguageId
+    languageId = 'en' // languageConfig.defaultLanguageTag
   }
   return (record: any) => {
     return flattenI18nLeafFieldsOnRecord({languageId}, modelSchema, record)

@@ -1,3 +1,4 @@
+import {MapType} from '../interfaces/utilTypes'
 import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
 
 export enum DBContentState {
@@ -21,6 +22,7 @@ export interface Content<T = any> {
 
   shared: boolean
   title: string
+  searchIndex?: MapType<string>
 
   content: T
   meta: T
@@ -66,10 +68,9 @@ export interface PublicContent extends Content {
 
 export interface ContentFilter {
   readonly title?: string
-  readonly draft?: boolean
-  readonly published?: boolean
-  readonly pending?: boolean
+  readonly search?: string
   readonly shared?: boolean
+  [key: string]: any
 }
 
 export interface PublicContentFilter {

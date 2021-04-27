@@ -16,7 +16,7 @@ export interface ContentModelSchemaFieldBase {
 
 export interface ContentModelSchemaFieldLeaf extends ContentModelSchemaFieldBase {
   i18n?: boolean
-  argument?: boolean
+  filterable?: boolean
 }
 
 export enum ContentModelSchemaTypes {
@@ -100,9 +100,10 @@ export interface RichTextConfig {
   ref?: ContentModelSchemaFieldRefTypeMap
 }
 
-export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldLeaf {
+export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.richText
   config?: RichTextConfig
+  i18n?: boolean
   searchable?: boolean
 }
 

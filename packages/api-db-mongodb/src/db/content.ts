@@ -11,12 +11,12 @@ import {
   SortOrder,
   ContentSort
 } from '@wepublish/api'
-
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
-
 import {CollectionName, DBContent} from './schema'
 import {MaxResultsPerPage} from './defaults'
 import {Cursor} from './cursor'
+
+const PATH_DELIMITER = '__'
 
 export class MongoDBContentAdapter implements DBContentAdapter {
   private contents: Collection<DBContent>
@@ -95,32 +95,35 @@ export class MongoDBContentAdapter implements DBContentAdapter {
         }
       : {}
 
-    const stateFilter: FilterQuery<any> = {}
     let textFilter: FilterQuery<any> = {}
-
-    const metaFilters: FilterQuery<any> = []
 
     function cleanupUserInput(string: string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
     }
-    if (filter?.title !== undefined) {
-      textFilter = {title: {$regex: cleanupUserInput(filter.title), $options: 'i'}}
-    }
 
-    if (filter?.published !== undefined) {
-      stateFilter.published = {[filter.published ? '$ne' : '$eq']: null}
-    }
+    const genericFilter: any = {}
+    if (filter) {
+      const {title, search, shared, ...genericFilters} = filter
+      if (title !== undefined) {
+        textFilter = {title: {$regex: cleanupUserInput(title), $options: 'i'}}
+      }
+      if (search !== undefined) {
+        textFilter = {searchIndex: {$regex: cleanupUserInput(search), $options: 'i'}}
+      }
 
-    if (filter?.draft !== undefined) {
-      stateFilter.draft = {[filter.draft ? '$ne' : '$eq']: null}
-    }
-
-    if (filter?.pending !== undefined) {
-      stateFilter.pending = {[filter.pending ? '$ne' : '$eq']: null}
-    }
-
-    if (filter?.shared !== undefined) {
-      stateFilter.shared = {[filter.shared ? '$ne' : '$eq']: false}
+      if (genericFilters) {
+        Object.entries(genericFilters).reduce((accu, item) => {
+          const [fieldName, operators] = item
+          for (const [operator, value] of Object.entries(operators)) {
+            if (value !== undefined) {
+              accu[`${fieldName.replace(new RegExp(PATH_DELIMITER, 'g'), '.')}`] = {
+                [`$${operator}`]: value
+              }
+            }
+          }
+          return accu
+        }, genericFilter)
+      }
     }
 
     const typeFilter: FilterQuery<any> = {}
@@ -132,17 +135,16 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     const [totalCount, contents] = await Promise.all([
       this.contents.countDocuments(
         {
-          $and: [typeFilter, stateFilter, metaFilters.length ? {$and: metaFilters} : {}, textFilter]
-        } as any,
+          $and: [typeFilter, textFilter]
+        },
         {collation: {locale: this.locale, strength: 2}} as MongoCountPreferences
       ), // MongoCountPreferences doesn't include collation
 
       this.contents
         .aggregate([], {collation: {locale: this.locale, strength: 2}})
         .match(typeFilter)
-        .match(stateFilter)
-        .match(metaFilters.length ? {$and: metaFilters} : {})
         .match(textFilter)
+        .match(genericFilter)
         .match(cursorFilter)
         .sort({[sortField]: sortDirection, _id: sortDirection})
         .limit(limitCount + 1)

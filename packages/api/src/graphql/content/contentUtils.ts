@@ -4,5 +4,5 @@ export const ContentModelPrefixPrivateInput = '_cmpi'
 const SEPARATOR = '_'
 
 export function nameJoin(...slug: string[]) {
-  return slug.join(SEPARATOR)
+  return slug.filter(s => s).join(SEPARATOR)
 }

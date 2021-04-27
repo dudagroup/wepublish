@@ -299,20 +299,17 @@ async function asyncMain() {
       contentModelArticle
     ],
     languageConfig: {
-      defaultLanguageId: '1',
+      defaultLanguageTag: 'en',
       languages: [
         {
-          id: '1',
           description: 'en',
           tag: 'en'
         },
         {
-          id: '2',
           description: 'de',
           tag: 'de'
         },
         {
-          id: '3',
           description: 'fr',
           tag: 'fr'
         }

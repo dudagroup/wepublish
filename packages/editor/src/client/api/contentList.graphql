@@ -62,12 +62,6 @@ mutation PublishContent(
     _all {
       publish(id: $id, publishAt: $publishAt, publishedAt: $publishedAt, updatedAt: $updatedAt) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }
@@ -78,12 +72,6 @@ mutation UnpublishContent($id: ID!) {
     _all {
       unpublish(id: $id) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }

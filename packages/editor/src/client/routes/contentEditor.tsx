@@ -247,9 +247,10 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
           }
         })
 
-        if (publishData?.content?._all?.publish?.published?.publishedAt) {
-          setPublishedAt(new Date(publishData?.content?._all?.publish?.published.publishedAt))
-        }
+        // if (publishData?.content?._all?.publish?.published?.publishedAt) {
+        //   setPublishedAt(new Date(publishData?.content?._all?.publish?.published.publishedAt))
+        // }
+        console.log('TODO implement publishData', publishData)
       }
 
       setChanged(false)

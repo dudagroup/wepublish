@@ -41,7 +41,7 @@ export type _Cmp_ArticleListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ContentFilter>;
+  filter?: Maybe<Filter_Article>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
 };
@@ -295,7 +295,7 @@ export type _Cmp_AuthorListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ContentFilter>;
+  filter?: Maybe<Filter_Author>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
 };
@@ -354,7 +354,7 @@ export type _Cmp_MediaLibraryListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ContentFilter>;
+  filter?: Maybe<Filter_MediaLibrary>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
 };
@@ -410,7 +410,7 @@ export type _Cmp_ModelAListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ContentFilter>;
+  filter?: Maybe<Filter_ModelA>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
 };
@@ -492,7 +492,7 @@ export type _Cmp_ModelBListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ContentFilter>;
+  filter?: Maybe<Filter_ModelB>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
 };
@@ -515,6 +515,7 @@ export type _Cmp_ModelB_Record = {
 export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
   myString: Scalars['String'];
+  myStringI18n: I18n_String;
   myRichText: Scalars['RichText'];
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
@@ -987,6 +988,7 @@ export type _Cmpi_ModelBUnpublishArgs = {
 
 export type _Cmpi_ModelB_Record_Content = {
   myString: Scalars['String'];
+  myStringI18n: I18n_String_Input;
   myRichText: Scalars['RichText'];
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
@@ -1056,34 +1058,11 @@ export type AllReadArgs = {
   id: Scalars['ID'];
 };
 
-export type AllCustomContents = {
-  __typename?: 'AllCustomContents';
-  id: Scalars['ID'];
-  shared: Scalars['Boolean'];
-  createdAt: Scalars['DateTime'];
-  modifiedAt: Scalars['DateTime'];
-  draft?: Maybe<AllCustomContentsRevision>;
-  published?: Maybe<AllCustomContentsRevision>;
-  pending?: Maybe<AllCustomContentsRevision>;
-  latest: AllCustomContentsRevision;
-};
-
-export type AllCustomContentsRevision = {
-  __typename?: 'AllCustomContentsRevision';
-  revision: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
-  title: Scalars['String'];
-  slug: Scalars['Slug'];
-};
-
 export type AllMutations = {
   __typename?: 'AllMutations';
   delete?: Maybe<Scalars['Boolean']>;
-  publish?: Maybe<AllCustomContents>;
-  unpublish?: Maybe<AllCustomContents>;
+  publish: ContentModelSummary;
+  unpublish: ContentModelSummary;
 };
 
 
@@ -1547,6 +1526,94 @@ export type FacebookVideoBlockInput = {
   videoID: Scalars['String'];
 };
 
+export type Filter_Article = {
+  title?: Maybe<Scalars['String']>;
+};
+
+export type Filter_Author = {
+  title?: Maybe<Scalars['String']>;
+};
+
+export type Filter_MediaLibrary = {
+  title?: Maybe<Scalars['String']>;
+};
+
+export type Filter_ModelA = {
+  title?: Maybe<Scalars['String']>;
+};
+
+export type Filter_ModelB = {
+  title?: Maybe<Scalars['String']>;
+  content__myString?: Maybe<FilterText>;
+  content__myStringI18n?: Maybe<FilterText>;
+  content__myInt?: Maybe<FilterInt>;
+  content__myFloat?: Maybe<FilterFloat>;
+  content__myBoolean?: Maybe<FilterBoolean>;
+  content__myDateTime?: Maybe<FilterDate>;
+  content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
+  content__myRef__recordId?: Maybe<FilterReference>;
+};
+
+export type Filter_ModelB_Content_MyEnum = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyEnum_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyEnum_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyEnum_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type FilterBoolean = {
+  /** equal to */
+  eq?: Maybe<Scalars['Boolean']>;
+};
+
+export type FilterDate = {
+  /** greater than */
+  gt?: Maybe<Scalars['DateTime']>;
+  /** less than */
+  lt?: Maybe<Scalars['DateTime']>;
+  /** less than */
+  eq?: Maybe<Scalars['DateTime']>;
+};
+
+export type FilterFloat = {
+  /** greater than */
+  gt?: Maybe<Scalars['Float']>;
+  /** less than */
+  lt?: Maybe<Scalars['Float']>;
+  /** less than */
+  eq?: Maybe<Scalars['Float']>;
+};
+
+export type FilterInt = {
+  /** greater than */
+  gt?: Maybe<Scalars['Int']>;
+  /** less than */
+  lt?: Maybe<Scalars['Int']>;
+  /** less than */
+  eq?: Maybe<Scalars['Int']>;
+};
+
+export type FilterReference = {
+  /** in */
+  in?: Maybe<Array<Scalars['ID']>>;
+  /** not in */
+  nin?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type FilterText = {
+  /** equal to */
+  eq?: Maybe<Scalars['String']>;
+  /** not equal to */
+  ne?: Maybe<Scalars['String']>;
+};
+
 export type GalleryImageEdge = {
   __typename?: 'GalleryImageEdge';
   caption?: Maybe<Scalars['String']>;
@@ -1769,14 +1836,13 @@ export enum InvoiceSort {
 
 export type LanguageConfig = {
   __typename?: 'LanguageConfig';
-  id: Scalars['ID'];
   tag: Scalars['String'];
   description: Scalars['String'];
 };
 
 export type LanguagesConfig = {
   __typename?: 'LanguagesConfig';
-  defaultLanguageId: Scalars['String'];
+  defaultLanguageTag: Scalars['String'];
   languages: Array<LanguageConfig>;
 };
 
@@ -3930,17 +3996,10 @@ export type PublishContentMutation = (
     { __typename?: 'content_mutations' }
     & { _all: (
       { __typename?: 'AllMutations' }
-      & { publish?: Maybe<(
-        { __typename?: 'AllCustomContents' }
-        & Pick<AllCustomContents, 'id'>
-        & { pending?: Maybe<(
-          { __typename?: 'AllCustomContentsRevision' }
-          & Pick<AllCustomContentsRevision, 'publishAt'>
-        )>, published?: Maybe<(
-          { __typename?: 'AllCustomContentsRevision' }
-          & Pick<AllCustomContentsRevision, 'publishedAt'>
-        )> }
-      )> }
+      & { publish: (
+        { __typename?: 'ContentModelSummary' }
+        & Pick<ContentModelSummary, 'id'>
+      ) }
     ) }
   ) }
 );
@@ -3956,17 +4015,10 @@ export type UnpublishContentMutation = (
     { __typename?: 'content_mutations' }
     & { _all: (
       { __typename?: 'AllMutations' }
-      & { unpublish?: Maybe<(
-        { __typename?: 'AllCustomContents' }
-        & Pick<AllCustomContents, 'id'>
-        & { pending?: Maybe<(
-          { __typename?: 'AllCustomContentsRevision' }
-          & Pick<AllCustomContentsRevision, 'publishAt'>
-        )>, published?: Maybe<(
-          { __typename?: 'AllCustomContentsRevision' }
-          & Pick<AllCustomContentsRevision, 'publishedAt'>
-        )> }
-      )> }
+      & { unpublish: (
+        { __typename?: 'ContentModelSummary' }
+        & Pick<ContentModelSummary, 'id'>
+      ) }
     ) }
   ) }
 );
@@ -3999,10 +4051,10 @@ export type ConfigQuery = (
       & Pick<ContentConfig, 'id' | 'identifier' | 'namePlural' | 'nameSingular' | 'schema'>
     )>, languages: (
       { __typename?: 'LanguagesConfig' }
-      & Pick<LanguagesConfig, 'defaultLanguageId'>
+      & Pick<LanguagesConfig, 'defaultLanguageTag'>
       & { languages: Array<(
         { __typename?: 'LanguageConfig' }
-        & Pick<LanguageConfig, 'id' | 'tag' | 'description'>
+        & Pick<LanguageConfig, 'tag' | 'description'>
       )> }
     ) }
   ) }
@@ -6477,12 +6529,6 @@ export const PublishContentDocument = gql`
     _all {
       publish(id: $id, publishAt: $publishAt, publishedAt: $publishedAt, updatedAt: $updatedAt) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }
@@ -6522,12 +6568,6 @@ export const UnpublishContentDocument = gql`
     _all {
       unpublish(id: $id) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }
@@ -6603,9 +6643,8 @@ export const ConfigDocument = gql`
       schema
     }
     languages {
-      defaultLanguageId
+      defaultLanguageTag
       languages {
-        id
         tag
         description
       }
