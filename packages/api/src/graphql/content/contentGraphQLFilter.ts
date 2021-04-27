@@ -86,41 +86,48 @@ function collectArgFields(
 ) {
   const contentModelSchemaFieldLeaf = contentModelSchemas as ContentModelSchemaFieldLeaf
 
+  function generatePath() {
+    if ((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n) {
+      return ['i18n', ...path].join(PATH_DELIMITER)
+    }
+    return path.join(PATH_DELIMITER)
+  }
+
   if (contentModelSchemaFieldLeaf.filterable) {
     switch (contentModelSchemas.type) {
       case ContentModelSchemaTypes.id:
       case ContentModelSchemaTypes.string:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: GraphQlFilterText
         }
         break
 
       case ContentModelSchemaTypes.boolean:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: GraphQlFilterBoolean
         }
         break
 
       case ContentModelSchemaTypes.int:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: GraphQlFilterInt
         }
         break
 
       case ContentModelSchemaTypes.float:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: GraphQlFilterFloat
         }
         break
 
       case ContentModelSchemaTypes.dateTime:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: GraphQlFilterDate
         }
         break
 
       case ContentModelSchemaTypes.enum:
-        context.fields[path.join(PATH_DELIMITER)] = {
+        context.fields[generatePath()] = {
           type: getGraphQlFilterEnum(name, contentModelSchemas)
         }
         break

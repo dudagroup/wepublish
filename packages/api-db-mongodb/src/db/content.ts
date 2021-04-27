@@ -15,6 +15,7 @@ import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 import {CollectionName, DBContent} from './schema'
 import {MaxResultsPerPage} from './defaults'
 import {Cursor} from './cursor'
+import {LanguageConfig} from '@wepublish/api/lib/interfaces/languageConfig'
 
 const PATH_DELIMITER = '__'
 
@@ -63,14 +64,10 @@ export class MongoDBContentAdapter implements DBContentAdapter {
   }
 
   // TODO: Deduplicate getImages, getPages, getAuthors
-  async getContents({
-    filter,
-    sort,
-    order,
-    cursor,
-    limit,
-    type
-  }: GetContentsArgs): Promise<ConnectionResult<any>> {
+  async getContents(
+    {filter, sort, order, cursor, limit, type, language}: GetContentsArgs,
+    languageConfig: LanguageConfig
+  ): Promise<ConnectionResult<any>> {
     const limitCount = Math.min(limit.count, MaxResultsPerPage)
     const sortDirection = limit.type === LimitType.First ? order : -order
 
@@ -116,7 +113,12 @@ export class MongoDBContentAdapter implements DBContentAdapter {
           const [fieldName, operators] = item
           for (const [operator, value] of Object.entries(operators)) {
             if (value !== undefined) {
-              accu[`${fieldName.replace(new RegExp(PATH_DELIMITER, 'g'), '.')}`] = {
+              const path = fieldName.split(PATH_DELIMITER)
+              if (path[0] === 'i18n') {
+                path.shift()
+                path.push(language || languageConfig.defaultLanguageTag)
+              }
+              accu[path.join('.')] = {
                 [`$${operator}`]: value
               }
             }

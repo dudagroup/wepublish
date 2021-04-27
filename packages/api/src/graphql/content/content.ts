@@ -150,14 +150,17 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 {filter, sort, order, after, before, first, last, language},
                 {dbAdapter}
               ) => {
-                const result = await dbAdapter.content.getContents({
-                  type: model.identifier,
-                  filter,
-                  sort,
-                  order,
-                  cursor: InputCursor(after, before),
-                  limit: Limit(first, last)
-                })
+                const result = await dbAdapter.content.getContents(
+                  {
+                    type: model.identifier,
+                    filter,
+                    sort,
+                    order,
+                    cursor: InputCursor(after, before),
+                    limit: Limit(first, last)
+                  },
+                  contextOptions.languageConfig
+                )
                 result.nodes.map(
                   flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
                 )
@@ -335,11 +338,12 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 last: {type: GraphQLInt},
                 filter: {type: filter},
                 sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
-                order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
+                order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
+                language: {type: graphQlLanguages}
               },
               resolve(
-                root,
-                {filter, sort, order, after, before, first, last},
+                source,
+                {filter, sort, order, language, after, before, first, last},
                 {authenticate, dbAdapter}
               ) {
                 const {roles} = authenticate()
@@ -349,14 +353,18 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   throw new NotAuthorisedError()
                 }
 
-                return dbAdapter.content.getContents({
-                  type: model.identifier,
-                  filter: {...filter, shared: !canGetContents ? true : undefined},
-                  sort,
-                  order,
-                  cursor: InputCursor(after, before),
-                  limit: Limit(first, last)
-                })
+                return dbAdapter.content.getContents(
+                  {
+                    type: model.identifier,
+                    filter: {...filter, shared: !canGetContents ? true : undefined},
+                    sort,
+                    order,
+                    cursor: InputCursor(after, before),
+                    limit: Limit(first, last),
+                    language
+                  },
+                  contextOptions.languageConfig
+                )
               }
             }
           }
@@ -419,6 +427,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
             args: {
               type: {type: GraphQLNonNull(GraphQLContentTypeEnum)},
               context: {type: GraphQLContentContextEnum},
+              language: {type: GraphQLInt},
               after: {type: GraphQLID},
               before: {type: GraphQLID},
               first: {type: GraphQLInt},
@@ -651,14 +660,17 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               const canGetSharedContents = isAuthorised(CanGetSharedContents, roles)
 
               if (canGetContents || canGetSharedContents) {
-                const r = await dbAdapter.content.getContents({
-                  type,
-                  filter: {...filter, shared: !canGetContents ? true : undefined},
-                  sort,
-                  order,
-                  cursor: InputCursor(after, before),
-                  limit: Limit(first, last)
-                })
+                const r = await dbAdapter.content.getContents(
+                  {
+                    type,
+                    filter: {...filter, shared: !canGetContents ? true : undefined},
+                    sort,
+                    order,
+                    cursor: InputCursor(after, before),
+                    limit: Limit(first, last)
+                  },
+                  contextOptions.languageConfig
+                )
                 r.nodes = r.nodes.map(content => {
                   return {content} as any
                 })

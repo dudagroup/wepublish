@@ -1,3 +1,4 @@
+import {LanguageConfig} from '../interfaces/languageConfig'
 import {MapType} from '../interfaces/utilTypes'
 import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
 
@@ -93,6 +94,7 @@ export interface GetContentsArgs {
   readonly sort: ContentSort
   readonly order: SortOrder
   readonly type?: string
+  readonly language?: string
 }
 
 export interface GetPublishedContentsArgs {
@@ -112,5 +114,8 @@ export interface DBContentAdapter {
   getContentByID(id: string): Promise<Content | null>
   getContentsByID(ids: readonly string[]): Promise<OptionalContent[]>
 
-  getContents(args: GetContentsArgs): Promise<ConnectionResult<Content>>
+  getContents(
+    args: GetContentsArgs,
+    languageConfig: LanguageConfig
+  ): Promise<ConnectionResult<Content>>
 }
