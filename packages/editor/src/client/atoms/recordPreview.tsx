@@ -35,18 +35,21 @@ export function RecordPreview({record}: RecordPreviewProps) {
     // TODO resolve full preview path and support also metha paths
     const schemaContent = contentModelConfig?.schema.content[contentModelConfig?.previewPath[0]]
     let previewObject = enrichedRecord.content[contentModelConfig?.previewPath[0]]
-    if (schemaContent.i18n) {
-      const lang = configs.apiConfig.languages.languages.find(
-        l => l.tag === configs.apiConfig.languages.defaultLanguageTag
-      )
-      previewObject = previewObject[lang?.tag || '']
-    }
 
-    if (previewObject?.media?.image) {
-      return <img src={previewObject?.media.url} />
-    }
+    if (previewObject) {
+      if (schemaContent.i18n) {
+        const lang = configs.apiConfig.languages.languages.find(
+          l => l.tag === configs.apiConfig.languages.defaultLanguageTag
+        )
+        previewObject = previewObject[lang?.tag || '']
+      }
 
-    return <>{previewObject}</>
+      if (previewObject?.media?.image) {
+        return <img src={previewObject?.media.url} />
+      }
+
+      return <>{previewObject}</>
+    }
   } else if (enrichedRecord.title) {
     return <>{enrichedRecord.title}</>
   }

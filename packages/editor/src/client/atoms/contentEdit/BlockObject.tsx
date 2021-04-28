@@ -4,7 +4,7 @@ import {
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
+import {ControlLabel, FormGroup} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'

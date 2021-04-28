@@ -50,7 +50,8 @@ export const config: EditorConfig = {
     },
     {
       identifier: MODEL_MEDIA_LIBRARY,
-      previewPath: ['mediaI18n']
+      previewPath: ['mediaI18n'],
+      previewSize: 'big'
     }
   ],
   cusomExtension: [

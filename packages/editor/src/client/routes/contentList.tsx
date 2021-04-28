@@ -173,7 +173,12 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </FlexboxGrid.Item>
       </FlexboxGrid>
 
-      <Table autoHeight style={{marginTop: '20px'}} loading={isLoading} data={articles}>
+      <Table
+        autoHeight
+        style={{marginTop: '20px'}}
+        loading={isLoading}
+        data={articles}
+        rowHeight={config.previewSize === 'big' ? 300 : undefined}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
