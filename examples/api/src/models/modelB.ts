@@ -10,7 +10,12 @@ export const contentModelB: ContentModel = {
       myString: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
-        searchable: true
+        searchable: true,
+        defaultValue: 'custom default value!',
+        editor: {
+          name: 'My String',
+          instructions: `Lorem ipsum dolor sit amet, [consectetur](http://google.com) adipiscing elit. __Nunc rutrum__, metus lobortis dapibus tristique, odio sapien eleifend velit, nec mattis ligula augue quis erat`
+        }
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
@@ -34,7 +39,8 @@ export const contentModelB: ContentModel = {
       },
       myInt: {
         type: ContentModelSchemaTypes.int,
-        filterable: true
+        filterable: true,
+        defaultValue: 333
       },
       myFloat: {
         type: ContentModelSchemaTypes.float,

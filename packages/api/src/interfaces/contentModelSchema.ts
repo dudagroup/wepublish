@@ -1,13 +1,15 @@
 import {MapType} from './utilTypes'
 
+export interface I18n<T = string> {
+  [language: string]: T
+}
+
 export interface ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes
   instructions?: string
   editor?: {
-    name?: string
-    instructions?: {
-      [lang: string]: string
-    }
+    name?: I18n<string> | string
+    instructions?: I18n<string> | string
   }
   public?: boolean
   optional?: boolean
