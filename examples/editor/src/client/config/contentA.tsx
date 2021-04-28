@@ -218,7 +218,7 @@ export function ContentAEditView({value, dispatch, configs}: ContentAEditViewPro
         </Panel>
       </Grid>
 
-      <Modal show={isChooseModalOpen} size="lg" onHide={() => setChooseModalOpen(false)}>
+      <Modal show={isChooseModalOpen} size="md" onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           configs={configs}
           refConfig={{

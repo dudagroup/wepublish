@@ -1,5 +1,5 @@
 import React from 'react'
-import {ControlLabel, Form, FormControl, FormGroup, Toggle, HelpBlock, Panel} from 'rsuite'
+import {ControlLabel, Form, FormControl, FormGroup, Toggle, Panel} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {LanguagesConfig} from '../api'
@@ -36,26 +36,27 @@ export function ContentMetadataPanel({
 
   return (
     <Panel>
-      <Form fluid={true}>
+      <Form fluid>
         <FormGroup>
-          <ControlLabel>{t('articleEditor.panels.title')}</ControlLabel>
+          <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
           <FormControl
             value={title}
+            placeholder={t('content.overview.internalTitlePlaceholder')}
             onChange={title => onChangeDefaultMetadata?.({...defaultMetadata, title})}
           />
         </FormGroup>
       </Form>
-      <Form fluid={true} style={{marginTop: '20px'}}>
+      <Form fluid layout="horizontal" style={{marginTop: '20px'}}>
         <FormGroup>
-          <ControlLabel>{t('articleEditor.panels.peering')}</ControlLabel>
+          <span style={{marginRight: 10}}>{t('articleEditor.panels.allowPeerPublishing')}</span>
           <Toggle
+            checkedChildren={t('global.buttons.yes')}
+            unCheckedChildren={t('global.buttons.no')}
             checked={shared}
             onChange={shared => onChangeDefaultMetadata?.({...defaultMetadata, shared})}
           />
-          <HelpBlock>{t('articleEditor.panels.allowPeerPublishing')}</HelpBlock>
         </FormGroup>
       </Form>
-      <hr></hr>
       {customMetaFields && customMetadata && (
         <GenericContentView
           configs={configs}
