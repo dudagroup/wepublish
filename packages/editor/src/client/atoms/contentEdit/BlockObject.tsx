@@ -4,11 +4,11 @@ import {
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
+import {ControlLabel, FormGroup} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'
-import marked from 'marked'
+import Instructions from './Instructions'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -27,18 +27,10 @@ export function BlockObject({
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
 
-  function toComponent(html: string) {
-    return <div dangerouslySetInnerHTML={{__html: html}} />
-  }
-
   const content = Object.entries(model.fields).map(item => {
     const [key, fieldModel] = item
     const v = value[key]
     const name = fieldModel.editor?.name || key
-    const instructions =
-      fieldModel.editor?.instructions && typeof fieldModel.editor?.instructions === 'string'
-        ? toComponent(marked(fieldModel.editor?.instructions as string))
-        : key // TODO I18n Support
 
     const childSchemaPath = [...schemaPath]
     childSchemaPath.push(key)
@@ -50,7 +42,7 @@ export function BlockObject({
           <>
             <div className="wep-label">
               <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-              <HelpBlock tooltip>{instructions}</HelpBlock>
+              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
             </div>
             <BlockAbstract
               configs={configs}
@@ -69,7 +61,7 @@ export function BlockObject({
           <>
             <div className="wep-label">
               <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-              <HelpBlock tooltip>{instructions}</HelpBlock>
+              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
             </div>
             <BlockAbstract
               configs={configs}
@@ -88,7 +80,7 @@ export function BlockObject({
       <FormGroup key={key}>
         <div className="wep-label">
           <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-          <HelpBlock tooltip>{instructions}</HelpBlock>
+          <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
         </div>
         {
           <BlockAbstract
