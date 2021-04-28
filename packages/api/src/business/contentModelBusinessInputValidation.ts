@@ -94,8 +94,10 @@ async function validateRecursive(
     }
 
     if ((richTextNode as RichTextTextNode).text) {
-      validatorContext.searchTerms[lang] += ' ' + (richTextNode as RichTextTextNode).text
-    } else if ((richTextNode as RichTextReferenceNode).type === ElementNodeType.Reference) {
+      validatorContext.searchTerms[lang] += (richTextNode as RichTextTextNode).text + ' '
+    }
+
+    if ((richTextNode as RichTextReferenceNode).type === ElementNodeType.Reference) {
       const richTextReferenceNode = richTextNode as RichTextReferenceNode
       const contentModelSchemaFieldRichText = schema as ContentModelSchemaFieldRichText
       if (contentModelSchemaFieldRichText?.config?.ref) {
@@ -153,12 +155,14 @@ async function validateRecursive(
     case ContentModelSchemaTypes.string: {
       if (schema.i18n) {
         for (const [lang, val] of Object.entries(data)) {
-          validatorContext.searchTerms[lang] += val || ''
+          if (val) {
+            validatorContext.searchTerms[lang] += val + ' '
+          }
         }
-        break
+      } else if (data) {
+        validatorContext.searchTerms[validatorContext.context.languageConfig.defaultLanguageTag] +=
+          data + ' '
       }
-      validatorContext.searchTerms[validatorContext.context.languageConfig.defaultLanguageTag] +=
-        ' ' + data
       break
     }
 
@@ -189,6 +193,15 @@ export async function validateInput(
   data?: MapType<any>
 ) {
   if (!(data && schema)) return
+
+  validatorContext.searchTerms = validatorContext.context.languageConfig.languages.reduce(
+    (accu, item) => {
+      accu[item.tag] = ''
+      return accu
+    },
+    {} as MapType<string>
+  )
+
   for (const [key, val] of Object.entries(schema)) {
     await validateRecursive(validatorContext, val, data[key])
   }

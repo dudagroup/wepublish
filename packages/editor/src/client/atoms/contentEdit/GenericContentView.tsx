@@ -27,8 +27,9 @@ export function GenericContent({
   const [langLane2, setLangLane2] = useState(languagesConfig.languages?.[1]?.tag)
 
   const languages = languagesConfig.languages.map(v => {
+    const isDefaultLangFlag = languagesConfig.defaultLanguageTag === v.tag ? ' (default)' : ''
     return {
-      label: v.tag,
+      label: v.tag + isDefaultLangFlag,
       value: v.tag
     }
   })
@@ -45,7 +46,7 @@ export function GenericContent({
               value={langLane1}
               appearance="subtle"
               onChange={setLangLane1}
-              style={{width: 100}}
+              style={{width: 120}}
             />
           </Col>
           <Col xs={2} style={{textAlign: 'center'}}>
@@ -65,7 +66,7 @@ export function GenericContent({
               value={langLane2}
               appearance="subtle"
               onChange={setLangLane2}
-              style={{width: 100}}
+              style={{width: 120}}
             />
           </Col>
         </Row>
