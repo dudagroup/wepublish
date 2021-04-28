@@ -196,7 +196,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column>
-        <Column flexGrow={3} align="left">
+        <Column flexGrow={2} minWidth={120} align="left">
           <HeaderCell>{t('content.overview.preview')}</HeaderCell>
           <Cell>
             {(rowData: ContentListRefFragment) => {
