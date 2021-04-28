@@ -178,7 +178,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
-        rowHeight={config.previewSize === 'big' ? 300 : undefined}>
+        rowHeight={config.previewSize === 'big' ? 123 : undefined}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>

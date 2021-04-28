@@ -206,7 +206,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.url && (
               <>
-                <SubMenuButton icon="external-link">
+                <SubMenuButton icon="link">
                   <LinkMenu />
                 </SubMenuButton>
                 <ToolbarDivider />
@@ -215,7 +215,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.ref && (
               <>
-                <SubMenuModalButton icon="link">
+                <SubMenuModalButton icon="paste">
                   <RefMenu types={config?.ref} />
                 </SubMenuModalButton>
                 <ToolbarDivider />
