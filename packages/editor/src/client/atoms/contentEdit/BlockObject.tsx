@@ -48,7 +48,10 @@ export function BlockObject({
       if (langLane1) {
         componentLane1 = (
           <>
-            <ControlLabel>{name}</ControlLabel>
+            <div className="wep-label">
+              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+              <HelpBlock tooltip>{instructions}</HelpBlock>
+            </div>
             <BlockAbstract
               configs={configs}
               schemaPath={[...childSchemaPath, langLane1]}
@@ -56,7 +59,6 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane1]}></BlockAbstract>
-            <HelpBlock tooltip>{instructions}</HelpBlock>
           </>
         )
       }
@@ -65,7 +67,10 @@ export function BlockObject({
       if (langLane2) {
         componentLane2 = (
           <>
-            <ControlLabel>{name}</ControlLabel>
+            <div className="wep-label">
+              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+              <HelpBlock tooltip>{instructions}</HelpBlock>
+            </div>
             <BlockAbstract
               configs={configs}
               schemaPath={[...childSchemaPath, langLane2]}
@@ -73,7 +78,6 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane2]}></BlockAbstract>
-            <HelpBlock tooltip>{instructions}</HelpBlock>
           </>
         )
       }
@@ -82,7 +86,10 @@ export function BlockObject({
 
     return (
       <FormGroup key={key}>
-        <ControlLabel>{name}</ControlLabel>
+        <div className="wep-label">
+          <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+          <HelpBlock tooltip>{instructions}</HelpBlock>
+        </div>
         {
           <BlockAbstract
             configs={configs}
@@ -92,7 +99,6 @@ export function BlockObject({
             languageContext={languageContext}
             value={v}></BlockAbstract>
         }
-        <HelpBlock tooltip>{instructions}</HelpBlock>
       </FormGroup>
     )
   })
