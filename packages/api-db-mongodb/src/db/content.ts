@@ -35,7 +35,7 @@ export class MongoDBContentAdapter implements DBContentAdapter {
 
   async updateContent({input}: UpdateContentArgs): Promise<Content> {
     const {value} = await this.contents.findOneAndUpdate(
-      {id: input.id, revision: input.revision},
+      {id: input.id},
       [
         {
           $set: input
@@ -66,7 +66,8 @@ export class MongoDBContentAdapter implements DBContentAdapter {
   // TODO: Deduplicate getImages, getPages, getAuthors
   async getContents(
     {filter, sort, order, cursor, limit, type, language}: GetContentsArgs,
-    languageConfig: LanguageConfig
+    languageConfig: LanguageConfig,
+    isPublicApi: boolean
   ): Promise<ConnectionResult<any>> {
     const limitCount = Math.min(limit.count, MaxResultsPerPage)
     const sortDirection = limit.type === LimitType.First ? order : -order
@@ -92,20 +93,31 @@ export class MongoDBContentAdapter implements DBContentAdapter {
         }
       : {}
 
-    let textFilter: FilterQuery<any> = {}
+    const textFilter: FilterQuery<any> = {}
 
     function cleanupUserInput(string: string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
     }
 
-    const genericFilter: any = {}
+    let visibilityFilter: FilterQuery<any> = {}
+    if (isPublicApi) {
+      const now = new Date()
+      visibilityFilter = {
+        $and: [
+          {publicationDate: {$lt: now}},
+          {$or: [{dePublicationDate: {$gt: now}}, {dePublicationDate: {$eq: null}}]}
+        ]
+      }
+    }
+
+    const genericFilter: FilterQuery<any> = {}
     if (filter) {
       const {title, search, shared, ...genericFilters} = filter
       if (title !== undefined) {
-        textFilter = {title: {$regex: cleanupUserInput(title), $options: 'i'}}
+        textFilter.title = {$regex: cleanupUserInput(title), $options: 'i'}
       }
       if (search !== undefined) {
-        textFilter = {searchIndex: {$regex: cleanupUserInput(search), $options: 'i'}}
+        textFilter.searchIndex = {$regex: cleanupUserInput(search), $options: 'i'}
       }
 
       if (genericFilters) {
@@ -137,13 +149,14 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     const [totalCount, contents] = await Promise.all([
       this.contents.countDocuments(
         {
-          $and: [typeFilter, textFilter]
+          $and: [typeFilter, textFilter, genericFilter, visibilityFilter]
         },
         {collation: {locale: this.locale, strength: 2}} as MongoCountPreferences
       ), // MongoCountPreferences doesn't include collation
 
       this.contents
         .aggregate([], {collation: {locale: this.locale, strength: 2}})
+        .match(visibilityFilter)
         .match(typeFilter)
         .match(textFilter)
         .match(genericFilter)

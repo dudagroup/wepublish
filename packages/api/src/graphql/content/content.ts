@@ -22,7 +22,6 @@ import {
   getGraphQLLanguagesEnum,
   getGraphQLPeerCustomContent,
   GraphQLContentFilter,
-  GraphQLContentSateEnum,
   GraphQLContentSort,
   GraphQLPublicContentFilter,
   GraphQLPublicContentSort
@@ -159,7 +158,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     cursor: InputCursor(after, before),
                     limit: Limit(first, last)
                   },
-                  contextOptions.languageConfig
+                  contextOptions.languageConfig,
+                  true
                 )
                 result.nodes.map(
                   flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
@@ -189,7 +189,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   type: GraphQLNonNull(inputTypeCreate)
                 }
               },
-              async resolve(root, {input}, {business}) {
+              async resolve(source, {input}, {business}) {
                 return business.createContent(model.identifier, input)
               }
             },
@@ -201,7 +201,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   type: GraphQLNonNull(inputTypeUpdate)
                 }
               },
-              async resolve(root, {input}, {business}) {
+              async resolve(source, {input}, {business}) {
                 return business.updateContent(model.identifier, input)
               }
             },
@@ -209,10 +209,9 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
             delete: {
               type: GraphQLNonNull(GraphQLBoolean),
               args: {
-                id: {type: GraphQLNonNull(GraphQLID)},
-                revision: {type: GraphQLInt}
+                id: {type: GraphQLNonNull(GraphQLID)}
               },
-              async resolve(root, {id}, {business}) {
+              async resolve(source, {id}, {business}) {
                 return business.deleteContent(id)
               }
             },
@@ -221,21 +220,18 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               type: typePrivate,
               args: {
                 id: {type: GraphQLNonNull(GraphQLID)},
-                revision: {type: GraphQLNonNull(GraphQLInt)},
-                publishAt: {type: GraphQLDateTime},
-                updatedAt: {type: GraphQLDateTime},
-                publishedAt: {type: GraphQLDateTime}
+                publicationDate: {type: GraphQLDateTime}
               },
-              async resolve(root, {id, revision, publishAt, updatedAt, publishedAt}, {business}) {
-                return business.publishContent(id, revision, publishAt, updatedAt, publishedAt)
+              async resolve(source, {id, publicationDate}, {business}) {
+                return business.publishContent(id, publicationDate)
               }
             },
 
             unpublish: {
               type: typePrivate,
               args: {id: {type: GraphQLNonNull(GraphQLID)}},
-              async resolve(root, {id, revision}, {business}) {
-                return business.unpublishContent(id, revision)
+              async resolve(source, {id}, {business}) {
+                return business.unpublishContent(id)
               }
             }
           }
@@ -401,8 +397,6 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       title: {type: GraphQLNonNull(GraphQLString)},
       shared: {type: GraphQLNonNull(GraphQLBoolean)},
       contentType: {type: GraphQLNonNull(GraphQLContentTypeEnum)},
-      revision: {type: GraphQLNonNull(GraphQLInt)},
-      state: {type: GraphQLNonNull(GraphQLContentSateEnum)},
 
       createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
       modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -731,7 +725,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
           delete: {
             type: GraphQLBoolean,
             args: {id: {type: GraphQLNonNull(GraphQLID)}},
-            async resolve(root, {id}, {authenticate, dbAdapter}) {
+            async resolve(source, {id}, {authenticate, dbAdapter}) {
               const {roles} = authenticate()
               authorise(CanDeleteContent, roles)
               return dbAdapter.content.deleteContent({id})
@@ -741,19 +735,17 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
             type: GraphQLNonNull(GraphQLContentModelSummary),
             args: {
               id: {type: GraphQLNonNull(GraphQLID)},
-              publishAt: {type: GraphQLDateTime},
-              updatedAt: {type: GraphQLDateTime},
-              publishedAt: {type: GraphQLDateTime}
+              publicationDate: {type: GraphQLDateTime}
             },
-            async resolve(root, {id, publishAt, updatedAt, publishedAt}, {business}) {
-              return business.publishContent(id, 1, publishAt, updatedAt, publishedAt)
+            async resolve(source, {id, publicationDate}, {business}) {
+              return business.publishContent(id, publicationDate)
             }
           },
           unpublish: {
             type: GraphQLNonNull(GraphQLContentModelSummary),
             args: {id: {type: GraphQLNonNull(GraphQLID)}},
             async resolve(root, {id}, {business}) {
-              return business.unpublishContent(id, 1)
+              return business.unpublishContent(id)
             }
           }
         }

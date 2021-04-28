@@ -2,18 +2,9 @@ import {LanguageConfig} from '../interfaces/languageConfig'
 import {MapType} from '../interfaces/utilTypes'
 import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
 
-export enum DBContentState {
-  Draft = 'Draft',
-  Review = 'Review',
-  Release = 'Release',
-  Archive = 'Archive'
-}
-
 export interface Content<T = any> {
   id: string
   contentType: string
-  revision: number
-  state: DBContentState
 
   createdAt: Date
   modifiedAt: Date
@@ -116,6 +107,7 @@ export interface DBContentAdapter {
 
   getContents(
     args: GetContentsArgs,
-    languageConfig: LanguageConfig
+    languageConfig: LanguageConfig,
+    isPublicApi?: boolean
   ): Promise<ConnectionResult<Content>>
 }

@@ -217,7 +217,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           <HeaderCell>{t('content.overview.updated')}</HeaderCell>
           <Cell dataKey="modifiedAt" />
         </Column>
-        <Column flexGrow={2} align="left">
+        {/* <Column flexGrow={2} align="left">
           <HeaderCell>{t('content.overview.states')}</HeaderCell>
           <Cell>
             {(rowData: PageRefFragment) => {
@@ -230,13 +230,13 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
               return <div>{states.join(' / ')}</div>
             }}
           </Cell>
-        </Column>
-        <Column width={160} align="right" fixed="right">
+        </Column> */}
+        <Column width={200} align="right" fixed="right">
           <HeaderCell>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 0'}}>
             {(rowData: Content) => (
               <>
-                {rowData && (
+                {rowData.publicationDate && (
                   <Button
                     color="orange"
                     appearance="link"

@@ -31,7 +31,6 @@ import {getI18nOutputType, getI18nInputType} from '../i18nPrimitives'
 import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia, GraphQLMediaInput} from './media'
 import {nameJoin} from './contentUtils'
-import {GraphQLContentSateEnum} from './contentGraphQLTypes'
 
 interface Context {
   language: LanguageConfig
@@ -203,8 +202,6 @@ export function generateSchema(
   const baseFields: GraphQLFieldConfigMap<unknown, unknown, unknown> = {
     id: {type: GraphQLNonNull(GraphQLID)},
     contentType: {type: GraphQLNonNull(GraphQLString)},
-    revision: {type: GraphQLNonNull(GraphQLInt)},
-    state: {type: GraphQLNonNull(GraphQLContentSateEnum)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},

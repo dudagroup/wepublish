@@ -44,23 +44,16 @@ fragment ContentListRef on ContentModelSummary {
   title
   shared
   contentType
-  revision
-  state
   createdAt
   modifiedAt
   publicationDate
   dePublicationDate
 }
 
-mutation PublishContent(
-  $id: ID!
-  $publishAt: DateTime!
-  $publishedAt: DateTime!
-  $updatedAt: DateTime!
-) {
+mutation PublishContent($id: ID!, $publicationDate: DateTime!) {
   content {
     _all {
-      publish(id: $id, publishAt: $publishAt, publishedAt: $publishedAt, updatedAt: $updatedAt) {
+      publish(id: $id, publicationDate: $publicationDate) {
         id
       }
     }

@@ -44,14 +44,13 @@ export type _Cmp_ArticleListArgs = {
   filter?: Maybe<Filter_Article>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_Article_Record = {
   __typename?: '_cmp_article_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -298,14 +297,13 @@ export type _Cmp_AuthorListArgs = {
   filter?: Maybe<Filter_Author>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_Author_Record = {
   __typename?: '_cmp_author_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -357,14 +355,13 @@ export type _Cmp_MediaLibraryListArgs = {
   filter?: Maybe<Filter_MediaLibrary>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_MediaLibrary_Record = {
   __typename?: '_cmp_mediaLibrary_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -413,14 +410,13 @@ export type _Cmp_ModelAListArgs = {
   filter?: Maybe<Filter_ModelA>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_ModelA_Record = {
   __typename?: '_cmp_modelA_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -495,14 +491,13 @@ export type _Cmp_ModelBListArgs = {
   filter?: Maybe<Filter_ModelB>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_ModelB_Record = {
   __typename?: '_cmp_modelB_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -585,16 +580,12 @@ export type _Cmpi_ArticleUpdateArgs = {
 
 export type _Cmpi_ArticleDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ArticlePublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -770,16 +761,12 @@ export type _Cmpi_AuthorUpdateArgs = {
 
 export type _Cmpi_AuthorDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_AuthorPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -834,16 +821,12 @@ export type _Cmpi_MediaLibraryUpdateArgs = {
 
 export type _Cmpi_MediaLibraryDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_MediaLibraryPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -896,16 +879,12 @@ export type _Cmpi_ModelAUpdateArgs = {
 
 export type _Cmpi_ModelADeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ModelAPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -969,16 +948,12 @@ export type _Cmpi_ModelBUpdateArgs = {
 
 export type _Cmpi_ModelBDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ModelBPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -1043,6 +1018,7 @@ export type All = {
 export type AllListArgs = {
   type: ContentTypeEnum;
   context?: Maybe<ContentContextEnum>;
+  language?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['ID']>;
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
@@ -1073,9 +1049,7 @@ export type AllMutationsDeleteArgs = {
 
 export type AllMutationsPublishArgs = {
   id: Scalars['ID'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -1405,8 +1379,6 @@ export type ContentModelSummary = {
   title: Scalars['String'];
   shared: Scalars['Boolean'];
   contentType: ContentTypeEnum;
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -1419,13 +1391,6 @@ export enum ContentSort {
   PublishAt = 'PUBLISH_AT',
   PublishedAt = 'PUBLISHED_AT',
   UpdatedAt = 'UPDATED_AT'
-}
-
-export enum ContentStateEnum {
-  Draft = 'Draft',
-  Review = 'Review',
-  Release = 'Release',
-  Archive = 'Archive'
 }
 
 export enum ContentTypeEnum {
@@ -1545,7 +1510,7 @@ export type Filter_ModelA = {
 export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
-  content__myStringI18n?: Maybe<FilterText>;
+  i18n__content__myStringI18n?: Maybe<FilterText>;
   content__myInt?: Maybe<FilterInt>;
   content__myFloat?: Maybe<FilterFloat>;
   content__myBoolean?: Maybe<FilterBoolean>;
@@ -1839,6 +1804,12 @@ export type LanguageConfig = {
   tag: Scalars['String'];
   description: Scalars['String'];
 };
+
+export enum Languages {
+  En = 'en',
+  De = 'de',
+  Fr = 'fr'
+}
 
 export type LanguagesConfig = {
   __typename?: 'LanguagesConfig';
@@ -3979,14 +3950,12 @@ export type ContentGetQuery = (
 
 export type ContentListRefFragment = (
   { __typename?: 'ContentModelSummary' }
-  & Pick<ContentModelSummary, 'id' | 'title' | 'shared' | 'contentType' | 'revision' | 'state' | 'createdAt' | 'modifiedAt' | 'publicationDate' | 'dePublicationDate'>
+  & Pick<ContentModelSummary, 'id' | 'title' | 'shared' | 'contentType' | 'createdAt' | 'modifiedAt' | 'publicationDate' | 'dePublicationDate'>
 );
 
 export type PublishContentMutationVariables = Exact<{
   id: Scalars['ID'];
-  publishAt: Scalars['DateTime'];
-  publishedAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  publicationDate: Scalars['DateTime'];
 }>;
 
 
@@ -5469,8 +5438,6 @@ export const ContentListRefFragmentDoc = gql`
   title
   shared
   contentType
-  revision
-  state
   createdAt
   modifiedAt
   publicationDate
@@ -6524,10 +6491,10 @@ export type ContentGetQueryHookResult = ReturnType<typeof useContentGetQuery>;
 export type ContentGetLazyQueryHookResult = ReturnType<typeof useContentGetLazyQuery>;
 export type ContentGetQueryResult = Apollo.QueryResult<ContentGetQuery, ContentGetQueryVariables>;
 export const PublishContentDocument = gql`
-    mutation PublishContent($id: ID!, $publishAt: DateTime!, $publishedAt: DateTime!, $updatedAt: DateTime!) {
+    mutation PublishContent($id: ID!, $publicationDate: DateTime!) {
   content {
     _all {
-      publish(id: $id, publishAt: $publishAt, publishedAt: $publishedAt, updatedAt: $updatedAt) {
+      publish(id: $id, publicationDate: $publicationDate) {
         id
       }
     }
@@ -6550,9 +6517,7 @@ export type PublishContentMutationFn = Apollo.MutationFunction<PublishContentMut
  * const [publishContentMutation, { data, loading, error }] = usePublishContentMutation({
  *   variables: {
  *      id: // value for 'id'
- *      publishAt: // value for 'publishAt'
- *      publishedAt: // value for 'publishedAt'
- *      updatedAt: // value for 'updatedAt'
+ *      publicationDate: // value for 'publicationDate'
  *   },
  * });
  */

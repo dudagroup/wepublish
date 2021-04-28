@@ -1,5 +1,5 @@
 import {Context} from '../context'
-import {Content, DBContentState} from '../db/content'
+import {Content} from '../db/content'
 import nanoid from 'nanoid/generate'
 import {
   authorise,
@@ -46,8 +46,6 @@ export class BusinessLogic {
         ...input,
         id: generateID(),
         contentType: identifier,
-        revision: 1,
-        state: DBContentState.Draft,
         createdAt: new Date(),
         modifiedAt: new Date(),
         publicationDate: undefined,
@@ -73,8 +71,6 @@ export class BusinessLogic {
       input: {
         ...input,
         contentType: identifier,
-        revision: 1,
-        state: DBContentState.Draft,
         modifiedAt: new Date(),
         searchIndex: validatorContext.searchTerms
       }
@@ -87,37 +83,28 @@ export class BusinessLogic {
     return this.context.dbAdapter.content.deleteContent({id})
   }
 
-  async publishContent(
-    id: string,
-    revision: number,
-    publishAt: Date,
-    publishedAt: Date,
-    updatedAt?: Date
-  ) {
+  async publishContent(id: string, publicationDate: Date) {
     const {roles} = this.context.authenticate()
     authorise(CanPublishContent, roles)
 
     return this.context.dbAdapter.content.updateContent({
       input: {
         id,
-        revision,
-        state: DBContentState.Release,
-        modifiedAt: updatedAt || new Date(),
-        publicationDate: publishAt || new Date()
+        publicationDate: publicationDate || new Date(),
+        modifiedAt: new Date()
       }
     })
   }
 
-  async unpublishContent(id: string, revision: number) {
+  async unpublishContent(id: string) {
     const {roles} = this.context.authenticate()
     authorise(CanPublishContent, roles)
 
     return this.context.dbAdapter.content.updateContent({
       input: {
         id,
-        revision,
-        state: DBContentState.Draft,
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
+        publicationDate: undefined
       }
     })
   }

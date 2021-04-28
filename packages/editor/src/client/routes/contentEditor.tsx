@@ -9,7 +9,7 @@ import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPan
 import {usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
-import {PublishCustomContentPanel} from '../panel/contentPublishPanel'
+import {PublishContentPanel} from '../panel/contentPublishPanel'
 import {useMutation, useQuery} from '@apollo/client'
 import {
   getCreateMutation,
@@ -129,7 +129,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   const recordData: ContentBody = data?.content[type]?.read
 
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
-  const pendingPublishDate = recordData?.createdAt
 
   const [hasChanged, setHasChanged] = useState(false)
   function setChanged(val: boolean) {
@@ -230,26 +229,19 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     }
   }
 
-  async function handlePublish(publishDate: Date, updateDate: Date) {
+  async function handlePublish(publishDate: Date) {
     if (contentdId) {
       const {data} = await updateContent({
         variables: {id: contentdId, input: createInput()}
       })
 
       if (data) {
-        const {data: publishData} = await publishContent({
+        await publishContent({
           variables: {
             id: contentdId,
-            publishAt: publishDate.toISOString(),
-            publishedAt: publishDate.toISOString(),
-            updatedAt: updateDate.toISOString()
+            publicationDate: publishDate.toISOString()
           }
         })
-
-        // if (publishData?.content?._all?.publish?.published?.publishedAt) {
-        //   setPublishedAt(new Date(publishData?.content?._all?.publish?.published.publishedAt))
-        // }
-        console.log('TODO implement publishData', publishData)
       }
 
       setChanged(false)
@@ -462,13 +454,13 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       </Modal>
 
       <Modal show={isPublishDialogOpen} size={'sm'} onHide={() => setPublishDialogOpen(false)}>
-        <PublishCustomContentPanel
+        <PublishContentPanel
           initialPublishDate={publishedAt}
-          pendingPublishDate={pendingPublishDate}
+          pendingPublishDate={recordData?.publicationDate}
           metadata={metadata}
           onClose={() => setPublishDialogOpen(false)}
-          onConfirm={(publishDate, updateDate) => {
-            handlePublish(publishDate, updateDate)
+          onConfirm={publishDate => {
+            handlePublish(publishDate)
             setPublishDialogOpen(false)
           }}
         />

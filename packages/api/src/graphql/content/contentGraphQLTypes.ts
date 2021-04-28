@@ -13,7 +13,6 @@ import {
 } from 'graphql'
 import {LanguageConfigItem} from '../../interfaces/languageConfig'
 import {ContentSort} from './contentInterfaces'
-import {DBContentState} from '../../db/content'
 import {Context} from '../../context'
 import {GraphQLPageInfo} from '../common'
 import {GraphQLPeer} from '../peer'
@@ -82,16 +81,6 @@ export function getGraphQLLanguagesEnum(languages: LanguageConfigItem[]) {
     values: values
   })
 }
-
-export const GraphQLContentSateEnum = new GraphQLEnumType({
-  name: 'ContentStateEnum',
-  values: Object.keys(DBContentState).reduce((accu, item) => {
-    accu[item] = {
-      value: item
-    }
-    return accu
-  }, {} as GraphQLEnumValueConfigMap)
-})
 
 export function getGraphQLContentConnection(parentName: string, content: GraphQLObjectType) {
   return new GraphQLObjectType({

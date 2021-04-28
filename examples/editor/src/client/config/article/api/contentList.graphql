@@ -40,8 +40,6 @@ fragment ContentListRef on ContentModelSummary {
   title
   shared
   contentType
-  revision
-  state
   createdAt
   modifiedAt
   publicationDate
@@ -63,12 +61,6 @@ mutation PublishContent(
         updatedAt: $updatedAt
       ) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }
@@ -79,12 +71,6 @@ mutation UnpublishContent($id: ID!) {
     _all {
       unpublish(id: $id) {
         id
-        pending {
-          publishAt
-        }
-        published {
-          publishedAt
-        }
       }
     }
   }
