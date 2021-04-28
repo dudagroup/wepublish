@@ -43,7 +43,7 @@ export function RecordPreview({record}: RecordPreviewProps) {
     }
 
     if (previewObject?.media?.image) {
-      return <img src={previewObject?.media.url} />
+      return <img src={previewObject?.media.url} style={{height: 100, width: 'auto'}} />
     }
 
     return <>{previewObject}</>

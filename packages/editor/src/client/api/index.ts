@@ -44,6 +44,7 @@ export type _Cmp_ArticleListArgs = {
   filter?: Maybe<Filter_Article>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_Article_Record = {
@@ -298,6 +299,7 @@ export type _Cmp_AuthorListArgs = {
   filter?: Maybe<Filter_Author>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_Author_Record = {
@@ -357,6 +359,7 @@ export type _Cmp_MediaLibraryListArgs = {
   filter?: Maybe<Filter_MediaLibrary>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_MediaLibrary_Record = {
@@ -413,6 +416,7 @@ export type _Cmp_ModelAListArgs = {
   filter?: Maybe<Filter_ModelA>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_ModelA_Record = {
@@ -495,6 +499,7 @@ export type _Cmp_ModelBListArgs = {
   filter?: Maybe<Filter_ModelB>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
 };
 
 export type _Cmp_ModelB_Record = {
@@ -1043,6 +1048,7 @@ export type All = {
 export type AllListArgs = {
   type: ContentTypeEnum;
   context?: Maybe<ContentContextEnum>;
+  language?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['ID']>;
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
@@ -1545,7 +1551,7 @@ export type Filter_ModelA = {
 export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
-  content__myStringI18n?: Maybe<FilterText>;
+  i18n__content__myStringI18n?: Maybe<FilterText>;
   content__myInt?: Maybe<FilterInt>;
   content__myFloat?: Maybe<FilterFloat>;
   content__myBoolean?: Maybe<FilterBoolean>;
@@ -1839,6 +1845,12 @@ export type LanguageConfig = {
   tag: Scalars['String'];
   description: Scalars['String'];
 };
+
+export enum Languages {
+  En = 'en',
+  De = 'de',
+  Fr = 'fr'
+}
 
 export type LanguagesConfig = {
   __typename?: 'LanguagesConfig';
