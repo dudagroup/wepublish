@@ -206,7 +206,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.url && (
               <>
-                <SubMenuButton icon="link">
+                <SubMenuButton icon="external-link">
                   <LinkMenu />
                 </SubMenuButton>
                 <ToolbarDivider />
