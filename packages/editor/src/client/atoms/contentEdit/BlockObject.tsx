@@ -8,7 +8,7 @@ import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'
-import marked from 'marked'
+import Instructions from './Instructions'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -27,18 +27,10 @@ export function BlockObject({
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
 
-  function toComponent(html: string) {
-    return <div dangerouslySetInnerHTML={{__html: html}} />
-  }
-
   const content = Object.entries(model.fields).map(item => {
     const [key, fieldModel] = item
     const v = value[key]
     const name = fieldModel.editor?.name || key
-    const instructions =
-      fieldModel.editor?.instructions && typeof fieldModel.editor?.instructions === 'string'
-        ? toComponent(marked(fieldModel.editor?.instructions as string))
-        : key // TODO I18n Support
 
     const childSchemaPath = [...schemaPath]
     childSchemaPath.push(key)
@@ -56,7 +48,7 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane1]}></BlockAbstract>
-            <HelpBlock tooltip>{instructions}</HelpBlock>
+            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
           </>
         )
       }
@@ -73,7 +65,7 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane2]}></BlockAbstract>
-            <HelpBlock tooltip>{instructions}</HelpBlock>
+            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
           </>
         )
       }
@@ -92,7 +84,7 @@ export function BlockObject({
             languageContext={languageContext}
             value={v}></BlockAbstract>
         }
-        <HelpBlock tooltip>{instructions}</HelpBlock>
+        <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
       </FormGroup>
     )
   })

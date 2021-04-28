@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import React from 'react'
 import {ControlLabel, Form, FormControl, FormGroup, Toggle, Panel} from 'rsuite'
 import {useTranslation} from 'react-i18next'

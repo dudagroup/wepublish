@@ -11,17 +11,21 @@ export const contentModelB: ContentModel = {
         type: ContentModelSchemaTypes.string,
         filterable: true,
         searchable: true,
-        defaultValue: 'custom default value!',
         editor: {
           name: 'My String',
-          instructions: `Lorem ipsum dolor sit amet, [consectetur](http://google.com) adipiscing elit. __Nunc rutrum__, metus lobortis dapibus tristique, odio sapien eleifend velit, nec mattis ligula augue quis erat`
+          instructions: `Lorem ipsum dolor sit amet, [consectetur](http://google.com) adipiscing elit. __Nunc rutrum__, metus lobortis dapibus tristique, odio sapien eleifend velit, nec mattis ligula augue quis erat`,
+          inputRows: 2,
+          inputType: 'tel',
+          maxCharacters: 10,
+          placeholder: 'placeholder example'
         }
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
         searchable: true,
-        i18n: true
+        i18n: true,
+        defaultValue: 'custom default value!'
       },
       myRichText: {
         type: ContentModelSchemaTypes.richText,

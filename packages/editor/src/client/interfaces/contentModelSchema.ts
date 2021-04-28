@@ -44,8 +44,13 @@ export interface ContentModelSchemaFieldId extends ContentModelSchemaFieldLeaf {
 export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.string
   defaultValue?: string
-  validations?: {
-    maxCharacters: number
+  editor?: {
+    name?: I18n<string> | string
+    instructions?: I18n<string> | string
+    maxCharacters?: number
+    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea'
+    inputRows?: number
+    placeholder?: string
   }
   searchable?: boolean
 }
