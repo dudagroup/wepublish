@@ -1,5 +1,5 @@
 import React, {memo, useState} from 'react'
-import {Modal} from 'rsuite'
+import {Modal, Drawer} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
@@ -28,7 +28,11 @@ function BlockRef({
             value: null
           })
         }}></ReferenceButton>
-      <Modal show={isChooseModalOpen} full onHide={() => setChooseModalOpen(false)}>
+      <Drawer
+        placement={'bottom'}
+        show={isChooseModalOpen}
+        full
+        onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           configs={configs}
           refConfig={model.types}
@@ -42,7 +46,7 @@ function BlockRef({
             })
           }}
         />
-      </Modal>
+      </Drawer>
     </>
   )
 }
