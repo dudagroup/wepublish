@@ -28,7 +28,7 @@ function BlockRef({
             value: null
           })
         }}></ReferenceButton>
-      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
+      <Modal show={isChooseModalOpen} full onHide={() => setChooseModalOpen(false)}>
         <RefSelectModal
           configs={configs}
           refConfig={model.types}
