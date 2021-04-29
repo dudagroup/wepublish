@@ -46,7 +46,11 @@ export enum TableCellNodeFields {
   Bordercolor = 'borderColor'
 }
 
-export interface RichTextBlockNode {
+export interface RichTextAbstractNode {
+  readonly children: RichTextNode[]
+}
+
+export interface RichTextBlockNode extends RichTextAbstractNode {
   readonly type:
     | ElementNodeType.H1
     | ElementNodeType.H2
@@ -57,28 +61,23 @@ export interface RichTextBlockNode {
     | ElementNodeType.ListItem
     | ElementNodeType.Table
     | ElementNodeType.TableRow
-
-  readonly children: RichTextNode[]
 }
 
-export interface RichTextTableCellNode {
+export interface RichTextTableCellNode extends RichTextAbstractNode {
   readonly type: ElementNodeType.TableCell
   readonly borderColor: string
-  readonly children: RichTextNode[]
 }
 
-export interface RichTextLinkNode {
+export interface RichTextLinkNode extends RichTextAbstractNode {
   readonly type: ElementNodeType.Link
   readonly url: string
   readonly title?: string
-  readonly children: RichTextNode[]
 }
 
-export interface RichTextReferenceNode {
+export interface RichTextReferenceNode extends RichTextAbstractNode {
   readonly type: ElementNodeType.Reference
   readonly reference: Reference
   readonly title?: string
-  readonly children: RichTextNode[]
 }
 
 export interface RichTextTextNode {

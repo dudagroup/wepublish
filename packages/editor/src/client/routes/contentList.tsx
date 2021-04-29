@@ -9,7 +9,18 @@ import {
 } from '../api'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {useTranslation} from 'react-i18next'
-import {FlexboxGrid, Input, InputGroup, Icon, IconButton, Table, Modal, Button} from 'rsuite'
+import {
+  FlexboxGrid,
+  Input,
+  InputGroup,
+  Icon,
+  Table,
+  Modal,
+  Button,
+  Popover,
+  Whisper,
+  Divider
+} from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
 import {Content} from '@wepublish/api'
@@ -53,6 +64,46 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
 
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(getDeleteMutation(config))
+
+  const rowDeleteButton = (rowData: any) => {
+    const triggerRef = React.createRef<any>()
+    const close = () => triggerRef.current.close()
+    const speaker = (
+      <Popover title={currentContent?.title}>
+        <Button
+          color="red"
+          disabled={isDeleting}
+          onClick={() => {
+            if (!currentContent) return
+            close()
+            deleteContent({
+              variables: {id: currentContent.id}
+            })
+              .then(() => {
+                refetch()
+              })
+              .catch(console.error)
+          }}>
+          {t('global.buttons.deleteNow')}
+        </Button>
+      </Popover>
+    )
+    return (
+      <>
+        <Whisper placement="left" trigger="click" speaker={speaker} ref={triggerRef}>
+          <Button
+            appearance="link"
+            color="red"
+            onClick={() => {
+              setCurrentContent(rowData)
+            }}>
+            {' '}
+            {t('global.buttons.delete')}{' '}
+          </Button>
+        </Whisper>
+      </>
+    )
+  }
 
   const listVariables = {type: type as any, filter: filter || undefined, first: RecordsPerPage}
   const {data, fetchMore, loading: isLoading, refetch} = useContentListQuery({
@@ -122,7 +173,12 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </FlexboxGrid.Item>
       </FlexboxGrid>
 
-      <Table style={{marginTop: '20px'}} loading={isLoading} data={articles}>
+      <Table
+        autoHeight
+        style={{marginTop: '20px'}}
+        loading={isLoading}
+        data={articles}
+        rowHeight={config.previewSize === 'big' ? 300 : undefined}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -161,7 +217,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           <HeaderCell>{t('content.overview.updated')}</HeaderCell>
           <Cell dataKey="modifiedAt" />
         </Column>
-        <Column flexGrow={2} align="left">
+        {/* <Column flexGrow={2} align="left">
           <HeaderCell>{t('content.overview.states')}</HeaderCell>
           <Cell>
             {(rowData: PageRefFragment) => {
@@ -174,35 +230,26 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
               return <div>{states.join(' / ')}</div>
             }}
           </Cell>
-        </Column>
-        <Column width={90} align="right" fixed="right">
+        </Column> */}
+        <Column width={200} align="right" fixed="right">
           <HeaderCell>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 0'}}>
             {(rowData: Content) => (
               <>
-                {rowData && (
-                  <IconButton
-                    icon={<Icon icon="arrow-circle-o-down" />}
-                    circle
-                    size="sm"
+                {rowData.publicationDate && (
+                  <Button
+                    color="orange"
+                    appearance="link"
                     onClick={e => {
                       setCurrentContent(rowData)
                       setConfirmAction(ConfirmAction.Unpublish)
                       setConfirmationDialogOpen(true)
-                    }}
-                  />
+                    }}>
+                    {t('global.buttons.unpublish')}
+                  </Button>
                 )}
-                <IconButton
-                  icon={<Icon icon="trash" />}
-                  circle
-                  size="sm"
-                  style={{marginLeft: '5px'}}
-                  onClick={() => {
-                    setCurrentContent(rowData)
-                    setConfirmAction(ConfirmAction.Delete)
-                    setConfirmationDialogOpen(true)
-                  }}
-                />
+                <Divider vertical></Divider>
+                {rowDeleteButton(rowData)}
               </>
             )}
           </Cell>
@@ -252,7 +299,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
 
         <Modal.Footer>
           <Button
-            color={'red'}
+            appearance={'primary'}
             disabled={isUnpublishing || isDeleting}
             onClick={async () => {
               if (!currentContent) return

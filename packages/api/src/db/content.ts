@@ -1,17 +1,10 @@
+import {LanguageConfig} from '../interfaces/languageConfig'
+import {MapType} from '../interfaces/utilTypes'
 import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
-
-export enum DBContentState {
-  Draft = 'Draft',
-  Review = 'Review',
-  Release = 'Release',
-  Archive = 'Archive'
-}
 
 export interface Content<T = any> {
   id: string
   contentType: string
-  revision: number
-  state: DBContentState
 
   createdAt: Date
   modifiedAt: Date
@@ -21,6 +14,7 @@ export interface Content<T = any> {
 
   shared: boolean
   title: string
+  searchIndex?: MapType<string>
 
   content: T
   meta: T
@@ -66,10 +60,9 @@ export interface PublicContent extends Content {
 
 export interface ContentFilter {
   readonly title?: string
-  readonly draft?: boolean
-  readonly published?: boolean
-  readonly pending?: boolean
+  readonly search?: string
   readonly shared?: boolean
+  [key: string]: any
 }
 
 export interface PublicContentFilter {
@@ -92,6 +85,7 @@ export interface GetContentsArgs {
   readonly sort: ContentSort
   readonly order: SortOrder
   readonly type?: string
+  readonly language?: string
 }
 
 export interface GetPublishedContentsArgs {
@@ -111,5 +105,9 @@ export interface DBContentAdapter {
   getContentByID(id: string): Promise<Content | null>
   getContentsByID(ids: readonly string[]): Promise<OptionalContent[]>
 
-  getContents(args: GetContentsArgs): Promise<ConnectionResult<Content>>
+  getContents(
+    args: GetContentsArgs,
+    languageConfig: LanguageConfig,
+    isPublicApi?: boolean
+  ): Promise<ConnectionResult<Content>>
 }

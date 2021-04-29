@@ -13,10 +13,10 @@ export interface PublishArticlePanelProps {
   metadata: DefaultMetadata
 
   onClose(): void
-  onConfirm(publishDate: Date, updateDate: Date): void
+  onConfirm(publishDate: Date): void
 }
 
-export function PublishCustomContentPanel({
+export function PublishContentPanel({
   initialPublishDate,
   pendingPublishDate,
   metadata,
@@ -24,9 +24,7 @@ export function PublishCustomContentPanel({
   onConfirm
 }: PublishArticlePanelProps) {
   const now = new Date()
-
   const [publishDate, setPublishDate] = useState<Date | undefined>(initialPublishDate ?? now)
-  const [updateDate, setUpdateDate] = useState<Date | undefined>(now)
 
   const {t} = useTranslation()
 
@@ -59,21 +57,6 @@ export function PublishCustomContentPanel({
               onChange={publishDate => setPublishDate(publishDate)}
             />
           </FormGroup>
-          <FormGroup>
-            <ControlLabel>{t('articleEditor.panels.updateDate')}</ControlLabel>
-            <DatePicker
-              block
-              value={updateDate}
-              format="YYYY-MM-DD HH:mm"
-              ranges={[
-                {
-                  label: 'Now',
-                  value: new Date()
-                }
-              ]}
-              onChange={updateDate => setUpdateDate(updateDate)}
-            />
-          </FormGroup>
         </Form>
 
         <DescriptionList>
@@ -89,8 +72,8 @@ export function PublishCustomContentPanel({
       <Modal.Footer>
         <Button
           appearance="primary"
-          disabled={!publishDate || !updateDate}
-          onClick={() => onConfirm(publishDate!, updateDate!)}>
+          disabled={!publishDate}
+          onClick={() => onConfirm(publishDate!)}>
           {t('articleEditor.panels.confirm')}
         </Button>
         <Button appearance="subtle" onClick={() => onClose()}>

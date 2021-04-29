@@ -175,7 +175,7 @@ export function getGraphQLPrivateQuery<TSource, TContext, TArgs>(
                         fields: {
                           id: {
                             type: GraphQLNonNull(GraphQLID),
-                            resolve: (source: any, args, context) => {
+                            resolve: (source: any) => {
                               return source.identifier
                             }
                           },
@@ -196,7 +196,7 @@ export function getGraphQLPrivateQuery<TSource, TContext, TArgs>(
                   new GraphQLObjectType<undefined, Context>({
                     name: `LanguagesConfig`,
                     fields: {
-                      defaultLanguageId: {type: GraphQLNonNull(GraphQLString)},
+                      defaultLanguageTag: {type: GraphQLNonNull(GraphQLString)},
                       languages: {
                         type: GraphQLNonNull(
                           GraphQLList(
@@ -204,7 +204,6 @@ export function getGraphQLPrivateQuery<TSource, TContext, TArgs>(
                               new GraphQLObjectType<undefined, Context>({
                                 name: `LanguageConfig`,
                                 fields: {
-                                  id: {type: GraphQLNonNull(GraphQLID)},
                                   tag: {type: GraphQLNonNull(GraphQLString)},
                                   description: {type: GraphQLNonNull(GraphQLString)}
                                 }

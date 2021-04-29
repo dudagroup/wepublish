@@ -36,9 +36,12 @@ function BlockString({
     <>
       {toggle}
       <FormControl
-        componentClass="textarea"
+        componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
         readOnly={!isActive}
-        rows={3}
+        type={model.editor?.inputType || 'text'}
+        rows={model.editor?.inputRows}
+        maxLength={model.editor?.maxCharacters}
+        placeholder={model.editor?.placeholder}
         value={value || ''}
         onChange={val =>
           dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})

@@ -90,25 +90,6 @@ export function MemberPlanList() {
     )
   }
 
-  // const speaker = (
-  //   <Popover title={currentMemberPlan?.name}>
-  //     <Button
-  //       color="red"
-  //       appearance="primary"
-  //       disabled={isDeleting}
-  //       onClick={async () => {
-  //         if (!currentMemberPlan) return
-
-  //         await deleteMemberPlan({
-  //           variables: {id: currentMemberPlan.id}
-  //         })
-  //         refetch()
-  //       }}>
-  //       {t('global.buttons.deleteNow')}
-  //     </Button>
-  //   </Popover>
-  // )
-
   useEffect(() => {
     switch (current?.type) {
       case RouteType.MemberPlanCreate:

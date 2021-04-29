@@ -7,19 +7,22 @@ import {
   ContentModelSchemaFieldUnion,
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
+import {MapType} from '../interfaces/utilTypes'
 
 export function generateEmptyContent(
   field: ContentModelSchemaFieldBase,
   languagesConfig: LanguagesConfig
 ): unknown {
-  function defaultVal(defaultVal: unknown) {
-    if ((field as ContentModelSchemaFieldLeaf).i18n) {
+  function defaultVal(defaultValue: unknown) {
+    const schema = field as ContentModelSchemaFieldLeaf
+    defaultValue = (schema as ContentModelSchemaFieldEnum).defaultValue || defaultValue
+    if (schema.i18n) {
       return languagesConfig?.languages.reduce((accu, lang) => {
-        accu[lang.tag] = defaultVal
+        accu[lang.tag] = defaultValue
         return accu
-      }, {} as any)
+      }, {} as MapType<unknown>)
     }
-    return defaultVal
+    return defaultValue
   }
 
   if (!field) {

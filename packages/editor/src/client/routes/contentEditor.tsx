@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
 import {Modal, Notification, Icon, IconButton} from 'rsuite'
-import {NavigationBar} from '../atoms/navigationBar'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -10,7 +9,7 @@ import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPan
 import {usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
-import {PublishCustomContentPanel} from '../panel/contentPublishPanel'
+import {PublishContentPanel} from '../panel/contentPublishPanel'
 import {useMutation, useQuery} from '@apollo/client'
 import {
   getCreateMutation,
@@ -130,7 +129,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   const recordData: ContentBody = data?.content[type]?.read
 
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
-  const pendingPublishDate = recordData?.createdAt
 
   const [hasChanged, setHasChanged] = useState(false)
   function setChanged(val: boolean) {
@@ -231,25 +229,19 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     }
   }
 
-  async function handlePublish(publishDate: Date, updateDate: Date) {
+  async function handlePublish(publishDate: Date) {
     if (contentdId) {
       const {data} = await updateContent({
         variables: {id: contentdId, input: createInput()}
       })
 
       if (data) {
-        const {data: publishData} = await publishContent({
+        await publishContent({
           variables: {
             id: contentdId,
-            publishAt: publishDate.toISOString(),
-            publishedAt: publishDate.toISOString(),
-            updatedAt: updateDate.toISOString()
+            publicationDate: publishDate.toISOString()
           }
         })
-
-        if (publishData?.content?._all?.publish?.published?.publishedAt) {
-          setPublishedAt(new Date(publishData?.content?._all?.publish?.published.publishedAt))
-        }
       }
 
       setChanged(false)
@@ -326,6 +318,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   return (
     <>
       <div
+        className="wep-editor-container"
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -333,43 +326,52 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
           minHeight: '100%'
         }}>
         <div
+          className="wep-editor-navigation"
           style={{
             display: 'flex',
             position: 'sticky',
+            justifyContent: 'center',
             top: 0,
             zIndex: 10,
+            background: '#f7f7fa',
             width: '100%'
           }}>
-          <NavigationBar
-            leftChildren={
-              <IconButtonLink
-                size={'lg'}
-                appearance="subtle"
-                icon={<Icon icon="angle-left" />}
-                route={ContentListRoute.create({type})}
-                onClick={e => {
-                  if (!unsavedChangesDialog()) e.preventDefault()
-                  if (onBack) {
-                    e.preventDefault()
-                    onBack()
-                  }
-                }}>
-                {t('articleEditor.overview.back')}
-              </IconButtonLink>
-            }
-            centerChildren={
-              <>
-                {metadataView && (
-                  <IconButton
-                    icon={<Icon icon="newspaper-o" />}
-                    appearance="subtle"
-                    size={'lg'}
-                    disabled={isDisabled}
-                    onClick={() => setMetaVisible(true)}>
-                    {t('articleEditor.overview.metadata')}
-                  </IconButton>
-                )}
-
+          <div
+            className="wep-editor-navigation-content"
+            style={{
+              display: 'flex',
+              width: 1260,
+              justifyContent: 'space-between'
+            }}>
+            <IconButtonLink
+              size={'lg'}
+              appearance="subtle"
+              style={{
+                marginLeft: '30px'
+              }}
+              icon={<Icon icon="angle-left" />}
+              route={ContentListRoute.create({type})}
+              onClick={e => {
+                if (!unsavedChangesDialog()) e.preventDefault()
+                if (onBack) {
+                  e.preventDefault()
+                  onBack()
+                }
+              }}>
+              {t('articleEditor.overview.back')}
+            </IconButtonLink>
+            <>
+              {metadataView && (
+                <IconButton
+                  icon={<Icon icon="file-text-o" />}
+                  appearance="subtle"
+                  size={'lg'}
+                  disabled={isDisabled}
+                  onClick={() => setMetaVisible(true)}>
+                  {t('articleEditor.overview.metadata')}
+                </IconButton>
+              )}
+              <div className="wep-navi-publishcontrols">
                 {isNew && createData == null ? (
                   <IconButton
                     style={{
@@ -377,7 +379,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                     }}
                     appearance="subtle"
                     size={'lg'}
-                    icon={<Icon icon="save" />}
+                    icon={<Icon icon="magic" />}
                     disabled={isDisabled}
                     onClick={() => handleSave()}>
                     {t('articleEditor.overview.create')}
@@ -395,39 +397,50 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
+
                     <IconButton
                       style={{
                         marginLeft: '20px'
                       }}
                       appearance="subtle"
                       size={'lg'}
-                      icon={<Icon icon="cloud-upload" />}
+                      icon={<Icon icon="file-upload" />}
                       disabled={isDisabled}
                       onClick={() => setPublishDialogOpen(true)}>
                       {t('articleEditor.overview.publish')}
                     </IconButton>
                   </>
                 )}
-              </>
-            }
-          />
+              </div>
+            </>
+          </div>
         </div>
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '100%',
-            paddingTop: 40,
-            paddingBottom: 60,
-            paddingLeft: 40,
-            paddingRight: 40
+            width: '100%'
           }}>
           <div
+            className="wep-editor-metalight"
             style={{
-              display: 'flex',
               width: '100%',
-              maxWidth: 880 + 40
+              maxWidth: 1140,
+              marginTop: 20,
+              border: '1px dashed #e5e5ea',
+              borderRadius: 6
+            }}>
+            {metadataView}
+          </div>
+          <div
+            className="wep-editor-content"
+            style={{
+              paddingTop: 20,
+              paddingBottom: 20,
+              marginLeft: 30,
+              marginRight: 30
             }}>
             {content}
           </div>
@@ -441,13 +454,13 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       </Modal>
 
       <Modal show={isPublishDialogOpen} size={'sm'} onHide={() => setPublishDialogOpen(false)}>
-        <PublishCustomContentPanel
+        <PublishContentPanel
           initialPublishDate={publishedAt}
-          pendingPublishDate={pendingPublishDate}
+          pendingPublishDate={recordData?.publicationDate}
           metadata={metadata}
           onClose={() => setPublishDialogOpen(false)}
-          onConfirm={(publishDate, updateDate) => {
-            handlePublish(publishDate, updateDate)
+          onConfirm={publishDate => {
+            handlePublish(publishDate)
             setPublishDialogOpen(false)
           }}
         />

@@ -11,12 +11,13 @@ import {
   SortOrder,
   ContentSort
 } from '@wepublish/api'
-
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
-
 import {CollectionName, DBContent} from './schema'
 import {MaxResultsPerPage} from './defaults'
 import {Cursor} from './cursor'
+import {LanguageConfig} from '@wepublish/api/lib/interfaces/languageConfig'
+
+const PATH_DELIMITER = '__'
 
 export class MongoDBContentAdapter implements DBContentAdapter {
   private contents: Collection<DBContent>
@@ -34,7 +35,7 @@ export class MongoDBContentAdapter implements DBContentAdapter {
 
   async updateContent({input}: UpdateContentArgs): Promise<Content> {
     const {value} = await this.contents.findOneAndUpdate(
-      {id: input.id, revision: input.revision},
+      {id: input.id},
       [
         {
           $set: input
@@ -63,14 +64,11 @@ export class MongoDBContentAdapter implements DBContentAdapter {
   }
 
   // TODO: Deduplicate getImages, getPages, getAuthors
-  async getContents({
-    filter,
-    sort,
-    order,
-    cursor,
-    limit,
-    type
-  }: GetContentsArgs): Promise<ConnectionResult<any>> {
+  async getContents(
+    {filter, sort, order, cursor, limit, type, language}: GetContentsArgs,
+    languageConfig: LanguageConfig,
+    isPublicApi: boolean
+  ): Promise<ConnectionResult<any>> {
     const limitCount = Math.min(limit.count, MaxResultsPerPage)
     const sortDirection = limit.type === LimitType.First ? order : -order
 
@@ -95,32 +93,51 @@ export class MongoDBContentAdapter implements DBContentAdapter {
         }
       : {}
 
-    const stateFilter: FilterQuery<any> = {}
-    let textFilter: FilterQuery<any> = {}
-
-    const metaFilters: FilterQuery<any> = []
+    const textFilter: FilterQuery<any> = {}
 
     function cleanupUserInput(string: string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
     }
-    if (filter?.title !== undefined) {
-      textFilter = {title: {$regex: cleanupUserInput(filter.title), $options: 'i'}}
+
+    let visibilityFilter: FilterQuery<any> = {}
+    if (isPublicApi) {
+      const now = new Date()
+      visibilityFilter = {
+        $and: [
+          {publicationDate: {$lt: now}},
+          {$or: [{dePublicationDate: {$gt: now}}, {dePublicationDate: {$eq: null}}]}
+        ]
+      }
     }
 
-    if (filter?.published !== undefined) {
-      stateFilter.published = {[filter.published ? '$ne' : '$eq']: null}
-    }
+    const genericFilter: FilterQuery<any> = {}
+    if (filter) {
+      const {title, search, shared, ...genericFilters} = filter
+      if (title !== undefined) {
+        textFilter.title = {$regex: cleanupUserInput(title), $options: 'i'}
+      }
+      if (search !== undefined) {
+        textFilter.searchIndex = {$regex: cleanupUserInput(search), $options: 'i'}
+      }
 
-    if (filter?.draft !== undefined) {
-      stateFilter.draft = {[filter.draft ? '$ne' : '$eq']: null}
-    }
-
-    if (filter?.pending !== undefined) {
-      stateFilter.pending = {[filter.pending ? '$ne' : '$eq']: null}
-    }
-
-    if (filter?.shared !== undefined) {
-      stateFilter.shared = {[filter.shared ? '$ne' : '$eq']: false}
+      if (genericFilters) {
+        Object.entries(genericFilters).reduce((accu, item) => {
+          const [fieldName, operators] = item
+          for (const [operator, value] of Object.entries(operators)) {
+            if (value !== undefined) {
+              const path = fieldName.split(PATH_DELIMITER)
+              if (path[0] === 'i18n') {
+                path.shift()
+                path.push(language || languageConfig.defaultLanguageTag)
+              }
+              accu[path.join('.')] = {
+                [`$${operator}`]: value
+              }
+            }
+          }
+          return accu
+        }, genericFilter)
+      }
     }
 
     const typeFilter: FilterQuery<any> = {}
@@ -132,17 +149,17 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     const [totalCount, contents] = await Promise.all([
       this.contents.countDocuments(
         {
-          $and: [typeFilter, stateFilter, metaFilters.length ? {$and: metaFilters} : {}, textFilter]
-        } as any,
+          $and: [typeFilter, textFilter, genericFilter, visibilityFilter]
+        },
         {collation: {locale: this.locale, strength: 2}} as MongoCountPreferences
       ), // MongoCountPreferences doesn't include collation
 
       this.contents
         .aggregate([], {collation: {locale: this.locale, strength: 2}})
+        .match(visibilityFilter)
         .match(typeFilter)
-        .match(stateFilter)
-        .match(metaFilters.length ? {$and: metaFilters} : {})
         .match(textFilter)
+        .match(genericFilter)
         .match(cursorFilter)
         .sort({[sortField]: sortDirection, _id: sortDirection})
         .limit(limitCount + 1)

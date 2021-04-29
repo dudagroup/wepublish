@@ -8,9 +8,8 @@ query Config {
       schema
     }
     languages {
-      defaultLanguageId
+      defaultLanguageTag
       languages {
-        id
         tag
         description
       }

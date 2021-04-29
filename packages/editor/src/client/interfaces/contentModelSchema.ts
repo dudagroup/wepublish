@@ -1,13 +1,15 @@
 import {MapType} from './utilTypes'
 
+export interface I18n<T = string> {
+  [language: string]: T
+}
+
 export interface ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes
   instructions?: string
   editor?: {
-    name?: string
-    instructions?: {
-      [lang: string]: string
-    }
+    name?: I18n<string> | string
+    instructions?: I18n<string> | string
   }
   public?: boolean
   optional?: boolean
@@ -16,7 +18,7 @@ export interface ContentModelSchemaFieldBase {
 
 export interface ContentModelSchemaFieldLeaf extends ContentModelSchemaFieldBase {
   i18n?: boolean
-  argument?: boolean
+  filterable?: boolean
 }
 
 export enum ContentModelSchemaTypes {
@@ -42,8 +44,13 @@ export interface ContentModelSchemaFieldId extends ContentModelSchemaFieldLeaf {
 export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.string
   defaultValue?: string
-  validations?: {
-    maxCharacters: number
+  editor?: {
+    name?: I18n<string> | string
+    instructions?: I18n<string> | string
+    maxCharacters?: number
+    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea'
+    inputRows?: number
+    placeholder?: string
   }
   searchable?: boolean
 }
@@ -100,9 +107,10 @@ export interface RichTextConfig {
   ref?: ContentModelSchemaFieldRefTypeMap
 }
 
-export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldLeaf {
+export interface ContentModelSchemaFieldRichText extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.richText
   config?: RichTextConfig
+  i18n?: boolean
   searchable?: boolean
 }
 

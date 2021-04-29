@@ -70,9 +70,9 @@ export function RefContentSelectPanel({onSelectRef, type, scope}: RefContentSele
       <>
         {data?.content._all.list.nodes.map(node => {
           const {content, peer} = node
-          const states = []
 
-          if (content.state) states.push(t('articleEditor.panels.draft'))
+          // const states = []
+          // if (content.state) states.push(t('articleEditor.panels.draft'))
           // if (content.pending) states.push(t('articleEditor.panels.pending'))
           // if (content.published) states.push(t('articleEditor.panels.published'))
 
@@ -96,9 +96,9 @@ export function RefContentSelectPanel({onSelectRef, type, scope}: RefContentSele
                 <div style={{display: 'inline', fontSize: 12, marginLeft: 8}}>
                   {new Date(content.modifiedAt).toLocaleString()}
                 </div>
-                <div style={{display: 'inline', fontSize: 12, marginLeft: 8}}>
+                {/* <div style={{display: 'inline', fontSize: 12, marginLeft: 8}}>
                   {states.join(' / ')}
-                </div>
+                </div> */}
               </div>
             </List.Item>
           )

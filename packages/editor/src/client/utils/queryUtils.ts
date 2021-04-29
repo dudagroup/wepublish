@@ -130,8 +130,6 @@ function getFragment(configs: Configs, schema: ContentModel) {
   const fragment = `
     fragment Content_${schema.identifier} on ${fragmentName} {
       id
-      revision
-      state
       createdAt
       modifiedAt
       publicationDate

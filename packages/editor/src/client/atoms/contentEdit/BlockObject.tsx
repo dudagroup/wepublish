@@ -4,10 +4,11 @@ import {
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup, HelpBlock} from 'rsuite'
+import {ControlLabel, FormGroup} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'
+import Instructions from './Instructions'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -25,10 +26,11 @@ export function BlockObject({
 }: BlockAbstractProps<ContentModelSchemaFieldObject, MapType<any>>) {
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
+
   const content = Object.entries(model.fields).map(item => {
     const [key, fieldModel] = item
     const v = value[key]
-    const instructions = null // TODO
+    const name = fieldModel.editor?.name || key
 
     const childSchemaPath = [...schemaPath]
     childSchemaPath.push(key)
@@ -38,7 +40,7 @@ export function BlockObject({
       if (langLane1) {
         componentLane1 = (
           <>
-            <ControlLabel>{key}</ControlLabel>
+            <ControlLabel>{name}</ControlLabel>
             <BlockAbstract
               configs={configs}
               schemaPath={[...childSchemaPath, langLane1]}
@@ -46,6 +48,7 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane1]}></BlockAbstract>
+            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
           </>
         )
       }
@@ -54,7 +57,7 @@ export function BlockObject({
       if (langLane2) {
         componentLane2 = (
           <>
-            <ControlLabel>{key}</ControlLabel>
+            <ControlLabel>{name}</ControlLabel>
             <BlockAbstract
               configs={configs}
               schemaPath={[...childSchemaPath, langLane2]}
@@ -62,6 +65,7 @@ export function BlockObject({
               model={fieldModel}
               languageContext={languageContext}
               value={v[langLane2]}></BlockAbstract>
+            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
           </>
         )
       }
@@ -70,7 +74,7 @@ export function BlockObject({
 
     return (
       <FormGroup key={key}>
-        <ControlLabel>{key}</ControlLabel>
+        <ControlLabel>{name}</ControlLabel>
         {
           <BlockAbstract
             configs={configs}
@@ -80,7 +84,7 @@ export function BlockObject({
             languageContext={languageContext}
             value={v}></BlockAbstract>
         }
-        <HelpBlock tooltip>{instructions}</HelpBlock>
+        <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
       </FormGroup>
     )
   })
