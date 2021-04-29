@@ -26,7 +26,18 @@ export function ReferencePreview({
   }
   return (
     <TagGroup>
-      <Tag closable onClose={onClose}>
+      <Tag
+        className="wep-ref-tag"
+        closable
+        onClose={onClose}
+        style={{
+          height: 36,
+          minWidth: 100,
+          paddingLeft: 10,
+          paddingRight: 35,
+          paddingTop: 6,
+          fontSize: 14
+        }}>
         <Link
           route={ContentEditRoute.create({type: reference.contentType, id: reference.recordId})}>
           {revSummary}

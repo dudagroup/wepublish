@@ -215,7 +215,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.ref && (
               <>
-                <SubMenuModalButton icon="link">
+                <SubMenuModalButton icon="paste">
                   <RefMenu types={config?.ref} />
                 </SubMenuModalButton>
                 <ToolbarDivider />
@@ -228,11 +228,11 @@ export const RichTextBlock = memo(function RichTextBlock({
               </SubMenuButton>
             )}
           </Toolbar>
-          {WepublishEditor.isEmpty(editor) && ( // Alternative placeholder
+          {/* {WepublishEditor.isEmpty(editor) && ( // Alternative placeholder
             <div onClick={() => ReactEditor.focus(editor)} style={{color: '#cad5e4'}}>
               {t('blocks.richText.startWriting')}
             </div>
-          )}
+          )} */}
         </>
       )}
       <Editable
@@ -246,7 +246,7 @@ export const RichTextBlock = memo(function RichTextBlock({
             : undefined
         }
         readOnly={disabled || displayOnly}
-        // placeholder={t('blocks.richText.startWriting')}  # causes focusing problems on firefox !
+        placeholder={t('blocks.richText.startWriting')}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         onBlur={() => {

@@ -177,7 +177,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
-        rowHeight={config.previewSize === 'big' ? 300 : undefined}>
+        rowHeight={config.previewSize === 'big' ? 123 : undefined}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -200,7 +200,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column>
-        <Column flexGrow={3} align="left">
+        <Column flexGrow={2} minWidth={120} align="left">
           <HeaderCell>{t('content.overview.preview')}</HeaderCell>
           <Cell>
             {(rowData: ContentListRefFragment) => {
