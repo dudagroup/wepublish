@@ -34,7 +34,7 @@ export interface I18nProps {
 
 export const I18nWrapper = memo(function I18nWrapper({lane1, lane2}: I18nProps) {
   return (
-    <Row className="show-grid" style={{display: 'flex', alignItems: 'center'}}>
+    <Row className="show-grid" style={{display: 'flex', alignItems: 'center', marginBottom: 24}}>
       <Col xs={11}>
         <FormGroup>{lane1}</FormGroup>
       </Col>
