@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import React, {
   ReactNode,
   forwardRef,
@@ -9,7 +10,7 @@ import React, {
   ReactEventHandler
 } from 'react'
 
-import {Icon, Popover, PopoverProps, Whisper, Divider, Modal} from 'rsuite'
+import {Icon, Popover, PopoverProps, Whisper, Divider, Drawer} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 
@@ -161,7 +162,7 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   }
 )
 
-export const SubMenuModalButton = forwardRef<PopoverProps, SubMenuButtonProps>(
+export const SubMenuDrawerButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   ({children, icon}, ref) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -191,14 +192,18 @@ export const SubMenuModalButton = forwardRef<PopoverProps, SubMenuButtonProps>(
             icon={isMenuOpen ? 'close' : icon}
           />
         </ToolbarButton>
-        <Modal
+        <Drawer
+          placement={'bottom'}
           full
           show={isMenuOpen}
           onHide={() => {
             setIsMenuOpen(false)
           }}>
-          {children}
-        </Modal>
+          <Drawer.Header>
+            <Drawer.Title>Choose a reference</Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body>{children}</Drawer.Body>
+        </Drawer>
       </SubMenuContext.Provider>
     )
   }

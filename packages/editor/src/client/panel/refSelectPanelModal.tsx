@@ -1,10 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {Button, Drawer, Modal} from 'rsuite'
+import {Button, Drawer} from 'rsuite'
 import {RefSelectPanel, RefSelectPanelProps} from './refSelectPanel'
 
-export function RefSelectModal(props: RefSelectPanelProps) {
+export function RefSelectDrawer(props: RefSelectPanelProps) {
   const {t} = useTranslation()
   return (
     <>

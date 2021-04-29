@@ -53,5 +53,5 @@ export function RecordPreview({record}: RecordPreviewProps) {
   } else if (enrichedRecord.title) {
     return <>{enrichedRecord.title}</>
   }
-  return <>{`Type: ${enrichedRecord.contentType} Id: ${enrichedRecord.id}`}</>
+  return <>{enrichedRecord.id}</>
 }

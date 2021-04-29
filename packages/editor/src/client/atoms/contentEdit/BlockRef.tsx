@@ -1,9 +1,9 @@
 import React, {memo, useState} from 'react'
-import {Modal, Drawer} from 'rsuite'
+import {Drawer} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
-import {RefSelectModal} from '../../panel/refSelectPanelModal'
+import {RefSelectDrawer} from '../../panel/refSelectPanelModal'
 import {ReferenceButton} from '../referenceButton'
 import {BlockAbstractProps} from './BlockAbstract'
 
@@ -33,7 +33,7 @@ function BlockRef({
         show={isChooseModalOpen}
         full
         onHide={() => setChooseModalOpen(false)}>
-        <RefSelectModal
+        <RefSelectDrawer
           configs={configs}
           refConfig={model.types}
           onClose={() => setChooseModalOpen(false)}

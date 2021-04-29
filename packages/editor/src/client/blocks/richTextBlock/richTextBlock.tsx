@@ -12,7 +12,7 @@ import {
   H2Icon,
   H3Icon,
   SubMenuButton,
-  SubMenuModalButton
+  SubMenuDrawerButton
 } from '../../atoms/toolbar'
 import {RichTextBlockValue} from '../types'
 import {FormatButton, FormatIconButton, EditorSubMenuButton} from './toolbar/buttons'
@@ -30,6 +30,9 @@ export interface RichTextConfig {
   h1?: boolean
   h2?: boolean
   h3?: boolean
+  h4?: boolean
+  h5?: boolean
+  h6?: boolean
   italic?: boolean
   bold?: boolean
   underline?: boolean
@@ -63,6 +66,9 @@ export const RichTextBlock = memo(function RichTextBlock({
     h1: true,
     h2: true,
     h3: true,
+    h4: false,
+    h5: false,
+    h6: false,
     italic: true,
     bold: true,
     underline: true,
@@ -163,7 +169,24 @@ export const RichTextBlock = memo(function RichTextBlock({
                 <H3Icon />
               </FormatButton>
             )}
-            {(config.h1 || config.h2 || config.h3) && <ToolbarDivider />}
+            {config.h4 && (
+              <FormatButton format={BlockFormat.H4}>
+                <H3Icon />
+              </FormatButton>
+            )}
+            {config.h5 && (
+              <FormatButton format={BlockFormat.H5}>
+                <H3Icon />
+              </FormatButton>
+            )}
+            {config.h6 && (
+              <FormatButton format={BlockFormat.H6}>
+                <H3Icon />
+              </FormatButton>
+            )}
+            {(config.h1 || config.h2 || config.h3 || config.h4 || config.h5 || config.h6) && (
+              <ToolbarDivider />
+            )}
 
             {config.unorderedList && (
               <FormatIconButton icon="list-ul" format={BlockFormat.UnorderedList} />
@@ -215,9 +238,9 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.ref && (
               <>
-                <SubMenuModalButton icon="paste">
+                <SubMenuDrawerButton icon="paste">
                   <RefMenu types={config?.ref} />
-                </SubMenuModalButton>
+                </SubMenuDrawerButton>
                 <ToolbarDivider />
               </>
             )}

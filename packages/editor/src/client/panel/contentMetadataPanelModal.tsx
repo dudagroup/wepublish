@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, Modal} from 'rsuite'
+import {Button, Drawer} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 
 export interface ArticleMetadataProperty {
@@ -23,17 +23,17 @@ export function ContentMetadataPanelModal({children, onClose}: ContentMetadataPa
 
   return (
     <>
-      <Modal.Header>
-        <Modal.Title>{t('articleEditor.panels.metadata')}</Modal.Title>
-      </Modal.Header>
+      <Drawer.Header>
+        <Drawer.Title>{t('articleEditor.panels.metadata')}</Drawer.Title>
+      </Drawer.Header>
 
-      <Modal.Body>{children}</Modal.Body>
+      <Drawer.Body>{children}</Drawer.Body>
 
-      <Modal.Footer>
+      <Drawer.Footer>
         <Button appearance={'subtle'} onClick={() => onClose?.()}>
           {t('articleEditor.panels.close')}
         </Button>
-      </Modal.Footer>
+      </Drawer.Footer>
     </>
   )
 }

@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
-import {Modal, Notification, Icon, IconButton} from 'rsuite'
+import {Modal, Notification, Icon, IconButton, Drawer} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -298,20 +298,14 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       configs,
       contentConfig
     )
-  } else {
+  } else if (contentConfig.schema.meta && customMetadataDispatcher) {
     metadataView = (
-      <ContentMetadataPanel
+      <GenericContentView
         configs={configs}
-        defaultMetadata={metadata}
-        customMetaFields={contentConfig.schema.meta}
-        customMetadata={customMetadata}
-        customMetadataDispatcher={customMetadataDispatcher}
+        record={customMetadata}
+        fields={contentConfig.schema.meta}
         languagesConfig={configs.apiConfig.languages}
-        onChangeDefaultMetadata={(value: any) => {
-          setMetadata(value)
-          setChanged(true)
-        }}
-      />
+        dispatch={customMetadataDispatcher}></GenericContentView>
     )
   }
 
@@ -432,7 +426,13 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               border: '1px dashed #e5e5ea',
               borderRadius: 6
             }}>
-            {metadataView}
+            <ContentMetadataPanel
+              defaultMetadata={metadata}
+              onChangeDefaultMetadata={(value: any) => {
+                setMetadata(value)
+                setChanged(true)
+              }}
+            />
           </div>
           <div
             className="wep-editor-content"
@@ -447,11 +447,16 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         </div>
       </div>
 
-      <Modal show={isMetaVisible} full backdrop="static" onHide={() => setMetaVisible(false)}>
+      <Drawer
+        show={isMetaVisible}
+        placement={'bottom'}
+        full
+        backdrop="static"
+        onHide={() => setMetaVisible(false)}>
         <ContentMetadataPanelModal onClose={() => setMetaVisible(false)}>
           {metadataView}
         </ContentMetadataPanelModal>
-      </Modal>
+      </Drawer>
 
       <Modal show={isPublishDialogOpen} size={'sm'} onHide={() => setPublishDialogOpen(false)}>
         <PublishContentPanel

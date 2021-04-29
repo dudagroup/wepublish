@@ -6,6 +6,9 @@ export enum ElementNodeType {
   H1 = 'heading-one',
   H2 = 'heading-two',
   H3 = 'heading-three',
+  H4 = 'heading-four',
+  H5 = 'heading-five',
+  H6 = 'heading-six',
   Paragraph = 'paragraph',
   UnorderedList = 'unordered-list',
   OrderedList = 'ordered-list',
@@ -55,6 +58,9 @@ export interface RichTextBlockNode extends RichTextAbstractNode {
     | ElementNodeType.H1
     | ElementNodeType.H2
     | ElementNodeType.H3
+    | ElementNodeType.H4
+    | ElementNodeType.H5
+    | ElementNodeType.H6
     | ElementNodeType.Paragraph
     | ElementNodeType.UnorderedList
     | ElementNodeType.OrderedList

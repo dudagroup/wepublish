@@ -14,6 +14,15 @@ export function renderElement({attributes, children, element}: RenderElementProp
     case BlockFormat.H3:
       return <h3 {...attributes}>{children}</h3>
 
+    case BlockFormat.H4:
+      return <h4 {...attributes}>{children}</h4>
+
+    case BlockFormat.H5:
+      return <h5 {...attributes}>{children}</h5>
+
+    case BlockFormat.H6:
+      return <h6 {...attributes}>{children}</h6>
+
     case BlockFormat.UnorderedList:
       return <ul {...attributes}>{children}</ul>
 
@@ -59,13 +68,14 @@ export function renderElement({attributes, children, element}: RenderElementProp
         </a>
       )
 
-    case InlineFormat.Reference:
+    case InlineFormat.Reference: {
       const reference = element.reference as Reference
       return (
         <a data-title={element.title} data-href={reference.recordId} {...attributes}>
           {children}
         </a>
       )
+    }
 
     default:
       return <p {...attributes}>{children}</p>

@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react'
 
-import {Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
+import {Drawer, Dropdown, Icon, IconButton, Modal, Panel} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
 import {ImageBlockValue} from './types'
 import {useTranslation} from 'react-i18next'
-import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {ContentEditor, RefSelectDrawer, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
 import {MODEL_MEDIA_LIBRARY} from '../../config'
 
@@ -81,8 +81,8 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
           onChange(e.target.value, ['caption'])
         }}
       />
-      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
-        <RefSelectModal
+      <Drawer show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
+        <RefSelectDrawer
           refConfig={{
             [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
@@ -95,11 +95,11 @@ export function ImageBlock({value, onChange, configs, autofocus}: BlockProps<Ima
             onChange(ref, ['image'])
           }}
         />
-      </Modal>
+      </Drawer>
       {image && (
         <Modal
           show={isEditModalOpen}
-          size="lg"
+          placement={'bottom'}
           backdrop="static"
           full
           onHide={() => setEditModalOpen(false)}>

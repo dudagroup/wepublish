@@ -5,7 +5,7 @@ import {ListInput, ListValue, FieldProps} from '../atoms/listInput'
 import {GalleryImageEdge} from '../blocks/types'
 import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {Configs, ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {Configs, ContentEditor, RefSelectDrawer, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
 import {MODEL_MEDIA_LIBRARY} from '../../config'
 
@@ -97,8 +97,12 @@ export function GalleryListItem({
         </Form>
       </div>
 
-      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
-        <RefSelectModal
+      <Drawer
+        show={isChooseModalOpen}
+        placement={'bottom'}
+        full
+        onHide={() => setChooseModalOpen(false)}>
+        <RefSelectDrawer
           refConfig={{
             [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
@@ -111,7 +115,7 @@ export function GalleryListItem({
             onChange(value => ({...value, image: ref}))
           }}
         />
-      </Modal>
+      </Drawer>
       {imageRef && (
         <Modal
           show={isEditModalOpen}

@@ -1,10 +1,10 @@
 import React, {useContext, useMemo, useState} from 'react'
-import {Button, Icon, Col, FormControl, Grid, Modal, Row, SelectPicker, Panel} from 'rsuite'
+import {Button, Icon, Col, FormControl, Grid, Row, SelectPicker, Panel, Drawer} from 'rsuite'
 import {
   RichTextBlock,
   RichTextBlockValue,
   Reference,
-  RefSelectModal,
+  RefSelectDrawer,
   ReferenceButton,
   ConfigContext,
   Configs
@@ -218,8 +218,12 @@ export function ContentAEditView({value, dispatch, configs}: ContentAEditViewPro
         </Panel>
       </Grid>
 
-      <Modal show={isChooseModalOpen} size="md" onHide={() => setChooseModalOpen(false)}>
-        <RefSelectModal
+      <Drawer
+        show={isChooseModalOpen}
+        placement={'bottom'}
+        full
+        onHide={() => setChooseModalOpen(false)}>
+        <RefSelectDrawer
           configs={configs}
           refConfig={{
             modelA: {scope: ContentContextEnum.Local},
@@ -235,7 +239,7 @@ export function ContentAEditView({value, dispatch, configs}: ContentAEditViewPro
             })
           }}
         />
-      </Modal>
+      </Drawer>
     </>
   )
 }
