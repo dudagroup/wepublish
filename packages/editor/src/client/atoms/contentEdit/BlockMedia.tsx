@@ -91,7 +91,7 @@ function BlockMedia({
 
     panel = (
       <>
-        <Panel style={{backgroundColor: 'dark'}}>
+        <div className="wep-media-panel" style={{backgroundColor: 'dark'}}>
           <FocalPointInput
             imageURL={url}
             imageWidth={width}
@@ -106,8 +106,10 @@ function BlockMedia({
               })
             }}
           />
-        </Panel>
-        <Panel header={t('images.panels.description')}>
+        </div>
+        <div
+          className="wep-media-meta"
+          style={{paddingLeft: 5, paddingRight: 10, paddingTop: 20, paddingBottom: 20}}>
           <DescriptionList>
             <DescriptionListItem label={t('images.panels.filename')}>
               {filename || t('images.panels.untitled')}
@@ -131,6 +133,8 @@ function BlockMedia({
             </DescriptionListItem>
           </DescriptionList>
           <Button
+            appearance="ghost"
+            color="red"
             onClick={() => {
               dispatch({
                 type: ContentEditActionEnum.update,
@@ -140,7 +144,7 @@ function BlockMedia({
             }}>
             {t('global.buttons.delete')}
           </Button>
-        </Panel>
+        </div>
       </>
     )
   } else if (value?.file || value?.media?.filename) {
