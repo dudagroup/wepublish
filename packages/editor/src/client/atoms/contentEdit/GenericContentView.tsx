@@ -14,6 +14,8 @@ interface GenericContentViewProps {
   readonly dispatch: React.Dispatch<ContentEditAction>
   readonly languagesConfig: LanguagesConfig
   readonly configs: Configs
+  readonly langLaneL?: string
+  readonly langLaneR?: string
 }
 
 export function GenericContent({
@@ -21,7 +23,9 @@ export function GenericContent({
   languagesConfig,
   record,
   dispatch,
-  configs
+  configs,
+  langLaneL,
+  langLaneR
 }: GenericContentViewProps) {
   const [langLane1, setLangLane1] = useState(languagesConfig.languages?.[0]?.tag)
   const [langLane2, setLangLane2] = useState(languagesConfig.languages?.[1]?.tag)
@@ -76,7 +80,7 @@ export function GenericContent({
 
   return (
     <Grid>
-      {header}
+      {!(langLaneL && langLaneR) && header}
       <Panel bordered>
         <Form fluid={true} style={{width: '100%'}}>
           <BlockObject
@@ -87,8 +91,8 @@ export function GenericContent({
               fields
             }}
             languageContext={{
-              langLane1,
-              langLane2,
+              langLane1: langLaneL || langLane1,
+              langLane2: langLaneR || langLane2,
               languagesConfig
             }}
             value={record}
@@ -100,5 +104,5 @@ export function GenericContent({
 }
 
 export const GenericContentView = memo(GenericContent, (a, b) => {
-  return Object.is(a.record, b.record)
+  return Object.is(a.record, b.record) && a.langLaneL == b.langLaneL && a.langLaneR == b.langLaneR
 })

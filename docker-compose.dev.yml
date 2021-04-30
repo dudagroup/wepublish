@@ -14,6 +14,7 @@ services:
       - 3011:3011
       - 8000:8000
       - 7000:7000
+      - 9240:9240
     command: ['yarn', 'watch']
     volumes:
       - ./:/home/node/wepublish:delegated
@@ -117,7 +118,7 @@ services:
     depends_on:
       - mongo
     ports:
-      - 8000:8081
+      - 8081:8081
     logging:
       driver: none
 

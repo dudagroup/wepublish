@@ -14,7 +14,8 @@ import {Reference} from '../../interfaces/referenceType'
 export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
   if (
     props.model.contentType.type === ContentModelSchemaTypes.reference &&
-    Object.keys(props.model.contentType.types).length === 1
+    Object.keys(props.model.contentType.types).length === 1 &&
+    props.model.editor?.presentReferenceListAsTagPicker
   ) {
     return (
       <BlockTags

@@ -1,24 +1,103 @@
 /* eslint-disable i18next/no-literal-string */
 import React from 'react'
-import {ControlLabel, Form, FormControl, FormGroup, Toggle, Panel} from 'rsuite'
+import {
+  ControlLabel,
+  Form,
+  FormControl,
+  FormGroup,
+  Toggle,
+  Panel,
+  InputGroup,
+  Whisper,
+  IconButton,
+  Icon,
+  Tooltip
+} from 'rsuite'
 import {useTranslation} from 'react-i18next'
+import {MapType} from '../interfaces/utilTypes'
+import {I18nWrapper} from '../atoms/contentEdit/i18nWrapper'
+import {slugify} from '../utility'
+import jsonpath from 'jsonpath'
+import {ContentModelConfigMerged} from '../interfaces/extensionConfig'
 
 export interface DefaultMetadata {
   readonly title: string
   readonly shared: boolean
+  readonly slugI18n: MapType<string>
 }
 
 export interface ContentMetadataPanelProps {
   readonly defaultMetadata: DefaultMetadata
+  readonly langLanes: string[]
+  readonly content: MapType<unknown>
+  readonly meta?: MapType<unknown>
+  readonly config: ContentModelConfigMerged
   onChangeDefaultMetadata?(defaultMetadata: DefaultMetadata): void
 }
 
 export function ContentMetadataPanel({
   defaultMetadata,
-  onChangeDefaultMetadata
+  onChangeDefaultMetadata,
+  langLanes,
+  content,
+  config,
+  meta
 }: ContentMetadataPanelProps) {
-  const {title, shared} = defaultMetadata
+  const {title, slugI18n, shared} = defaultMetadata
   const {t} = useTranslation()
+
+  const [componentLane1, componentLane2] = langLanes.map(lang => {
+    const slug = slugI18n[lang]
+
+    let deriveButton = null
+    if (config.deriveSlug) {
+      deriveButton = (
+        <Whisper
+          placement="top"
+          trigger="hover"
+          speaker={<Tooltip>{config.deriveSlug.instructions}</Tooltip>}>
+          <IconButton
+            icon={<Icon icon="magic" />}
+            onClick={() => {
+              if (config.deriveSlug) {
+                const result = jsonpath.query({content, meta}, config.deriveSlug.jsonPath)
+                if (result.length > 0 && config.deriveSlug) {
+                  let val = result[0]
+                  if (typeof val !== 'string') {
+                    val = val?.[lang]
+                  }
+                  if (typeof val === 'string') {
+                    onChangeDefaultMetadata?.({
+                      ...defaultMetadata,
+                      slugI18n: {...slugI18n, [lang]: slugify(val)}
+                    })
+                  }
+                }
+              }
+            }}
+          />
+        </Whisper>
+      )
+    }
+
+    return (
+      <InputGroup style={{width: '100%'}}>
+        <FormControl
+          value={slug}
+          onChange={val =>
+            onChangeDefaultMetadata?.({...defaultMetadata, slugI18n: {...slugI18n, [lang]: val}})
+          }
+          onBlur={() =>
+            onChangeDefaultMetadata?.({
+              ...defaultMetadata,
+              slugI18n: {...slugI18n, [lang]: slugify(slug)}
+            })
+          }
+        />
+        {deriveButton}
+      </InputGroup>
+    )
+  })
 
   return (
     <Panel>
@@ -30,6 +109,10 @@ export function ContentMetadataPanel({
             placeholder={t('content.overview.internalTitlePlaceholder')}
             onChange={title => onChangeDefaultMetadata?.({...defaultMetadata, title})}
           />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>{t('articleEditor.panels.slug')}</ControlLabel>
+          <I18nWrapper lane1={componentLane1} lane2={componentLane2} />
         </FormGroup>
       </Form>
       <Form fluid layout="horizontal" style={{marginTop: '20px'}}>

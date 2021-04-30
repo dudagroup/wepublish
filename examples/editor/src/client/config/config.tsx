@@ -21,6 +21,10 @@ export const config: EditorConfig = {
   contentModelExtension: [
     {
       identifier: 'modelA',
+      deriveSlug: {
+        instructions: 'derive slug from field "myStringI18n"',
+        jsonPath: '$.content.myStringI18n'
+      },
       getContentView: (content, onChange, disabled, dispatch, configs) => {
         return <ContentAEditView value={content} dispatch={dispatch} configs={configs} />
       },
@@ -41,6 +45,13 @@ export const config: EditorConfig = {
             dispatch={dispatchCustomMetadata}
           />
         )
+      }
+    },
+    {
+      identifier: 'modelB',
+      deriveSlug: {
+        instructions: 'derive slug from field "myStringI18n"',
+        jsonPath: '$.content.myStringI18n'
       }
     },
     {

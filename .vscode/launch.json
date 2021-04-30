@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Editor Example",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3010",
+      "webRoot": "${workspaceFolder}/examples/editor"
+    },
+    {
+      "name": "Launch Editor Standalone",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/packages/editor"
+    },
+    {
+      "name": "Attach API (Docker)",
+      "type": "node",
+      "request": "attach",
+      "port": 9240,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/home/node/wepublish/",
+      "protocol": "inspector"
+    }
+  ]
+}

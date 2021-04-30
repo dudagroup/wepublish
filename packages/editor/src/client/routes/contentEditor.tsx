@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import React, {useState, useEffect, useCallback, useReducer} from 'react'
-import {Modal, Notification, Icon, IconButton, Drawer} from 'rsuite'
+import React, {useState, useEffect, useCallback, useReducer, useMemo} from 'react'
+import {Modal, Notification, Icon, IconButton, Drawer, Row, Col, SelectPicker, Button} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -24,6 +24,7 @@ import {ContentEditActionEnum, contentReducer} from '../control/contentReducer'
 import {generateEmptyRootContent} from '../control/contentUtil'
 import {Configs} from '../interfaces/extensionConfig'
 import {Reference} from '../interfaces/referenceType'
+import {MapType} from '../interfaces/utilTypes'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -43,6 +44,7 @@ interface ContentBody {
   shared: boolean
   state: string
   title: string
+  slugI18n: MapType<string>
   content: any
   meta?: any
   __typename: string
@@ -51,6 +53,8 @@ interface ContentBody {
 export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEditorProps) {
   const {t} = useTranslation()
   const dispatch = useRouteDispatch()
+  const [langLane1, setLangLane1] = useState(configs.apiConfig.languages.languages[0]?.tag)
+  const [langLane2, setLangLane2] = useState(configs.apiConfig.languages.languages[1]?.tag)
 
   const contentConfig = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type
@@ -77,7 +81,11 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   const [publishedAt, setPublishedAt] = useState<Date>()
   const [metadata, setMetadata] = useState<DefaultMetadata>({
     title: '',
-    shared: false
+    shared: false,
+    slugI18n: configs.apiConfig.languages.languages.reduce((accu, lang) => {
+      accu[lang.tag] = ''
+      return accu
+    }, {} as MapType<string>)
   })
 
   const intitialCustomMetadata =
@@ -156,12 +164,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
 
   useEffect(() => {
     if (recordData) {
-      const {shared, title, content, meta} = stripKeysRecursive(recordData, ['__typename'])
+      const {shared, title, slugI18n, content, meta} = stripKeysRecursive(recordData, [
+        '__typename'
+      ])
       const publishedAt = new Date()
       if (publishedAt) setPublishedAt(new Date(publishedAt))
 
       setMetadata({
         title,
+        slugI18n,
         shared
       })
       setCustomMetadata(meta)
@@ -189,6 +200,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     return {
       id: contentdId,
       title: metadata.title,
+      slugI18n: metadata.slugI18n,
       shared: metadata.shared,
       content,
       meta
@@ -278,13 +290,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         record={contentData}
         fields={contentConfig.schema.content}
         languagesConfig={configs.apiConfig.languages}
-        dispatch={dispatcher}></GenericContentView>
+        dispatch={dispatcher}
+        langLaneL={langLane1}
+        langLaneR={langLane2}></GenericContentView>
     )
   }
 
-  let metadataView = null
+  let customMetadataView = null
   if (contentConfig.getMetaView) {
-    metadataView = contentConfig.getMetaView(
+    customMetadataView = contentConfig.getMetaView(
       metadata,
       customMetadata,
       value => {
@@ -299,7 +313,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       contentConfig
     )
   } else if (contentConfig.schema.meta && customMetadataDispatcher) {
-    metadataView = (
+    customMetadataView = (
       <GenericContentView
         configs={configs}
         record={customMetadata}
@@ -307,6 +321,54 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         languagesConfig={configs.apiConfig.languages}
         dispatch={customMetadataDispatcher}></GenericContentView>
     )
+  }
+
+  const languages = configs.apiConfig.languages.languages.map(v => {
+    const isDefaultLangFlag =
+      configs.apiConfig.languages.defaultLanguageTag === v.tag ? ' (default)' : ''
+    return {
+      label: v.tag + isDefaultLangFlag,
+      value: v.tag
+    }
+  })
+  let header
+  if (configs.apiConfig.languages.languages.length >= 2) {
+    header = useMemo(() => {
+      return (
+        <Row className="show-grid">
+          <Col xs={11}>
+            <SelectPicker
+              cleanable={false}
+              data={languages}
+              value={langLane1}
+              appearance="subtle"
+              onChange={setLangLane1}
+              style={{width: 120}}
+            />
+          </Col>
+          <Col xs={2} style={{textAlign: 'center'}}>
+            <Button
+              appearance="link"
+              onClick={() => {
+                setLangLane1(langLane2)
+                setLangLane2(langLane1)
+              }}>
+              {<Icon icon="exchange" />}
+            </Button>
+          </Col>
+          <Col xs={11} style={{textAlign: 'right'}}>
+            <SelectPicker
+              cleanable={false}
+              data={languages}
+              value={langLane2}
+              appearance="subtle"
+              onChange={setLangLane2}
+              style={{width: 120}}
+            />
+          </Col>
+        </Row>
+      )
+    }, [langLane2, langLane1])
   }
 
   return (
@@ -355,7 +417,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               {t('articleEditor.overview.back')}
             </IconButtonLink>
             <>
-              {metadataView && (
+              {customMetadataView && (
                 <IconButton
                   icon={<Icon icon="file-text-o" />}
                   appearance="subtle"
@@ -422,11 +484,24 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             style={{
               width: '100%',
               maxWidth: 1140,
+              marginTop: 20
+            }}>
+            {header}
+          </div>
+          <div
+            className="wep-editor-metalight"
+            style={{
+              width: '100%',
+              maxWidth: 1140,
               marginTop: 20,
               border: '1px dashed #e5e5ea',
               borderRadius: 6
             }}>
             <ContentMetadataPanel
+              langLanes={[langLane1, langLane2]}
+              meta={customMetadata}
+              config={contentConfig}
+              content={contentData}
               defaultMetadata={metadata}
               onChangeDefaultMetadata={(value: any) => {
                 setMetadata(value)
@@ -454,7 +529,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         backdrop="static"
         onHide={() => setMetaVisible(false)}>
         <ContentMetadataPanelModal onClose={() => setMetaVisible(false)}>
-          {metadataView}
+          {customMetadataView}
         </ContentMetadataPanelModal>
       </Drawer>
 

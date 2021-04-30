@@ -210,6 +210,7 @@ export function generateSchema(
     dePublicationDate: {type: GraphQLDateTime},
 
     title: {type: GraphQLNonNull(GraphQLString)},
+    slugI18n: {type: GraphQLNonNull(getI18nOutputType(GraphQLString, languageConfig))},
     shared: {type: GraphQLNonNull(GraphQLBoolean)}
   }
   contentModels[identifier] = new GraphQLObjectType({
@@ -267,6 +268,7 @@ export function generateInputSchema(
       name: nameJoin(identifier, 'create'),
       fields: {
         title: {type: GraphQLNonNull(GraphQLString)},
+        slugI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLString, languageConfig))},
         shared: {type: GraphQLNonNull(GraphQLBoolean)},
         ...content
       }
