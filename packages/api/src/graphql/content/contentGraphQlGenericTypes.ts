@@ -278,6 +278,7 @@ export function generateInputSchema(
       fields: {
         id: {type: GraphQLNonNull(GraphQLID)},
         title: {type: GraphQLNonNull(GraphQLString)},
+        slugI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLString, languageConfig))},
         shared: {type: GraphQLNonNull(GraphQLBoolean)},
         ...content
       }
