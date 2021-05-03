@@ -1,26 +1,26 @@
 /* eslint-disable i18next/no-literal-string */
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {Button, Modal} from 'rsuite'
+import {Button, Drawer} from 'rsuite'
 import {RefSelectPanel, RefSelectPanelProps} from './refSelectPanel'
 
-export function RefSelectModal(props: RefSelectPanelProps) {
+export function RefSelectDrawer(props: RefSelectPanelProps) {
   const {t} = useTranslation()
   return (
     <>
-      <Modal.Header onHide={() => props.onClose?.()}>
-        <Modal.Title>Choose a reference</Modal.Title>
-      </Modal.Header>
+      <Drawer.Header onHide={() => props.onClose?.()}>
+        <Drawer.Title>Choose a reference</Drawer.Title>
+      </Drawer.Header>
 
-      <Modal.Body>
+      <Drawer.Body>
         <RefSelectPanel {...props}></RefSelectPanel>
-      </Modal.Body>
+      </Drawer.Body>
 
-      <Modal.Footer>
+      <Drawer.Footer>
         <Button appearance={'subtle'} onClick={() => props.onClose?.()}>
           {t('articleEditor.panels.close')}
         </Button>
-      </Modal.Footer>
+      </Drawer.Footer>
     </>
   )
 }

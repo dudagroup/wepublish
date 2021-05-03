@@ -170,3 +170,14 @@ export const ALL_PAYMENT_PERIODICITIES: PaymentPeriodicity[] = [
   PaymentPeriodicity.Biannual,
   PaymentPeriodicity.Yearly
 ]
+
+export function humanReadableDateTime(isoDateString: string) {
+  const dateFormat: Intl.DateTimeFormatOptions = {
+    year: '2-digit',
+    month: '2-digit',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
+  return new Date(isoDateString).toLocaleDateString(navigator.language, dateFormat)
+}

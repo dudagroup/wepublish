@@ -48,7 +48,7 @@ export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLe
     name?: I18n<string> | string
     instructions?: I18n<string> | string
     maxCharacters?: number
-    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea'
+    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea' | 'slug'
     inputRows?: number
     placeholder?: string
   }
@@ -93,6 +93,9 @@ export interface RichTextConfig {
   h1?: boolean
   h2?: boolean
   h3?: boolean
+  h4?: boolean
+  h5?: boolean
+  h6?: boolean
   italic?: boolean
   bold?: boolean
   underline?: boolean
@@ -134,6 +137,11 @@ export interface ContentModelSchemaFieldRef extends ContentModelSchemaFieldLeaf 
 export interface ContentModelSchemaFieldList extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.list
   contentType: ContentModelSchemas
+  editor?: {
+    name?: I18n<string> | string
+    instructions?: I18n<string> | string
+    presentReferenceListAsTagPicker?: boolean
+  }
 }
 
 export interface ContentModelSchemaFieldObject extends ContentModelSchemaFieldBase {

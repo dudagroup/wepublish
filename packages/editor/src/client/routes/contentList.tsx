@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import React, {useEffect, useState} from 'react'
 import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
 import {
@@ -18,7 +19,8 @@ import {
   Button,
   Popover,
   Whisper,
-  Divider
+  Divider,
+  Drawer
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
@@ -28,6 +30,7 @@ import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
 import {Configs} from '../interfaces/extensionConfig'
 import {ContentEditor} from './contentEditor'
+import {humanReadableDateTime} from '../utility'
 
 const {Column, HeaderCell, Cell} = Table
 
@@ -177,7 +180,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
-        rowHeight={config.previewSize === 'big' ? 300 : undefined}>
+        rowHeight={config.previewSize === 'big' ? 123 : undefined}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -200,7 +203,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column>
-        <Column flexGrow={3} align="left">
+        <Column flexGrow={2} minWidth={120} align="left">
           <HeaderCell>{t('content.overview.preview')}</HeaderCell>
           <Cell>
             {(rowData: ContentListRefFragment) => {
@@ -210,11 +213,19 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </Column>
         <Column flexGrow={2} minWidth={140} align="left">
           <HeaderCell>{t('content.overview.created')}</HeaderCell>
-          <Cell dataKey="createdAt" />
+          <Cell>
+            {(rowData: ContentListRefFragment) => {
+              return humanReadableDateTime(rowData.createdAt)
+            }}
+          </Cell>
         </Column>
         <Column flexGrow={2} minWidth={140} align="left">
           <HeaderCell>{t('content.overview.updated')}</HeaderCell>
-          <Cell dataKey="modifiedAt" />
+          <Cell>
+            {(rowData: ContentListRefFragment) => {
+              return humanReadableDateTime(rowData.modifiedAt)
+            }}
+          </Cell>
         </Column>
         {/* <Column flexGrow={2} align="left">
           <HeaderCell>{t('content.overview.states')}</HeaderCell>
@@ -328,14 +339,13 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </Modal.Footer>
       </Modal>
 
-      <Modal
+      <Drawer
         show={isEditModalOpen}
-        size="lg"
-        // eslint-disable-next-line i18next/no-literal-string
+        placement={'bottom'}
         backdrop="static"
         full
         onHide={() => setEditModalOpen(false)}>
-        <Modal.Body>
+        <Drawer.Body style={{margin: 0}}>
           <ContentEditor
             onBack={() => setEditModalOpen(false)}
             onApply={ref => {
@@ -346,8 +356,8 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
             type={type}
             configs={configs}></ContentEditor>
-        </Modal.Body>
-      </Modal>
+        </Drawer.Body>
+      </Drawer>
     </>
   )
 }

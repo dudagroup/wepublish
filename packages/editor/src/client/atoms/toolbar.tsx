@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import React, {
   ReactNode,
   forwardRef,
@@ -9,7 +10,7 @@ import React, {
   ReactEventHandler
 } from 'react'
 
-import {Icon, Popover, PopoverProps, Whisper, Divider, Modal} from 'rsuite'
+import {Icon, Popover, PopoverProps, Whisper, Divider, Drawer} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 
@@ -28,17 +29,17 @@ export function Toolbar({onMouseDown, fadeOut = false, children}: ToolbarProps) 
       style={{
         pointerEvents: 'none',
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'left',
         alignItems: 'center',
 
         position: 'sticky',
         zIndex: 1,
-        marginBottom: 30
+        marginBottom: 15
       }}>
       <div
         style={{
           pointerEvents: 'auto',
-          padding: 5,
+          padding: 0,
           backgroundColor: 'white',
           borderRadius: 6,
 
@@ -73,7 +74,7 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
       <button
         className="icon-button"
         style={{
-          border: `${active ? 'blue' : '#00000000'} 1px solid`
+          color: `${active ? '#3498ff' : '#000'}`
         }}
         ref={ref}
         {...props}>
@@ -161,7 +162,7 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   }
 )
 
-export const SubMenuModalButton = forwardRef<PopoverProps, SubMenuButtonProps>(
+export const SubMenuDrawerButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   ({children, icon}, ref) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -191,21 +192,30 @@ export const SubMenuModalButton = forwardRef<PopoverProps, SubMenuButtonProps>(
             icon={isMenuOpen ? 'close' : icon}
           />
         </ToolbarButton>
-        <Modal
+        <Drawer
+          placement={'bottom'}
           full
           show={isMenuOpen}
           onHide={() => {
             setIsMenuOpen(false)
           }}>
-          {children}
-        </Modal>
+          <Drawer.Header>
+            <Drawer.Title>Choose a reference</Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body>{children}</Drawer.Body>
+        </Drawer>
       </SubMenuContext.Provider>
     )
   }
 )
 
 export function ToolbarDivider() {
-  return <Divider style={{height: '1.5em'}} vertical />
+  return (
+    <Divider
+      style={{height: '1.5em', background: 'transparent', marginLeft: 7, marginRight: 7}}
+      vertical
+    />
+  )
 }
 
 interface ControlsContainerProps {

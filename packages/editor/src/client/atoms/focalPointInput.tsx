@@ -66,7 +66,9 @@ export function FocalPointInput({
         display: 'flex',
         width: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        background: '#000',
+        borderRadius: 6
       }}
       ref={containerRef}>
       <div ref={imageContainer}>

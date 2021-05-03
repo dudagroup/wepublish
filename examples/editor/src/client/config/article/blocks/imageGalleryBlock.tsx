@@ -10,7 +10,7 @@ import {ImageGalleryBlockValue} from './types'
 import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
-import {ContentEditor, RefSelectModal, useRecordHook} from '@wepublish/editor'
+import {ContentEditor, RefSelectDrawer, useRecordHook} from '@wepublish/editor'
 import {ImageRecord} from '../interfaces/interfaces'
 import {MODEL_MEDIA_LIBRARY} from '../../config'
 
@@ -170,8 +170,12 @@ export function ImageGalleryBlock({
           )
         }}
       />
-      <Modal show={isChooseModalOpen} size="lg" full onHide={() => setChooseModalOpen(false)}>
-        <RefSelectModal
+      <Drawer
+        show={isChooseModalOpen}
+        placement={'bottom'}
+        full
+        onHide={() => setChooseModalOpen(false)}>
+        <RefSelectDrawer
           refConfig={{
             [MODEL_MEDIA_LIBRARY]: {
               scope: 'local'
@@ -192,7 +196,7 @@ export function ImageGalleryBlock({
             )
           }}
         />
-      </Modal>
+      </Drawer>
       {imageRef && (
         <Modal
           show={isEditModalOpen}

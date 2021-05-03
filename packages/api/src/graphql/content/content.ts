@@ -53,6 +53,7 @@ import {MapType} from '../../interfaces/utilTypes'
 import {generateInputSchema, generateSchema} from './contentGraphQlGenericTypes'
 import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
 import {getFilter} from './contentGraphQLFilter'
+import {getI18nOutputType} from '../i18nPrimitives'
 
 export interface PeerContent {
   peerID: string
@@ -395,6 +396,9 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
     fields: {
       id: {type: GraphQLNonNull(GraphQLID)},
       title: {type: GraphQLNonNull(GraphQLString)},
+      slugI18n: {
+        type: GraphQLNonNull(getI18nOutputType(GraphQLString, contextOptions.languageConfig))
+      },
       shared: {type: GraphQLNonNull(GraphQLBoolean)},
       contentType: {type: GraphQLNonNull(GraphQLContentTypeEnum)},
 

@@ -28,7 +28,7 @@ import {ControlLabel, Button, Form, FormControl, FormGroup, Divider, Icon, Alert
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 
-declare var PasswordCredential: any
+declare const PasswordCredential: any
 
 export function Login() {
   const [email, setEmail] = useState('')
@@ -120,7 +120,7 @@ export function Login() {
       user: {email: responseEmail, roles}
     } = response.data.createSession
 
-    if (PasswordCredential) {
+    if (typeof PasswordCredential !== 'undefined') {
       const cred = new PasswordCredential({
         id: email,
         password

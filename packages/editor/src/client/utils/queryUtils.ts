@@ -135,6 +135,9 @@ function getFragment(configs: Configs, schema: ContentModel) {
       publicationDate
       dePublicationDate
       title
+      slugI18n {
+        ${configs.apiConfig.languages.languages.map(v => `${v.tag}`).join('\n')}
+      }
       shared
       ${getFragmentSchema(configs, schema.schema, fragmentName)}
     }

@@ -32,6 +32,10 @@ export interface ContentModelExtension<M = any> extends ExtensionBase {
   defaultMeta?: any
   previewPath?: string[]
   previewSize?: 'big' | 'small'
+  deriveSlug?: {
+    jsonPath: string
+    instructions: string
+  }
   getMetaView?: getMetaViewFunction<M>
   getContentView?: getContentViewFunction
 }

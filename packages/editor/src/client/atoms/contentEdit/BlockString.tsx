@@ -1,8 +1,9 @@
 import React from 'react'
-import {FormControl, Toggle} from 'rsuite'
+import {useTranslation} from 'react-i18next'
+import {FormControl, Icon, IconButton, InputGroup, Toggle, Tooltip, Whisper} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
-import {isNullOrUndefined} from '../../utility'
+import {isNullOrUndefined, slugify} from '../../utility'
 import {BlockAbstractProps} from './BlockAbstract'
 
 function BlockString({
@@ -13,6 +14,8 @@ function BlockString({
 }: BlockAbstractProps<ContentModelSchemaFieldString, string | null>) {
   let toggle
   const isActive = !isNullOrUndefined(value)
+  const {t} = useTranslation()
+
   if (model.optional) {
     toggle = (
       <>
@@ -32,6 +35,43 @@ function BlockString({
       </>
     )
   }
+
+  if (model.editor?.inputType === 'slug') {
+    return (
+      <InputGroup style={{width: '100%'}}>
+        <FormControl
+          value={value || ''}
+          onChange={val =>
+            dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
+          }
+          onBlur={() =>
+            dispatch({
+              type: ContentEditActionEnum.update,
+              value: slugify(value || ''),
+              path: schemaPath
+            })
+          }
+        />
+        <Whisper
+          placement="top"
+          trigger="hover"
+          speaker={<Tooltip>{t('articleEditor.panels.slugifySeoTitle')}</Tooltip>}>
+          <IconButton
+            icon={<Icon icon="magic" />}
+            onClick={() => {
+              // TODO derive from other configurable field
+              dispatch({
+                type: ContentEditActionEnum.update,
+                value: slugify(value || ''),
+                path: schemaPath
+              })
+            }}
+          />
+        </Whisper>
+      </InputGroup>
+    )
+  }
+
   return (
     <>
       {toggle}

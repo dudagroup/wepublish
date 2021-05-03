@@ -1,5 +1,6 @@
 import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
 import {MODEL_A} from './modelA'
+import {typeMediaLibrary} from './modelMediaLibrary'
 
 export const contentModelB: ContentModel = {
   identifier: 'modelB',
@@ -20,6 +21,15 @@ export const contentModelB: ContentModel = {
           placeholder: 'placeholder example'
         }
       },
+      mySlug: {
+        type: ContentModelSchemaTypes.string,
+        filterable: true,
+        searchable: true,
+        i18n: true,
+        editor: {
+          inputType: 'slug'
+        }
+      },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
@@ -33,6 +43,11 @@ export const contentModelB: ContentModel = {
         config: {
           bold: true,
           h1: true,
+          h2: true,
+          h3: true,
+          h4: true,
+          h5: true,
+          h6: true,
           orderedList: true,
           ref: {
             [MODEL_A]: {
@@ -105,9 +120,27 @@ export const contentModelB: ContentModel = {
         types: {
           [MODEL_A]: {
             scope: 'local'
+          },
+          [typeMediaLibrary]: {
+            scope: 'local'
           }
         },
         filterable: true
+      },
+      myTags: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.reference,
+          types: {
+            [MODEL_A]: {
+              scope: 'local'
+            }
+          },
+          filterable: true
+        },
+        editor: {
+          presentReferenceListAsTagPicker: true
+        }
       }
     }
   }

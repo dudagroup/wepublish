@@ -8,12 +8,14 @@ import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
 import BlockTags from './BlockTags'
+import {useTranslation} from 'react-i18next'
 import {Reference} from '../../interfaces/referenceType'
 
 export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
   if (
     props.model.contentType.type === ContentModelSchemaTypes.reference &&
-    Object.keys(props.model.contentType.types).length === 1
+    Object.keys(props.model.contentType.types).length === 1 &&
+    props.model.editor?.presentReferenceListAsTagPicker
   ) {
     return (
       <BlockTags
@@ -29,13 +31,15 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
 
   const {dispatch, model, languageContext, value, schemaPath} = props
   const childSchemaPath = [...schemaPath]
-
+  const {t} = useTranslation()
   const content = value.map((item, index, array) => {
     let buttonUp = null
     if (index !== 0) {
       buttonUp = (
         <IconButton
           icon={<Icon icon="up" />}
+          appearance="subtle"
+          size="sm"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -53,6 +57,8 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
       buttonDown = (
         <IconButton
           icon={<Icon icon="down" />}
+          appearance="subtle"
+          size="sm"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -68,8 +74,20 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
 
     return (
       <List.Item key={index} index={index}>
+        {buttonUp}
+        {buttonDown}
+        <BlockAbstract
+          configs={props.configs}
+          schemaPath={[...childSchemaPath, index]}
+          dispatch={dispatch}
+          model={model.contentType}
+          languageContext={languageContext}
+          value={item}></BlockAbstract>
+
         <IconButton
           icon={<Icon icon="plus" />}
+          appearance="subtle"
+          size="xs"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -83,6 +101,8 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
 
         <IconButton
           icon={<Icon icon="minus" />}
+          appearance="subtle"
+          size="xs"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -93,17 +113,6 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
             })
           }}
         />
-
-        {buttonUp}
-        {buttonDown}
-
-        <BlockAbstract
-          configs={props.configs}
-          schemaPath={[...childSchemaPath, index]}
-          dispatch={dispatch}
-          model={model.contentType}
-          languageContext={languageContext}
-          value={item}></BlockAbstract>
       </List.Item>
     )
   })
@@ -113,14 +122,16 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
       <List>{content}</List>
       <IconButton
         icon={<Icon icon="plus" />}
+        style={{marginTop: 5}}
         onClick={() => {
           dispatch({
             type: ContentEditActionEnum.push,
             path: childSchemaPath,
             insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
           })
-        }}
-      />
+        }}>
+        {t('global.buttons.add')}
+      </IconButton>
     </>
   )
 }

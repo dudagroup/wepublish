@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import React, {useRef} from 'react'
-import {Button, Whisper} from 'rsuite'
+import {IconButton, Whisper, Icon, Popover, Button} from 'rsuite'
 import marked from 'marked'
 
 const Overlay = React.forwardRef(({style, instructions, key, onClose, ...rest}: any, ref) => {
@@ -9,9 +9,8 @@ const Overlay = React.forwardRef(({style, instructions, key, onClose, ...rest}: 
     background: '#fff',
     width: 200,
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 6,
     position: 'absolute',
-    border: '1px solid #ddd',
     boxShadow: '0 3px 6px -2px rgba(0, 0, 0, 0.6)'
   }
 
@@ -25,10 +24,10 @@ const Overlay = React.forwardRef(({style, instructions, key, onClose, ...rest}: 
       : key // TODO I18n Support
 
   return (
-    <div {...rest} style={styles} ref={ref}>
+    <Popover {...rest} style={styles} ref={ref}>
       {instructionsWrapper}
-      <button onClick={onClose}>close</button>
-    </div>
+      <Button onClick={onClose}>close</Button>
+    </Popover>
   )
 })
 
@@ -64,7 +63,13 @@ function Instructions(propsInstructions: InstructionsProps) {
           />
         )
       }}>
-      <Button>i</Button>
+      <IconButton
+        appearance="subtle"
+        icon={<Icon icon="help-o" />}
+        circle
+        size="xs"
+        style={{marginLeft: 10}}
+      />
     </Whisper>
   )
 }
