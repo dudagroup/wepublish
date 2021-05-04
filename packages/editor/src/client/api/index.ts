@@ -754,6 +754,7 @@ export type _Cmpi_Article_Record_Meta = {
 export type _Cmpi_Article_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Article_Record_Content;
   meta: _Cmpi_Article_Record_Meta;
@@ -816,6 +817,7 @@ export type _Cmpi_Author_Record_Create = {
 export type _Cmpi_Author_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Author_Record_Content;
 };
@@ -875,6 +877,7 @@ export type _Cmpi_MediaLibrary_Record_Create = {
 export type _Cmpi_MediaLibrary_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_MediaLibrary_Record_Content;
 };
@@ -944,6 +947,7 @@ export type _Cmpi_ModelA_Record_Meta = {
 export type _Cmpi_ModelA_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelA_Record_Content;
   meta: _Cmpi_ModelA_Record_Meta;
@@ -1030,6 +1034,7 @@ export type _Cmpi_ModelB_Record_Create = {
 export type _Cmpi_ModelB_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelB_Record_Content;
 };
@@ -1403,6 +1408,7 @@ export type ContentModelSummary = {
   __typename?: 'ContentModelSummary';
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String;
   shared: Scalars['Boolean'];
   contentType: ContentTypeEnum;
   createdAt: Scalars['DateTime'];
