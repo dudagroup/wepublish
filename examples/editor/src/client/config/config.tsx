@@ -42,7 +42,10 @@ export const config: EditorConfig = {
         onChange,
         onChangeMetadata,
         dispatchCustomMetadata,
-        configs
+        configs,
+        _,
+        langLaneL,
+        langLaneR
       ) => {
         return (
           <ContentMetadataPanel
@@ -51,6 +54,8 @@ export const config: EditorConfig = {
             customMetadata={customMetadata}
             onChangeDefaultMetadata={onChange}
             dispatch={dispatchCustomMetadata}
+            langLaneL={langLaneL}
+            langLaneR={langLaneR}
           />
         )
       }

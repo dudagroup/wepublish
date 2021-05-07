@@ -16,6 +16,8 @@ export interface ContentMetadataPanelProps {
   onChangeDefaultMetadata?(defaultMetadata: DefaultMetadata): void
   readonly dispatch: React.Dispatch<ContentEditAction>
   readonly configs: Configs
+  readonly langLaneL: string
+  readonly langLaneR: string
 }
 
 export function ContentMetadataPanel({
@@ -23,7 +25,9 @@ export function ContentMetadataPanel({
   customMetadata,
   onChangeDefaultMetadata,
   dispatch,
-  configs
+  configs,
+  langLaneL,
+  langLaneR
 }: ContentMetadataPanelProps) {
   const {title, shared} = defaultMetadata
   const {t} = useTranslation()
@@ -50,7 +54,13 @@ export function ContentMetadataPanel({
         </FormGroup>
       </Form>
       <hr></hr>
-      <ContentAEditView value={customMetadata} configs={configs} dispatch={dispatch} />
+      <ContentAEditView
+        value={customMetadata}
+        configs={configs}
+        dispatch={dispatch}
+        langLaneL={langLaneL}
+        langLaneR={langLaneR}
+      />
     </Panel>
   )
 }
