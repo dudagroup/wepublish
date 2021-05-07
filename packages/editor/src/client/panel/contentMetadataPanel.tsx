@@ -81,7 +81,7 @@ export function ContentMetadataPanel({
     }
 
     return (
-      <InputGroup style={{width: '100%'}}>
+      <InputGroup key={lang} style={{width: '100%'}}>
         <FormControl
           value={slug}
           onChange={val =>

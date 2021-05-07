@@ -53,8 +53,8 @@ interface ContentBody {
 export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEditorProps) {
   const {t} = useTranslation()
   const dispatch = useRouteDispatch()
-  const [langLane1, setLangLane1] = useState(configs.apiConfig.languages.languages[0]?.tag)
-  const [langLane2, setLangLane2] = useState(configs.apiConfig.languages.languages[1]?.tag)
+  const [langLaneL, setLangLaneL] = useState(configs.apiConfig.languages.languages[0]?.tag)
+  const [langLaneR, setLangLaneR] = useState(configs.apiConfig.languages.languages[1]?.tag)
 
   const contentConfig = configs.contentModelExtensionMerged.find(config => {
     return config.identifier === type
@@ -281,7 +281,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       isLoading || isDisabled,
       dispatcher,
       configs,
-      contentConfig
+      contentConfig,
+      langLaneL,
+      langLaneR
     )
   } else {
     content = (
@@ -291,8 +293,8 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         fields={contentConfig.schema.content}
         languagesConfig={configs.apiConfig.languages}
         dispatch={dispatcher}
-        langLaneL={langLane1}
-        langLaneR={langLane2}></GenericContentView>
+        langLaneL={langLaneL}
+        langLaneR={langLaneR}></GenericContentView>
     )
   }
 
@@ -310,7 +312,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       },
       customMetadataDispatcher,
       configs,
-      contentConfig
+      contentConfig,
+      langLaneL,
+      langLaneR
     )
   } else if (contentConfig.schema.meta && customMetadataDispatcher) {
     customMetadataView = (
@@ -319,7 +323,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         record={customMetadata}
         fields={contentConfig.schema.meta}
         languagesConfig={configs.apiConfig.languages}
-        dispatch={customMetadataDispatcher}></GenericContentView>
+        dispatch={customMetadataDispatcher}
+        langLaneL={langLaneL}
+        langLaneR={langLaneR}></GenericContentView>
     )
   }
 
@@ -340,9 +346,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             <SelectPicker
               cleanable={false}
               data={languages}
-              value={langLane1}
+              value={langLaneL}
               appearance="subtle"
-              onChange={setLangLane1}
+              onChange={setLangLaneL}
               style={{width: 120}}
             />
           </Col>
@@ -350,8 +356,8 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             <Button
               appearance="link"
               onClick={() => {
-                setLangLane1(langLane2)
-                setLangLane2(langLane1)
+                setLangLaneL(langLaneR)
+                setLangLaneR(langLaneL)
               }}>
               {<Icon icon="exchange" />}
             </Button>
@@ -360,15 +366,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             <SelectPicker
               cleanable={false}
               data={languages}
-              value={langLane2}
+              value={langLaneR}
               appearance="subtle"
-              onChange={setLangLane2}
+              onChange={setLangLaneR}
               style={{width: 120}}
             />
           </Col>
         </Row>
       )
-    }, [langLane2, langLane1])
+    }, [langLaneR, langLaneL])
   }
 
   return (
@@ -498,7 +504,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               borderRadius: 6
             }}>
             <ContentMetadataPanel
-              langLanes={[langLane1, langLane2]}
+              langLanes={[langLaneL, langLaneR]}
               meta={customMetadata}
               config={contentConfig}
               content={contentData}

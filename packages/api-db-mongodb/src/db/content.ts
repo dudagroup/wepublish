@@ -19,6 +19,14 @@ import {LanguageConfig} from '@wepublish/api/lib/interfaces/languageConfig'
 
 const PATH_DELIMITER = '__'
 
+function getPublicFilter() {
+  const now = new Date()
+  return [
+    {publicationDate: {$lt: now}},
+    {$or: [{dePublicationDate: {$gt: now}}, {dePublicationDate: {$eq: null}}]}
+  ]
+}
+
 export class MongoDBContentAdapter implements DBContentAdapter {
   private contents: Collection<DBContent>
   private locale: string
@@ -55,12 +63,27 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     return deletedCount !== 0
   }
 
-  async getContentByID(id: string): Promise<Content | null> {
-    return this.contents.findOne({id})
+  async getContentByID(id: string, isPublicApi: boolean): Promise<Content | null> {
+    const filter: FilterQuery<any> = {$and: [{id}]}
+    if (isPublicApi) {
+      filter.$and?.push(...getPublicFilter())
+    }
+    return this.contents.findOne(filter)
   }
 
-  async getContentsByID(ids: readonly string[]): Promise<Content[]> {
+  async getContentsByID_(ids: readonly string[]): Promise<Content[]> {
     return this.contents.find({id: {$in: ids as any}}).toArray()
+  }
+
+  async getContentsByID(ids: readonly string[], isPublicApi: boolean): Promise<Content[]> {
+    const filter: FilterQuery<any> = {$and: [{id: {$in: ids as any}}]}
+    if (isPublicApi) {
+      filter.$and?.push(...getPublicFilter())
+    }
+
+    const articles = await this.contents.find(filter).toArray()
+    const articleMap = Object.fromEntries(articles.map(article => [article.id, article]))
+    return ids.map(id => articleMap[id] ?? null)
   }
 
   // TODO: Deduplicate getImages, getPages, getAuthors
@@ -101,12 +124,8 @@ export class MongoDBContentAdapter implements DBContentAdapter {
 
     let visibilityFilter: FilterQuery<any> = {}
     if (isPublicApi) {
-      const now = new Date()
       visibilityFilter = {
-        $and: [
-          {publicationDate: {$lt: now}},
-          {$or: [{dePublicationDate: {$gt: now}}, {dePublicationDate: {$eq: null}}]}
-        ]
+        $and: [...getPublicFilter()]
       }
     }
 
