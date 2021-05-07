@@ -132,8 +132,10 @@ async function validateRecursive(
 
     case ContentModelSchemaTypes.reference: {
       if (schema.i18n) {
-        for (const val of Object.values(data)) {
-          await handleRef(val, schema.types)
+        if (data) {
+          for (const val of Object.values(data)) {
+            await handleRef(val, schema.types)
+          }
         }
         break
       }
@@ -143,8 +145,10 @@ async function validateRecursive(
 
     case ContentModelSchemaTypes.media: {
       if (schema.i18n) {
-        for (const val of Object.values(data)) {
-          await handleMedia(val)
+        if (data) {
+          for (const val of Object.values(data)) {
+            await handleMedia(val)
+          }
         }
         break
       }
@@ -154,9 +158,11 @@ async function validateRecursive(
 
     case ContentModelSchemaTypes.string: {
       if (schema.i18n) {
-        for (const [lang, val] of Object.entries(data)) {
-          if (val) {
-            validatorContext.searchTerms[lang] += val + ' '
+        if (data) {
+          for (const [lang, val] of Object.entries(data)) {
+            if (val) {
+              validatorContext.searchTerms[lang] += val + ' '
+            }
           }
         }
       } else if (data) {
