@@ -262,7 +262,7 @@ export async function contextFromRequest(
     publicPagesBySlug: new DataLoader(slugs => dbAdapter.page.getPublishedPagesBySlug(slugs)),
 
     content: new DataLoader(ids => dbAdapter.content.getContentsByID(ids)),
-    publicContent: new DataLoader(ids => dbAdapter.content.getContentsByID(ids)),
+    publicContent: new DataLoader(ids => dbAdapter.content.getContentsByID(ids, true)),
 
     userRolesByID: new DataLoader(ids => dbAdapter.userRole.getUserRolesByID(ids)),
 
