@@ -20,7 +20,7 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "alwaysStrict": true,
 
     "forceConsistentCasingInFileNames": true,
