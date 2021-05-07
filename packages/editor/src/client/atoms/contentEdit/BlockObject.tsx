@@ -4,11 +4,13 @@ import {
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup} from 'rsuite'
+import {ControlLabel, FormGroup, Toggle} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'
 import Instructions from './Instructions'
+import {ContentEditActionEnum} from '../../control/contentReducer'
+import {generateEmptyContent} from '../../control/contentUtil'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -36,6 +38,28 @@ export function BlockObject({
     childSchemaPath.push(key)
 
     if ((fieldModel as ContentModelSchemaFieldLeaf).i18n) {
+      if (!v) {
+        return (
+          <FormGroup key={key}>
+            <div className="wep-label">
+              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+            </div>
+            <Toggle
+              size="sm"
+              checked={false}
+              onChange={() => {
+                dispatch({
+                  type: ContentEditActionEnum.update,
+                  value: generateEmptyContent(fieldModel, languageContext.languagesConfig),
+                  path: childSchemaPath
+                })
+              }}
+            />
+          </FormGroup>
+        )
+      }
+
       let componentLane1 = null
       if (langLane1) {
         componentLane1 = (

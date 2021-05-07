@@ -104,5 +104,5 @@ export function GenericContent({
 }
 
 export const GenericContentView = memo(GenericContent, (a, b) => {
-  return Object.is(a.record, b.record) && a.langLaneL == b.langLaneL && a.langLaneR == b.langLaneR
+  return Object.is(a.record, b.record) && a.langLaneL === b.langLaneL && a.langLaneR === b.langLaneR
 })

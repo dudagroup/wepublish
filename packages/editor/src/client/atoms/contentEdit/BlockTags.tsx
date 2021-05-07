@@ -38,7 +38,7 @@ export function BlockTags({
         items.reduce((accu, item) => {
           accu[item.id] = item
           return accu
-        }, Object.assign({}, cache))
+        }, Object.assign({}, cache) as MapType<any>)
       )
     }
   }, [data])

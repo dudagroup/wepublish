@@ -47,7 +47,7 @@ export function ContentMetadataPanel({
   const {t} = useTranslation()
 
   const [componentLane1, componentLane2] = langLanes.map(lang => {
-    const slug = slugI18n[lang]
+    const slug = slugI18n?.[lang] || ''
 
     let deriveButton = null
     if (config.deriveSlug) {
