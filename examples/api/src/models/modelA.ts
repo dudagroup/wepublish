@@ -11,13 +11,65 @@ export const contentModelA: ContentModel = {
       myString: {
         type: ContentModelSchemaTypes.string,
         deprecationReason: "it's very old",
-        instructions: 'this is an ordinary string',
-        optional: true
+        instructions: 'this is an ordinary string'
       },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
-        i18n: true,
-        optional: true
+        i18n: true
+      },
+      myRichText: {
+        type: ContentModelSchemaTypes.richText,
+        config: {
+          italic: true,
+          bold: true,
+          ref: {
+            modelB: {
+              scope: 'local'
+            }
+          }
+        }
+      },
+      myRichTextI18n: {
+        type: ContentModelSchemaTypes.richText,
+        i18n: true
+      },
+      myRef: {
+        type: ContentModelSchemaTypes.reference,
+        types: {
+          modelA: {
+            scope: 'local'
+          },
+          modelB: {
+            scope: 'local'
+          }
+        }
+      }
+    },
+    meta: {
+      myString: {
+        type: ContentModelSchemaTypes.string
+      },
+      myStringI18n: {
+        type: ContentModelSchemaTypes.string,
+        i18n: true
+      },
+      myRichText: {
+        type: ContentModelSchemaTypes.richText
+      },
+      myRichTextI18n: {
+        type: ContentModelSchemaTypes.richText,
+        i18n: true
+      },
+      myRef: {
+        type: ContentModelSchemaTypes.reference,
+        types: {
+          modelA: {
+            scope: 'local'
+          },
+          modelB: {
+            scope: 'local'
+          }
+        }
       }
     }
   }

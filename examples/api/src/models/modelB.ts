@@ -37,6 +37,21 @@ export const contentModelB: ContentModel = {
         i18n: true,
         defaultValue: 'custom default value!'
       },
+      myOptionalString: {
+        type: ContentModelSchemaTypes.string,
+        optional: true,
+        editor: {
+          instructions: 'This is an optional field'
+        }
+      },
+      myOptionalStringI18n: {
+        type: ContentModelSchemaTypes.string,
+        i18n: true,
+        optional: true,
+        editor: {
+          instructions: 'This is an optional i18n field'
+        }
+      },
       myRichText: {
         type: ContentModelSchemaTypes.richText,
         searchable: true,
@@ -94,6 +109,37 @@ export const contentModelB: ContentModel = {
           type: ContentModelSchemaTypes.string
         }
       },
+      myListNested: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.object,
+          fields: {
+            foo: {
+              type: ContentModelSchemaTypes.string
+            },
+            bar: {
+              type: ContentModelSchemaTypes.string,
+              i18n: true,
+              optional: true
+            },
+            list: {
+              type: ContentModelSchemaTypes.list,
+              contentType: {
+                type: ContentModelSchemaTypes.object,
+                fields: {
+                  nestedFoo: {
+                    type: ContentModelSchemaTypes.string
+                  },
+                  nestedBar: {
+                    type: ContentModelSchemaTypes.string,
+                    i18n: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       myUnion: {
         type: ContentModelSchemaTypes.union,
         cases: {
@@ -101,7 +147,8 @@ export const contentModelB: ContentModel = {
             type: ContentModelSchemaTypes.object,
             fields: {
               foo: {
-                type: ContentModelSchemaTypes.boolean
+                type: ContentModelSchemaTypes.string,
+                i18n: true
               }
             }
           },
@@ -126,6 +173,18 @@ export const contentModelB: ContentModel = {
           }
         },
         filterable: true
+      },
+      myRefI18n: {
+        type: ContentModelSchemaTypes.reference,
+        i18n: true,
+        types: {
+          modelA: {
+            scope: 'local'
+          },
+          modelB: {
+            scope: 'local'
+          }
+        }
       },
       myTags: {
         type: ContentModelSchemaTypes.list,
