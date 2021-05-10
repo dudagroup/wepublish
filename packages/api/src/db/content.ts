@@ -14,6 +14,8 @@ export interface Content<T = any> {
 
   shared: boolean
   title: string
+  slugI18n?: MapType<string>
+
   searchIndex?: MapType<string>
 
   content: T
