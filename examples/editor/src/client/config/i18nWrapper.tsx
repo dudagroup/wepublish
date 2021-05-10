@@ -56,10 +56,27 @@ export const tooltip = (
 
 export const I18nWrapper = memo(function I18nWrapper({label, children, display}: I18nProps) {
   let preview = null
-  if (!display || typeof display === 'string') {
+  if (typeof display === 'string') {
     preview = <Input className="wep-input-disabled" value={display} disabled />
-  } else {
+  } else if (display) {
     preview = display
+  }
+
+  let center = null
+  if (preview) {
+    preview = (
+      <Form>
+        <FormGroup>
+          <ControlLabel>{label}</ControlLabel>
+          {preview}
+        </FormGroup>
+      </Form>
+    )
+    center = (
+      <Whisper placement="top" trigger="hover" speaker={tooltip}>
+        <IconButton icon={<Icon icon="left" />} circle size="sm" />
+      </Whisper>
+    )
   }
   return (
     <Row className="show-grid" style={{display: 'flex', alignItems: 'center'}}>
@@ -72,18 +89,9 @@ export const I18nWrapper = memo(function I18nWrapper({label, children, display}:
         </Form>
       </Col>
       <Col xs={2} style={{textAlign: 'center', paddingTop: '5px'}}>
-        <Whisper placement="top" trigger="hover" speaker={tooltip}>
-          <IconButton icon={<Icon icon="left" />} circle size="sm" />
-        </Whisper>
+        {center}
       </Col>
-      <Col xs={11}>
-        <Form>
-          <FormGroup>
-            <ControlLabel>{label}</ControlLabel>
-            {preview}
-          </FormGroup>
-        </Form>
-      </Col>
+      <Col xs={11}>{preview}</Col>
     </Row>
   )
 })
