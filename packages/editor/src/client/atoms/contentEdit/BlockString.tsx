@@ -21,6 +21,9 @@ function BlockString({
       <>
         <Toggle
           size="sm"
+          style={{marginTop: 4, marginBottom: 4, fontSize: 15}}
+          checkedChildren={t('global.buttons.enabled')}
+          unCheckedChildren={t('global.buttons.disabled')}
           checked={isActive}
           onChange={() => {
             if (isActive) {
@@ -30,8 +33,6 @@ function BlockString({
             }
           }}
         />
-        <br />
-        <br />
       </>
     )
   }

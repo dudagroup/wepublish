@@ -15,7 +15,9 @@
         "publish": "Publish",
         "unpublish": "Unpublish",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "enabled": "Show input",
+        "disabled": "Disabled"
       }
     },
     "content": {
