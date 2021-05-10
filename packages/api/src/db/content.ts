@@ -102,8 +102,8 @@ export interface DBContentAdapter {
   updateContent(args: UpdateContentArgs): Promise<Content>
   deleteContent(args: DeleteContentArgs): Promise<boolean>
 
-  getContentByID(id: string): Promise<Content | null>
-  getContentsByID(ids: readonly string[]): Promise<OptionalContent[]>
+  getContentByID(id: string, isPublicApi?: boolean): Promise<Content | null>
+  getContentsByID(ids: readonly string[], isPublicApi?: boolean): Promise<OptionalContent[]>
 
   getContents(
     args: GetContentsArgs,

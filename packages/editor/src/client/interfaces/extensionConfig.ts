@@ -46,7 +46,9 @@ export type getContentViewFunction = (
   disabled: any,
   dispatch: React.Dispatch<ContentEditAction>,
   configs: Configs,
-  contentModelConfigMerged: ContentModelConfigMerged
+  contentModelConfigMerged: ContentModelConfigMerged,
+  langLaneL: string,
+  langLaneR: string
 ) => JSX.Element
 
 export type getMetaViewFunction<M = any> = (
@@ -56,7 +58,9 @@ export type getMetaViewFunction<M = any> = (
   onChangeCustomMetaData: (customMetadata: M) => void,
   dispatchCustomMetaData: React.Dispatch<ContentEditAction>,
   configs: Configs,
-  contentModelConfigMerged: ContentModelConfigMerged
+  contentModelConfigMerged: ContentModelConfigMerged,
+  langLaneL: string,
+  langLaneR: string
 ) => JSX.Element
 
 export type ContentModelConfigMerged = ContentConfig & Partial<ContentModelExtension>

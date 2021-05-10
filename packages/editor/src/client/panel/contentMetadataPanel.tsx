@@ -47,7 +47,7 @@ export function ContentMetadataPanel({
   const {t} = useTranslation()
 
   const [componentLane1, componentLane2] = langLanes.map(lang => {
-    const slug = slugI18n[lang]
+    const slug = slugI18n?.[lang] || ''
 
     let deriveButton = null
     if (config.deriveSlug) {
@@ -81,7 +81,7 @@ export function ContentMetadataPanel({
     }
 
     return (
-      <InputGroup style={{width: '100%'}}>
+      <InputGroup key={lang} style={{width: '100%'}}>
         <FormControl
           value={slug}
           onChange={val =>

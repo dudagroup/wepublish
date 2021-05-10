@@ -15,7 +15,6 @@ import {
 import {GraphQLDateTime} from 'graphql-iso-date'
 import {Context, ContextOptions} from '../../context'
 import {InputCursor, Limit, SortOrder} from '../../db/common'
-import {SessionType} from '../../db/session'
 import {NotAuthorisedError} from '../../error'
 import {
   getGraphQLContentConnection,
@@ -107,15 +106,12 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
           fields: {
             read: {
               type: typePublic,
-              args: {id: {type: GraphQLID}, language: {type: GraphQLNonNull(graphQlLanguages)}},
-              async resolve(root, {id}, {session, loaders}) {
-                const content = await loaders.publicContent.load(id)
-
-                if (session?.type === SessionType.Token) {
-                  return content?.shared ? content : null
-                }
-
-                return content
+              args: {
+                id: {type: GraphQLNonNull(GraphQLID)},
+                language: {type: GraphQLNonNull(graphQlLanguages)}
+              },
+              async resolve(source, {id}, {loaders}) {
+                return loaders.publicContent.load(id)
               }
             },
 
@@ -251,7 +247,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
           name: idPrivate,
           fields: {
             read: {
-              type: GraphQLNonNull(typePrivate),
+              type: typePrivate,
               args: {
                 peerID: {type: GraphQLID},
                 id: {type: GraphQLNonNull(GraphQLID)}

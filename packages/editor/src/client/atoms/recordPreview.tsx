@@ -8,6 +8,7 @@ interface RecordPreviewProps {
     contentType: string
     title: string
     content?: any
+    meta?: any
   }
 }
 

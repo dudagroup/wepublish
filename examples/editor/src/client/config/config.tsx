@@ -25,8 +25,16 @@ export const config: EditorConfig = {
         instructions: 'derive slug from field "myStringI18n"',
         jsonPath: '$.content.myStringI18n'
       },
-      getContentView: (content, onChange, disabled, dispatch, configs) => {
-        return <ContentAEditView value={content} dispatch={dispatch} configs={configs} />
+      getContentView: (content, onChange, disabled, dispatch, configs, _, langLaneL, langLaneR) => {
+        return (
+          <ContentAEditView
+            value={content}
+            dispatch={dispatch}
+            configs={configs}
+            langLaneL={langLaneL}
+            langLaneR={langLaneR}
+          />
+        )
       },
       getMetaView: (
         metadata,
@@ -34,7 +42,10 @@ export const config: EditorConfig = {
         onChange,
         onChangeMetadata,
         dispatchCustomMetadata,
-        configs
+        configs,
+        _,
+        langLaneL,
+        langLaneR
       ) => {
         return (
           <ContentMetadataPanel
@@ -43,6 +54,8 @@ export const config: EditorConfig = {
             customMetadata={customMetadata}
             onChangeDefaultMetadata={onChange}
             dispatch={dispatchCustomMetadata}
+            langLaneL={langLaneL}
+            langLaneR={langLaneR}
           />
         )
       }
