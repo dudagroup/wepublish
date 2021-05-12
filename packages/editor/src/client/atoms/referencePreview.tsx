@@ -20,11 +20,12 @@ export function ReferencePreview({
         closable
         onClose={onClose}
         style={{
-          height: 36,
+          minHeight: 36,
           minWidth: 100,
           paddingLeft: 10,
           paddingRight: 35,
           paddingTop: 6,
+          paddingBottom: 6,
           fontSize: 14
         }}>
         <Link

@@ -21,6 +21,7 @@ export const config: EditorConfig = {
   contentModelExtension: [
     {
       identifier: 'modelA',
+      icon: 'good',
       deriveSlug: {
         instructions: 'derive slug from field "myStringI18n"',
         jsonPath: '$.content.myStringI18n'
