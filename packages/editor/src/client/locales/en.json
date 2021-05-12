@@ -16,7 +16,7 @@
         "unpublish": "Unpublish",
         "yes": "Yes",
         "no": "No",
-        "enabled": "Show input",
+        "enabled": "Enabled",
         "disabled": "Disabled"
       }
     },
@@ -629,6 +629,7 @@
         "optionalDescription": "Optional description for the link",
         "link": "Link",
         "reference": "Reference",
+        "selectedRef": "Selected reference",
         "text": "Text",
         "apply": "Apply",
         "cancel": "Cancel",

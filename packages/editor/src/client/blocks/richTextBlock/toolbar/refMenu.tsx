@@ -44,10 +44,11 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
 
   return (
     <>
-      <Form fluid>
+      <Form fluid style={{marginBottom: 60}}>
         <FormGroup>
           <ControlLabel>{t('blocks.richText.text')}</ControlLabel>
           <FormControl
+            style={{width: '45%'}}
             value={title}
             onChange={title => {
               setTitle(title)
@@ -55,30 +56,11 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
           />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{t('blocks.richText.reference')}</ControlLabel>
+          <h3>{t('blocks.richText.selectedRef')}</h3>
           <ReferencePreview
             reference={reference}
             onClose={() => setReferences(undefined)}></ReferencePreview>
         </FormGroup>
-        <ButtonToolbar>
-          <Button
-            disabled={!reference}
-            onClick={e => {
-              e.preventDefault()
-              insertLink(editor, selection, reference, title || undefined)
-              closeMenu()
-            }}>
-            {t('blocks.richText.insert')}
-          </Button>
-          <RemoveLinkFormatButton />
-          <Button
-            onClick={e => {
-              e.preventDefault()
-              closeMenu()
-            }}>
-            {t('blocks.richText.cancel')}
-          </Button>
-        </ButtonToolbar>
       </Form>
       <RefSelectPanel
         refConfig={types}
@@ -91,6 +73,29 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
           setReferences(ref)
         }}
       />
+      <div className="wep-refmenu-btns" style={{position: 'absolute', bottom: 0, right: 0}}>
+        <ButtonToolbar>
+          <Button
+            color="green"
+            disabled={!reference}
+            onClick={e => {
+              e.preventDefault()
+              insertLink(editor, selection, reference, title || undefined)
+              closeMenu()
+            }}>
+            {t('blocks.richText.insert')}
+          </Button>
+          <RemoveLinkFormatButton />
+          <Button
+            appearance="subtle"
+            onClick={e => {
+              e.preventDefault()
+              closeMenu()
+            }}>
+            {t('blocks.richText.cancel')}
+          </Button>
+        </ButtonToolbar>
+      </div>
     </>
   )
 }
@@ -147,6 +152,9 @@ export function RemoveLinkFormatButton() {
   return (
     <Button
       icon="unlink"
+      size="sm"
+      appearance="ghost"
+      color="red"
       active={WepublishEditor.isFormatActive(editor, InlineFormat.Reference)}
       disabled={!WepublishEditor.isFormatActive(editor, InlineFormat.Reference)}
       onMouseDown={() => {

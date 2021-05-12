@@ -17,7 +17,7 @@ export function RefSelectDrawer(props: RefSelectPanelProps) {
       </Drawer.Body>
 
       <Drawer.Footer>
-        <Button appearance={'subtle'} onClick={() => props.onClose?.()}>
+        <Button style={{marginBottom: 10}} onClick={() => props.onClose?.()}>
           {t('articleEditor.panels.close')}
         </Button>
       </Drawer.Footer>
