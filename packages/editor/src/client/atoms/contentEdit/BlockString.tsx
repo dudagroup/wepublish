@@ -1,6 +1,6 @@
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {FormControl, Icon, IconButton, InputGroup, Toggle, Tooltip, Whisper} from 'rsuite'
+import {Form, FormControl, Icon, IconButton, InputGroup, Toggle, Tooltip, Whisper} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
 import {isNullOrUndefined, slugify} from '../../utility'
@@ -39,19 +39,21 @@ function BlockString({
   if (model.editor?.inputType === 'slug') {
     return (
       <InputGroup style={{width: '100%'}}>
-        <FormControl
-          value={value || ''}
-          onChange={val =>
-            dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
-          }
-          onBlur={() =>
-            dispatch({
-              type: ContentEditActionEnum.update,
-              value: slugify(value || ''),
-              path: schemaPath
-            })
-          }
-        />
+        <Form>
+          <FormControl
+            value={value || ''}
+            onChange={val =>
+              dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
+            }
+            onBlur={() =>
+              dispatch({
+                type: ContentEditActionEnum.update,
+                value: slugify(value || ''),
+                path: schemaPath
+              })
+            }
+          />
+        </Form>
         <Whisper
           placement="top"
           trigger="hover"
@@ -73,7 +75,7 @@ function BlockString({
   }
 
   return (
-    <>
+    <Form>
       {toggle}
       <FormControl
         componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
@@ -87,7 +89,7 @@ function BlockString({
           dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
         }
       />
-    </>
+    </Form>
   )
 }
 

@@ -49,22 +49,20 @@ export function GenericContent({
     <Grid>
       {header}
       <Panel bordered>
-        <Form fluid={true} style={{width: '100%'}}>
-          <BlockObject
-            configs={configs}
-            dispatch={dispatch}
-            model={{
-              type: ContentModelSchemaTypes.object,
-              fields
-            }}
-            languageContext={{
-              langLane1: presentLanguageControl && langLane1 ? langLane1 : langLaneL || langLane1,
-              langLane2: presentLanguageControl && langLane2 ? langLane2 : langLaneR || langLane2,
-              languagesConfig
-            }}
-            value={record}
-            schemaPath={[]}></BlockObject>
-        </Form>
+        <BlockObject
+          configs={configs}
+          dispatch={dispatch}
+          model={{
+            type: ContentModelSchemaTypes.object,
+            fields
+          }}
+          languageContext={{
+            langLane1: presentLanguageControl && langLane1 ? langLane1 : langLaneL || langLane1,
+            langLane2: presentLanguageControl && langLane2 ? langLane2 : langLaneR || langLane2,
+            languagesConfig
+          }}
+          value={record}
+          schemaPath={[]}></BlockObject>
       </Panel>
     </Grid>
   )
