@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import React, {useState, useEffect, useCallback, useReducer, useMemo} from 'react'
-import {Modal, Notification, Icon, IconButton, Drawer, Row, Col, SelectPicker, Button} from 'rsuite'
+import React, {useState, useEffect, useCallback, useReducer} from 'react'
+import {Modal, Notification, Icon, IconButton, Drawer} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
 
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
@@ -25,6 +25,7 @@ import {generateEmptyRootContent} from '../control/contentUtil'
 import {Configs} from '../interfaces/extensionConfig'
 import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
+import LanguageControl from '../atoms/contentEdit/LanguageControl'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -325,56 +326,22 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         languagesConfig={configs.apiConfig.languages}
         dispatch={customMetadataDispatcher}
         langLaneL={langLaneL}
-        langLaneR={langLaneR}></GenericContentView>
+        langLaneR={langLaneR}
+        presentLanguageControl={true}></GenericContentView>
     )
   }
 
-  const languages = configs.apiConfig.languages.languages.map(v => {
-    const isDefaultLangFlag =
-      configs.apiConfig.languages.defaultLanguageTag === v.tag ? ' (default)' : ''
-    return {
-      label: v.tag + isDefaultLangFlag,
-      value: v.tag
-    }
-  })
   let header
   if (configs.apiConfig.languages.languages.length >= 2) {
-    header = useMemo(() => {
-      return (
-        <Row className="show-grid">
-          <Col xs={11}>
-            <SelectPicker
-              cleanable={false}
-              data={languages}
-              value={langLaneL}
-              appearance="subtle"
-              onChange={setLangLaneL}
-              style={{width: 120}}
-            />
-          </Col>
-          <Col xs={2} style={{textAlign: 'center'}}>
-            <Button
-              appearance="link"
-              onClick={() => {
-                setLangLaneL(langLaneR)
-                setLangLaneR(langLaneL)
-              }}>
-              {<Icon icon="exchange" />}
-            </Button>
-          </Col>
-          <Col xs={11} style={{textAlign: 'right'}}>
-            <SelectPicker
-              cleanable={false}
-              data={languages}
-              value={langLaneR}
-              appearance="subtle"
-              onChange={setLangLaneR}
-              style={{width: 120}}
-            />
-          </Col>
-        </Row>
-      )
-    }, [langLaneR, langLaneL])
+    header = (
+      <LanguageControl
+        languagesConfig={configs.apiConfig.languages}
+        langLaneL={langLaneL}
+        langLaneR={langLaneR}
+        setLangLaneL={setLangLaneL}
+        setLangLaneR={setLangLaneR}
+      />
+    )
   }
 
   return (

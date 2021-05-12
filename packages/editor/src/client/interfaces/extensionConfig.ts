@@ -1,9 +1,12 @@
+import {SVGIcon} from 'rsuite/lib/@types/common'
+import {IconNames} from 'rsuite/lib/Icon'
 import {ContentConfig, Config} from '../api'
 import {ContentEditAction} from '../control/contentReducer'
 import {DefaultMetadata} from '../panel/contentMetadataPanel'
 
 export interface ExtensionBase {
   identifier: string
+  icon?: IconNames | SVGIcon
 }
 
 export interface CusomExtension extends ExtensionBase {

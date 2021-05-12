@@ -82,7 +82,7 @@ export function Base({children, configs}: BaseProps) {
       return (
         <NavItemLink
           key={item.identifier}
-          icon={<Icon icon="file" />}
+          icon={<Icon icon={item.icon || 'file'} />}
           route={route}
           active={
             current?.type === RouteType.ContentList && current.params.type === item.identifier
@@ -97,7 +97,7 @@ export function Base({children, configs}: BaseProps) {
       customContentNavItems.push(
         <NavItemLink
           key={item.identifier}
-          icon={<Icon icon="file" />}
+          icon={<Icon icon={item.icon || 'file'} />}
           route={route}
           active={
             current?.type === RouteType.ContentList && current.params.type === item.identifier

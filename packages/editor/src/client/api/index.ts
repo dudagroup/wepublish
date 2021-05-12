@@ -428,6 +428,7 @@ export type _Cmp_ModelA_Record = {
   slugI18n: I18n_String;
   shared: Scalars['Boolean'];
   content: _Cmp_ModelA_Record_Content;
+  meta: _Cmp_ModelA_Record_Meta;
 };
 
 export type _Cmp_ModelA_Record_Content = {
@@ -436,8 +437,32 @@ export type _Cmp_ModelA_Record_Content = {
    * this is an ordinary string
    * @deprecated it's very old
    */
-  myString?: Maybe<Scalars['String']>;
-  myStringI18n?: Maybe<I18n_String>;
+  myString: Scalars['String'];
+  myStringI18n: I18n_String;
+  myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText;
+  myRef?: Maybe<Ref_ModelA_ModelB>;
+};
+
+export type _Cmp_ModelA_Record_Content_MyRef = _Cmp_ModelA_Record_Content_MyRef_ModelA | _Cmp_ModelA_Record_Content_MyRef_ModelB;
+
+export type _Cmp_ModelA_Record_Content_MyRef_ModelA = {
+  __typename?: '_cmp_modelA_record_content_myRef_modelA';
+  modelA?: Maybe<_Cmp_ModelA_Record>;
+};
+
+export type _Cmp_ModelA_Record_Content_MyRef_ModelB = {
+  __typename?: '_cmp_modelA_record_content_myRef_modelB';
+  modelB?: Maybe<_Cmp_ModelB_Record>;
+};
+
+export type _Cmp_ModelA_Record_Meta = {
+  __typename?: '_cmp_modelA_record_meta';
+  myString: Scalars['String'];
+  myStringI18n: I18n_String;
+  myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText;
+  myRef?: Maybe<Ref_ModelA_ModelB>;
 };
 
 export type _Cmp_ModelAConnection = {
@@ -490,6 +515,8 @@ export type _Cmp_ModelB_Record_Content = {
   myString: Scalars['String'];
   mySlug: I18n_String;
   myStringI18n: I18n_String;
+  myOptionalString?: Maybe<Scalars['String']>;
+  myOptionalStringI18n?: Maybe<I18n_String>;
   myRichText: Scalars['RichText'];
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
@@ -497,8 +524,10 @@ export type _Cmp_ModelB_Record_Content = {
   myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
   myList: Array<Scalars['String']>;
+  myListNested: Array<_Cmp_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmp_ModelB_Record_Content_MyUnion;
   myRef?: Maybe<Ref_ModelA_MediaLibrary>;
+  myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB>;
   myTags: Array<Maybe<Ref_ModelA>>;
 };
 
@@ -508,6 +537,19 @@ export enum _Cmp_ModelB_Record_Content_MyEnum {
   /** Bar */
   Bar = 'bar'
 }
+
+export type _Cmp_ModelB_Record_Content_MyListNested = {
+  __typename?: '_cmp_modelB_record_content_myListNested';
+  foo: Scalars['String'];
+  bar?: Maybe<I18n_String>;
+  list: Array<_Cmp_ModelB_Record_Content_MyListNested_List>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyListNested_List = {
+  __typename?: '_cmp_modelB_record_content_myListNested_list';
+  nestedFoo: Scalars['String'];
+  nestedBar: I18n_String;
+};
 
 export type _Cmp_ModelB_Record_Content_MyRef = _Cmp_ModelB_Record_Content_MyRef_ModelA | _Cmp_ModelB_Record_Content_MyRef_MediaLibrary;
 
@@ -530,7 +572,7 @@ export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
   __typename?: '_cmp_modelB_record_content_myUnion_caseA_content';
-  foo: Scalars['Boolean'];
+  foo: I18n_String;
 };
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
@@ -892,8 +934,11 @@ export type _Cmpi_ModelAUnpublishArgs = {
 
 export type _Cmpi_ModelA_Record_Content = {
   /** this is an ordinary string */
-  myString?: Maybe<Scalars['String']>;
-  myStringI18n?: Maybe<I18n_String_Input>;
+  myString: Scalars['String'];
+  myStringI18n: I18n_String_Input;
+  myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText_Input;
+  myRef?: Maybe<Ref_Input>;
 };
 
 export type _Cmpi_ModelA_Record_Create = {
@@ -901,6 +946,15 @@ export type _Cmpi_ModelA_Record_Create = {
   slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelA_Record_Content;
+  meta: _Cmpi_ModelA_Record_Meta;
+};
+
+export type _Cmpi_ModelA_Record_Meta = {
+  myString: Scalars['String'];
+  myStringI18n: I18n_String_Input;
+  myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText_Input;
+  myRef?: Maybe<Ref_Input>;
 };
 
 export type _Cmpi_ModelA_Record_Update = {
@@ -909,6 +963,7 @@ export type _Cmpi_ModelA_Record_Update = {
   slugI18n: I18n_String_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelA_Record_Content;
+  meta: _Cmpi_ModelA_Record_Meta;
 };
 
 export type _Cmpi_ModelB = {
@@ -950,6 +1005,8 @@ export type _Cmpi_ModelB_Record_Content = {
   myString: Scalars['String'];
   mySlug: I18n_String_Input;
   myStringI18n: I18n_String_Input;
+  myOptionalString?: Maybe<Scalars['String']>;
+  myOptionalStringI18n?: Maybe<I18n_String_Input>;
   myRichText: Scalars['RichText'];
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
@@ -957,8 +1014,10 @@ export type _Cmpi_ModelB_Record_Content = {
   myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
   myList: Array<Scalars['String']>;
+  myListNested: Array<_Cmpi_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmpi_ModelB_Record_Content_MyUnion;
   myRef?: Maybe<Ref_Input>;
+  myRefI18n?: Maybe<I18n_Ref_Input_Input>;
   myTags: Array<Maybe<Ref_Input>>;
 };
 
@@ -969,13 +1028,24 @@ export enum _Cmpi_ModelB_Record_Content_MyEnum {
   Bar = 'bar'
 }
 
+export type _Cmpi_ModelB_Record_Content_MyListNested = {
+  foo: Scalars['String'];
+  bar?: Maybe<I18n_String_Input>;
+  list: Array<_Cmpi_ModelB_Record_Content_MyListNested_List>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyListNested_List = {
+  nestedFoo: Scalars['String'];
+  nestedBar: I18n_String_Input;
+};
+
 export type _Cmpi_ModelB_Record_Content_MyUnion = {
   caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseA>;
   caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseB>;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
-  foo: Scalars['Boolean'];
+  foo: I18n_String_Input;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
@@ -1593,6 +1663,32 @@ export type I18n_Media_Input_Input = {
   en?: Maybe<Media_Input>;
   de?: Maybe<Media_Input>;
   fr?: Maybe<Media_Input>;
+};
+
+export type I18n_Ref_Input_Input = {
+  en?: Maybe<Ref_Input>;
+  de?: Maybe<Ref_Input>;
+  fr?: Maybe<Ref_Input>;
+};
+
+export type I18n_Ref_ModelA_ModelB = {
+  __typename?: 'i18n_ref_modelA_modelB';
+  en?: Maybe<Ref_ModelA_ModelB>;
+  de?: Maybe<Ref_ModelA_ModelB>;
+  fr?: Maybe<Ref_ModelA_ModelB>;
+};
+
+export type I18n_RichText = {
+  __typename?: 'i18n_RichText';
+  en?: Maybe<Scalars['RichText']>;
+  de?: Maybe<Scalars['RichText']>;
+  fr?: Maybe<Scalars['RichText']>;
+};
+
+export type I18n_RichText_Input = {
+  en?: Maybe<Scalars['RichText']>;
+  de?: Maybe<Scalars['RichText']>;
+  fr?: Maybe<Scalars['RichText']>;
 };
 
 export type I18n_String = {
@@ -2884,6 +2980,15 @@ export type Ref_ModelA_MediaLibrary = {
   contentType: Scalars['ID'];
   peerId?: Maybe<Scalars['ID']>;
   record?: Maybe<_Cmp_ModelB_Record_Content_MyRef>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref_ModelA_ModelB = {
+  __typename?: 'ref_modelA_modelB';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_Cmp_ModelA_Record_Content_MyRef>;
   peer?: Maybe<Peer>;
 };
 
