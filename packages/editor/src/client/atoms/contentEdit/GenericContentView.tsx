@@ -1,7 +1,7 @@
 import {ContentModelSchemas} from '@wepublish/api'
 import {MapType} from '@wepublish/api/lib/interfaces/utilTypes'
 import React, {memo, useState} from 'react'
-import {Form, Grid, Panel} from 'rsuite'
+import {Grid, Panel} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {ContentEditAction} from '../../control/contentReducer'
 import {ContentModelSchemaTypes} from '../../interfaces/contentModelSchema'
