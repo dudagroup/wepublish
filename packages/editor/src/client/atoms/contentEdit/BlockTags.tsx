@@ -74,7 +74,7 @@ export function BlockTags({
       value={value.map(r => {
         return r.recordId
       })}
-      style={{width: 300}}
+      style={{minWidth: 300, paddingBottom: 7}}
       labelKey="title"
       valueKey="id"
       onChange={handleChange}

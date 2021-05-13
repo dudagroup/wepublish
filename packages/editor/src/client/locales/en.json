@@ -15,7 +15,9 @@
         "publish": "Publish",
         "unpublish": "Unpublish",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
       }
     },
     "content": {
@@ -627,6 +629,7 @@
         "optionalDescription": "Optional description for the link",
         "link": "Link",
         "reference": "Reference",
+        "selectedRef": "Selected reference",
         "text": "Text",
         "apply": "Apply",
         "cancel": "Cancel",
