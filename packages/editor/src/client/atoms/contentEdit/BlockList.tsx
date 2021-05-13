@@ -3,7 +3,7 @@ import {
   ContentModelSchemaFieldList,
   ContentModelSchemaTypes
 } from '../../interfaces/contentModelSchema'
-import {Icon, IconButton, List} from 'rsuite'
+import {FlexboxGrid, Icon, IconButton, List} from 'rsuite'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
@@ -39,7 +39,7 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
         <IconButton
           icon={<Icon icon="up" />}
           appearance="subtle"
-          size="sm"
+          size="xs"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -58,7 +58,7 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
         <IconButton
           icon={<Icon icon="down" />}
           appearance="subtle"
-          size="sm"
+          size="xs"
           onClick={() => {
             dispatch({
               type: ContentEditActionEnum.splice,
@@ -74,45 +74,52 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
 
     return (
       <List.Item key={index} index={index}>
-        {buttonUp}
-        {buttonDown}
-        <BlockAbstract
-          configs={props.configs}
-          schemaPath={[...childSchemaPath, index]}
-          dispatch={dispatch}
-          model={model.contentType}
-          languageContext={languageContext}
-          value={item}></BlockAbstract>
+        <FlexboxGrid align="middle">
+          <FlexboxGrid.Item colspan={1}>
+            <IconButton
+              icon={<Icon icon="plus" />}
+              size="xs"
+              appearance="subtle"
+              onClick={() => {
+                dispatch({
+                  type: ContentEditActionEnum.splice,
+                  path: childSchemaPath,
+                  start: index + 1,
+                  delete: 0,
+                  insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
+                })
+              }}
+            />
 
-        <IconButton
-          icon={<Icon icon="plus" />}
-          appearance="subtle"
-          size="xs"
-          onClick={() => {
-            dispatch({
-              type: ContentEditActionEnum.splice,
-              path: childSchemaPath,
-              start: index + 1,
-              delete: 0,
-              insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
-            })
-          }}
-        />
-
-        <IconButton
-          icon={<Icon icon="minus" />}
-          appearance="subtle"
-          size="xs"
-          onClick={() => {
-            dispatch({
-              type: ContentEditActionEnum.splice,
-              path: childSchemaPath,
-              start: index,
-              delete: 1,
-              insert: []
-            })
-          }}
-        />
+            <IconButton
+              icon={<Icon icon="minus" />}
+              size="xs"
+              appearance="subtle"
+              onClick={() => {
+                dispatch({
+                  type: ContentEditActionEnum.splice,
+                  path: childSchemaPath,
+                  start: index,
+                  delete: 1,
+                  insert: []
+                })
+              }}
+            />
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={22}>
+            <BlockAbstract
+              configs={props.configs}
+              schemaPath={[...childSchemaPath, index]}
+              dispatch={dispatch}
+              model={model.contentType}
+              languageContext={languageContext}
+              value={item}></BlockAbstract>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={1} style={{textAlign: 'right'}}>
+            {buttonUp}
+            {buttonDown}
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
       </List.Item>
     )
   })

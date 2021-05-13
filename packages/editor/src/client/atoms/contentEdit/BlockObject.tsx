@@ -18,6 +18,8 @@ export interface LanguageContext {
   readonly langLane2: string
 }
 
+const labelStyle = {marginTop: '32px'}
+
 export function BlockObject({
   dispatch,
   languageContext,
@@ -41,7 +43,7 @@ export function BlockObject({
       if (!v) {
         return (
           <FormGroup key={key}>
-            <div className="wep-label">
+            <div className="wep-label" style={labelStyle}>
               <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
               <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
             </div>
@@ -64,7 +66,7 @@ export function BlockObject({
       if (langLane1) {
         componentLane1 = (
           <>
-            <div className="wep-label">
+            <div className="wep-label" style={labelStyle}>
               <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
               <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
             </div>
@@ -83,7 +85,7 @@ export function BlockObject({
       if (langLane2) {
         componentLane2 = (
           <>
-            <div className="wep-label">
+            <div className="wep-label" style={labelStyle}>
               <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
               <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
             </div>
@@ -102,7 +104,7 @@ export function BlockObject({
 
     return (
       <FormGroup key={key}>
-        <div className="wep-label">
+        <div className="wep-label" style={labelStyle}>
           <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
           <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
         </div>

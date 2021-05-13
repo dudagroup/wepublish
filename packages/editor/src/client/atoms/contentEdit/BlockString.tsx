@@ -21,6 +21,9 @@ function BlockString({
       <>
         <Toggle
           size="sm"
+          style={{marginTop: 4, marginBottom: 4, fontSize: 15}}
+          checkedChildren={t('global.buttons.enabled')}
+          unCheckedChildren={t('global.buttons.disabled')}
           checked={isActive}
           onChange={() => {
             if (isActive) {
@@ -30,8 +33,6 @@ function BlockString({
             }
           }}
         />
-        <br />
-        <br />
       </>
     )
   }
@@ -39,7 +40,7 @@ function BlockString({
   if (model.editor?.inputType === 'slug') {
     return (
       <InputGroup style={{width: '100%'}}>
-        <Form>
+        <Form style={{width: '100%', margin: 0}}>
           <FormControl
             value={value || ''}
             onChange={val =>
@@ -75,7 +76,7 @@ function BlockString({
   }
 
   return (
-    <Form>
+    <Form style={{width: '100%', margin: 0}}>
       {toggle}
       <FormControl
         componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
