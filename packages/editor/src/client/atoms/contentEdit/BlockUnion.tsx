@@ -3,6 +3,7 @@ import {SelectPicker} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
 import {ContentModelSchemaFieldUnion} from '../../interfaces/contentModelSchema'
+import {destructUnionCase} from '../../utility'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 
 export function BlockUnion({
@@ -13,14 +14,10 @@ export function BlockUnion({
   schemaPath,
   configs
 }: BlockAbstractProps<ContentModelSchemaFieldUnion, {[key: string]: unknown}>) {
-  if (!(value && Object.entries(value).length === 1)) {
+  if (!(value && Object.entries(value).length === 1) && !model.optional) {
     return null
   }
-  const myCase = Object.entries(value)[0]
-  const [currentCase, val] = myCase
-  const updatePath = [...schemaPath]
-  updatePath.push(currentCase)
-
+  const {unionCase, val} = destructUnionCase(value)
   const data = Object.keys(model.cases).map(key => {
     return {
       label: key,
@@ -31,11 +28,18 @@ export function BlockUnion({
   return (
     <div>
       <SelectPicker
-        cleanable={false}
+        cleanable={!!model.optional}
+        searchable={false}
         data={data}
-        value={currentCase}
+        value={unionCase}
         onChange={nextCase => {
-          if (nextCase !== currentCase) {
+          if (!nextCase) {
+            dispatch({
+              type: ContentEditActionEnum.update,
+              value: null,
+              path: schemaPath
+            })
+          } else if (nextCase !== unionCase) {
             dispatch({
               type: ContentEditActionEnum.update,
               value: {
@@ -49,15 +53,15 @@ export function BlockUnion({
           }
         }}
       />
-      {
+      {unionCase && (
         <BlockAbstract
           configs={configs}
-          schemaPath={updatePath}
+          schemaPath={[...schemaPath, unionCase]}
           dispatch={dispatch}
-          model={model.cases[currentCase]}
+          model={model.cases[unionCase]}
           languageContext={languageContext}
           value={val}></BlockAbstract>
-      }
+      )}
     </div>
   )
 }

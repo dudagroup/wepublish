@@ -139,7 +139,9 @@ function flattenI18nLeafFields(
     case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
-      union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
+      if (unionCase) {
+        union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
+      }
       break
     }
 
