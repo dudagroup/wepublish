@@ -21,15 +21,6 @@ export const contentModelB: ContentModel = {
           placeholder: 'placeholder example'
         }
       },
-      mySlug: {
-        type: ContentModelSchemaTypes.string,
-        filterable: true,
-        searchable: true,
-        i18n: true,
-        editor: {
-          inputType: 'slug'
-        }
-      },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
@@ -55,6 +46,26 @@ export const contentModelB: ContentModel = {
       myRichText: {
         type: ContentModelSchemaTypes.richText,
         searchable: true,
+        config: {
+          bold: true,
+          h1: true,
+          h2: true,
+          h3: true,
+          h4: true,
+          h5: true,
+          h6: true,
+          orderedList: true,
+          ref: {
+            [MODEL_A]: {
+              scope: 'local'
+            }
+          }
+        }
+      },
+      myRichTextI18n: {
+        type: ContentModelSchemaTypes.richText,
+        searchable: true,
+        i18n: true,
         config: {
           bold: true,
           h1: true,

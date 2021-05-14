@@ -48,7 +48,7 @@ export interface ContentModelSchemaFieldString extends ContentModelSchemaFieldLe
     name?: I18n<string> | string
     instructions?: I18n<string> | string
     maxCharacters?: number
-    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea' | 'slug'
+    inputType?: 'text' | 'url' | 'tel' | 'email' | 'password' | 'textarea'
     inputRows?: number
     placeholder?: string
   }
