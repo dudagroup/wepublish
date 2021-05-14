@@ -126,7 +126,9 @@ async function validateRecursive(
     case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
-      await validateRecursive(validatorContext, schema.cases[unionCase], val)
+      if (unionCase) {
+        await validateRecursive(validatorContext, schema.cases[unionCase], val)
+      }
       break
     }
 

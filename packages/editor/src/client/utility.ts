@@ -181,3 +181,18 @@ export function humanReadableDateTime(isoDateString: string) {
   }
   return new Date(isoDateString).toLocaleDateString(navigator.language, dateFormat)
 }
+
+export function destructUnionCase(value: any) {
+  try {
+    const unionCase = Object.keys(value)[0]
+    return {
+      unionCase,
+      val: value[unionCase]
+    }
+  } catch (error) {
+    return {
+      unionCase: null,
+      val: null
+    }
+  }
+}

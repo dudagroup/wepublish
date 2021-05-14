@@ -103,6 +103,21 @@ export const contentModelB: ContentModel = {
           }
         ]
       },
+      myOptionalEnum: {
+        type: ContentModelSchemaTypes.enum,
+        optional: true,
+        filterable: true,
+        values: [
+          {
+            value: 'foo',
+            description: 'Foo'
+          },
+          {
+            value: 'bar',
+            description: 'Bar'
+          }
+        ]
+      },
       myList: {
         type: ContentModelSchemaTypes.list,
         contentType: {
@@ -142,6 +157,29 @@ export const contentModelB: ContentModel = {
       },
       myUnion: {
         type: ContentModelSchemaTypes.union,
+        cases: {
+          caseA: {
+            type: ContentModelSchemaTypes.object,
+            fields: {
+              foo: {
+                type: ContentModelSchemaTypes.string,
+                i18n: true
+              }
+            }
+          },
+          caseB: {
+            type: ContentModelSchemaTypes.object,
+            fields: {
+              bar: {
+                type: ContentModelSchemaTypes.float
+              }
+            }
+          }
+        }
+      },
+      myOptionalUnion: {
+        type: ContentModelSchemaTypes.union,
+        optional: true,
         cases: {
           caseA: {
             type: ContentModelSchemaTypes.object,

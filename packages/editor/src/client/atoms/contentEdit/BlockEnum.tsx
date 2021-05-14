@@ -19,7 +19,8 @@ function BlockEnum({
 
   return (
     <SelectPicker
-      cleanable={model.optional}
+      cleanable={!!model.optional}
+      searchable={false}
       data={data}
       value={value}
       onChange={val => {

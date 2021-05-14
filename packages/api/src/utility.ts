@@ -117,10 +117,17 @@ export function capitalizeFirstLetter(str: string): string {
 }
 
 export function destructUnionCase(value: any) {
-  const unionCase = Object.keys(value)[0]
-  return {
-    unionCase,
-    val: value[unionCase]
+  try {
+    const unionCase = Object.keys(value)[0]
+    return {
+      unionCase,
+      val: value[unionCase]
+    }
+  } catch (error) {
+    return {
+      unionCase: null,
+      val: null
+    }
   }
 }
 
