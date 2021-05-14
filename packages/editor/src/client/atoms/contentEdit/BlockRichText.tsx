@@ -53,7 +53,7 @@ function BlockRichText({
       {toggle}
       <RichTextBlock
         value={v}
-        disabled={isNullOrUndefined(value)}
+        disabled={!isActive && model.optional}
         onChange={richText => {
           const update = isFunctionalUpdate(richText) ? richText(v) : richText
           dispatch({
