@@ -4,8 +4,9 @@ import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
 import {
   useUnpublishContentMutation,
   useContentListQuery,
-  ContentListQuery,
-  ContentListRefFragment
+  ContentListRefFragment,
+  ContentSort,
+  ContentTypeEnum
 } from '../api'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {useTranslation} from 'react-i18next'
@@ -30,16 +31,30 @@ import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
 import {Configs} from '../interfaces/extensionConfig'
 import {ContentEditor} from './contentEditor'
-import {humanReadableDateTime} from '../utility'
-
-const {Column, HeaderCell, Cell} = Table
+import {
+  DEFAULT_TABLE_PAGE_SIZES,
+  humanReadableDateTime,
+  mapTableSortTypeToGraphQLSortOrder
+} from '../utility'
+const {Column, HeaderCell, Cell, Pagination} = Table
 
 enum ConfirmAction {
   Delete = 'delete',
   Unpublish = 'unpublish'
 }
 
-const RecordsPerPage = 10
+function mapColumFieldToGraphQLField(columnField: string): ContentSort | null {
+  switch (columnField) {
+    case 'createdAt':
+      return ContentSort.CreatedAt
+    case 'modifiedAt':
+      return ContentSort.ModifiedAt
+    case 'publishAt':
+      return ContentSort.PublishAt
+    default:
+      return null
+  }
+}
 
 export interface ArticleEditorProps {
   readonly type: string
@@ -54,6 +69,10 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [sortField, setSortField] = useState('modifiedAt')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
@@ -107,12 +126,23 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
     )
   }
 
-  const listVariables = {type: type as any, filter: filter || undefined, first: RecordsPerPage}
-  const {data, fetchMore, loading: isLoading, refetch} = useContentListQuery({
+  const listVariables = {
+    type: type as ContentTypeEnum,
+    filter: filter || undefined,
+    first: limit,
+    skip: page - 1,
+    sort: mapColumFieldToGraphQLField(sortField),
+    order: mapTableSortTypeToGraphQLSortOrder(sortOrder)
+  }
+
+  const {data, loading: isLoading, refetch} = useContentListQuery({
     variables: listVariables,
-    skip: !type,
     fetchPolicy: 'network-only'
   })
+
+  useEffect(() => {
+    refetch(listVariables)
+  }, [filter, page, limit, sortOrder, sortField])
 
   const {t} = useTranslation()
 
@@ -121,29 +151,6 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       setArticles(data?.content._all.list.nodes.map(a => a.content))
     }
   }, [data?.content._all.list])
-
-  function loadMore() {
-    fetchMore({
-      variables: {...listVariables, after: data?.content._all.list.pageInfo.endCursor},
-      updateQuery: (prev, {fetchMoreResult}) => {
-        if (!fetchMoreResult) return prev
-
-        return {
-          content: {
-            _all: {
-              list: {
-                ...(fetchMoreResult as ContentListQuery).content._all.list,
-                nodes: [
-                  ...(prev as ContentListQuery).content._all.list.nodes,
-                  ...(fetchMoreResult as ContentListQuery)?.content._all.list.nodes
-                ]
-              }
-            }
-          }
-        }
-      }
-    })
-  }
 
   return (
     <>
@@ -180,7 +187,14 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
-        rowHeight={config.previewSize === 'big' ? 123 : undefined}>
+        rowHeight={config.previewSize === 'big' ? 123 : undefined}
+        onSortColumn={(sortColumn, sortType) => {
+          // setSortOrder(sortType)
+          // setSortField(sortColumn)
+          console.log('TODO: implement onSortColumn', sortColumn, sortType)
+          setSortField('modifiedAt')
+          setSortOrder('asc')
+        }}>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -266,11 +280,15 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </Column>
       </Table>
 
-      {data?.content._all.list.pageInfo.hasNextPage && (
-        <Button style={{height: '80px'}} label={t('content.overview.loadMore')} onClick={loadMore}>
-          {t('buttons.loadMore')}
-        </Button>
-      )}
+      <Pagination
+        style={{height: '50px'}}
+        lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+        activePage={page}
+        displayLength={limit}
+        total={data?.content._all.list.totalCount}
+        onChangePage={page => setPage(page)}
+        onChangeLength={limit => setLimit(limit)}
+      />
 
       <Modal
         show={isConfirmationDialogOpen}
