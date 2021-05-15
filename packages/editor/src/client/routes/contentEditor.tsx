@@ -191,7 +191,10 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   }, [createError, updateError, publishError])
 
   function createInput(): any {
-    const content = stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
+    const content = stripKeysRecursive(JSON.parse(JSON.stringify(contentData)), [
+      '__typename',
+      '__ephemeralReactStateMeta'
+    ])
     let meta
     if (customMetadata) {
       const {__typename: waste, ...rest} = customMetadata
