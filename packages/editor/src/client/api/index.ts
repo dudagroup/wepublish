@@ -41,6 +41,7 @@ export type _Cmp_ArticleListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_Article>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -295,6 +296,7 @@ export type _Cmp_AuthorListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_Author>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -354,6 +356,7 @@ export type _Cmp_MediaLibraryListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_MediaLibrary>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -410,6 +413,7 @@ export type _Cmp_ModelAListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_ModelA>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -490,6 +494,7 @@ export type _Cmp_ModelBListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_ModelB>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -513,19 +518,21 @@ export type _Cmp_ModelB_Record = {
 export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
   myString: Scalars['String'];
-  mySlug: I18n_String;
   myStringI18n: I18n_String;
   myOptionalString?: Maybe<Scalars['String']>;
   myOptionalStringI18n?: Maybe<I18n_String>;
   myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText;
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
   myBoolean: Scalars['Boolean'];
   myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
+  myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmp_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmp_ModelB_Record_Content_MyUnion;
+  myOptionalUnion?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_ModelA_MediaLibrary>;
   myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB>;
   myTags: Array<Maybe<Ref_ModelA>>;
@@ -549,6 +556,35 @@ export type _Cmp_ModelB_Record_Content_MyListNested_List = {
   __typename?: '_cmp_modelB_record_content_myListNested_list';
   nestedFoo: Scalars['String'];
   nestedBar: I18n_String;
+};
+
+export enum _Cmp_ModelB_Record_Content_MyOptionalEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion = _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA | _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB;
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseA';
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseA_content';
+  foo: I18n_String;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseB';
+  caseB?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB_Content = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseB_content';
+  bar: Scalars['Float'];
 };
 
 export type _Cmp_ModelB_Record_Content_MyRef = _Cmp_ModelB_Record_Content_MyRef_ModelA | _Cmp_ModelB_Record_Content_MyRef_MediaLibrary;
@@ -1003,19 +1039,21 @@ export type _Cmpi_ModelBUnpublishArgs = {
 
 export type _Cmpi_ModelB_Record_Content = {
   myString: Scalars['String'];
-  mySlug: I18n_String_Input;
   myStringI18n: I18n_String_Input;
   myOptionalString?: Maybe<Scalars['String']>;
   myOptionalStringI18n?: Maybe<I18n_String_Input>;
   myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText_Input;
   myInt: Scalars['Int'];
   myFloat: Scalars['Float'];
   myBoolean: Scalars['Boolean'];
   myDateTime?: Maybe<Scalars['DateTime']>;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
+  myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmpi_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmpi_ModelB_Record_Content_MyUnion;
+  myOptionalUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_Input>;
   myRefI18n?: Maybe<I18n_Ref_Input_Input>;
   myTags: Array<Maybe<Ref_Input>>;
@@ -1037,6 +1075,26 @@ export type _Cmpi_ModelB_Record_Content_MyListNested = {
 export type _Cmpi_ModelB_Record_Content_MyListNested_List = {
   nestedFoo: Scalars['String'];
   nestedBar: I18n_String_Input;
+};
+
+export enum _Cmpi_ModelB_Record_Content_MyOptionalEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseA>;
+  caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseA = {
+  foo: I18n_String_Input;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB = {
+  bar: Scalars['Float'];
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion = {
@@ -1082,6 +1140,7 @@ export type AllListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<ContentFilter>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -1570,13 +1629,13 @@ export type Filter_ModelA = {
 export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
-  i18n__content__mySlug?: Maybe<FilterText>;
   i18n__content__myStringI18n?: Maybe<FilterText>;
   content__myInt?: Maybe<FilterInt>;
   content__myFloat?: Maybe<FilterFloat>;
   content__myBoolean?: Maybe<FilterBoolean>;
   content__myDateTime?: Maybe<FilterDate>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
+  content__myOptionalEnum?: Maybe<Filter_ModelB_Content_MyOptionalEnum>;
   content__myRef__recordId?: Maybe<FilterReference>;
   content__myTags__recordId?: Maybe<FilterReference>;
 };
@@ -1589,6 +1648,20 @@ export type Filter_ModelB_Content_MyEnum = {
 };
 
 export enum Filter_ModelB_Content_MyEnum_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type Filter_ModelB_Content_MyOptionalEnum = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyOptionalEnum_Enum {
   /** Foo */
   Foo = 'foo',
   /** Bar */
@@ -3960,7 +4033,12 @@ export type ContentListQueryVariables = Exact<{
   context?: Maybe<ContentContextEnum>;
   filter?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['ID']>;
+  before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+  order?: Maybe<SortOrder>;
+  sort?: Maybe<ContentSort>;
 }>;
 
 
@@ -6460,10 +6538,10 @@ export type RequestChangesOnCommentMutationHookResult = ReturnType<typeof useReq
 export type RequestChangesOnCommentMutationResult = Apollo.MutationResult<RequestChangesOnCommentMutation>;
 export type RequestChangesOnCommentMutationOptions = Apollo.BaseMutationOptions<RequestChangesOnCommentMutation, RequestChangesOnCommentMutationVariables>;
 export const ContentListDocument = gql`
-    query ContentList($type: contentTypeEnum!, $context: contentContextEnum, $filter: String, $after: ID, $first: Int) {
+    query ContentList($type: contentTypeEnum!, $context: contentContextEnum, $filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: ContentSort) {
   content {
     _all {
-      list(type: $type, context: $context, first: $first, after: $after, filter: {title: $filter}) {
+      list(type: $type, context: $context, filter: {title: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
         nodes {
           peer {
             id
@@ -6502,7 +6580,12 @@ export const ContentListDocument = gql`
  *      context: // value for 'context'
  *      filter: // value for 'filter'
  *      after: // value for 'after'
+ *      before: // value for 'before'
  *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      skip: // value for 'skip'
+ *      order: // value for 'order'
+ *      sort: // value for 'sort'
  *   },
  * });
  */

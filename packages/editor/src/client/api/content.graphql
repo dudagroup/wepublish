@@ -3,11 +3,27 @@ query ContentList(
   $context: contentContextEnum
   $filter: String
   $after: ID
+  $before: ID
   $first: Int
+  $last: Int
+  $skip: Int
+  $order: SortOrder
+  $sort: ContentSort
 ) {
   content {
     _all {
-      list(type: $type, context: $context, first: $first, after: $after, filter: {title: $filter}) {
+      list(
+        type: $type
+        context: $context
+        filter: { title: $filter }
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+        skip: $skip
+        order: $order
+        sort: $sort
+      ) {
         nodes {
           peer {
             id

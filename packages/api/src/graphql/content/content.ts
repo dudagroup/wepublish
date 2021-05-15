@@ -134,6 +134,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
+                skip: {type: GraphQLInt},
                 filter: {type: GraphQLPublicContentFilter},
                 sort: {
                   type: GraphQLPublicContentSort,
@@ -143,7 +144,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               },
               resolve: async (
                 source,
-                {filter, sort, order, after, before, first, last, language},
+                {filter, sort, order, after, before, first, skip, last, language},
                 {dbAdapter}
               ) => {
                 const result = await dbAdapter.content.getContents(
@@ -153,7 +154,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     sort,
                     order,
                     cursor: InputCursor(after, before),
-                    limit: Limit(first, last)
+                    limit: Limit(first, last, skip)
                   },
                   contextOptions.languageConfig,
                   true
@@ -329,6 +330,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 before: {type: GraphQLID},
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
+                skip: {type: GraphQLInt},
                 filter: {type: filter},
                 sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
@@ -336,7 +338,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               },
               resolve(
                 source,
-                {filter, sort, order, language, after, before, first, last},
+                {filter, sort, order, language, after, before, first, skip, last},
                 {authenticate, dbAdapter}
               ) {
                 const {roles} = authenticate()
@@ -353,7 +355,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     sort,
                     order,
                     cursor: InputCursor(after, before),
-                    limit: Limit(first, last),
+                    limit: Limit(first, last, skip),
                     language
                   },
                   contextOptions.languageConfig
@@ -426,13 +428,14 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               before: {type: GraphQLID},
               first: {type: GraphQLInt},
               last: {type: GraphQLInt},
+              skip: {type: GraphQLInt},
               filter: {type: GraphQLContentFilter},
               sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
               order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
             },
             async resolve(
               root,
-              {type, filter, sort, order, context: argContext, after, before, first, last},
+              {type, filter, sort, order, context: argContext, after, before, first, last, skip},
               context,
               info
             ) {
@@ -661,7 +664,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     sort,
                     order,
                     cursor: InputCursor(after, before),
-                    limit: Limit(first, last)
+                    limit: Limit(first, last, skip)
                   },
                   contextOptions.languageConfig
                 )
