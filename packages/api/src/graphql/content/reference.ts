@@ -6,12 +6,13 @@ import {
   GraphQLType,
   GraphQLUnionType
 } from 'graphql'
+import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
 import {Context} from '../../context'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
-import {MapType} from '../../interfaces/utilTypes'
 import {createProxyingIsTypeOf, createProxyingResolver} from '../../utility'
 import {GraphQLPeer} from '../peer'
+import {TypeGeneratorContext} from './contentGraphQlGenericTypes'
 import {GraphQLUnknown} from './contentGraphQLTypes'
 import {nameJoin} from './contentUtils'
 
@@ -30,9 +31,9 @@ const refTypes: {[type: string]: any} = {}
 export function getReference(
   name: string,
   type: ContentModelSchemaFieldRef,
-  contentModels?: MapType<GraphQLObjectType>
+  context: TypeGeneratorContext
 ) {
-  const typeKey = Object.keys(type.types).join('_')
+  const typeKey = context.isPublic ? 'public' : 'private' + Object.keys(type.types).join('_')
   if (typeKey in refTypes) {
     return refTypes[typeKey]
   }
@@ -43,16 +44,16 @@ export function getReference(
     throw Error('At least one type should be definied for Reference')
   } else if (typeArray.length === 1) {
     const contentType = typeArray[0][0]
-    if (contentModels?.[contentType]) {
-      graphQLRecordType = contentModels[contentType]
+    if (context.contentModels?.[contentType]) {
+      graphQLRecordType = context.contentModels[contentType]
     }
   } else {
     graphQLRecordType = new GraphQLUnionType({
       name,
       types: typeArray.map(([contentType, {scope}]) => {
         let graphQLUnionCase: GraphQLType = GraphQLUnknown
-        if (contentModels?.[contentType]) {
-          graphQLUnionCase = contentModels[contentType]
+        if (context.contentModels?.[contentType]) {
+          graphQLUnionCase = context.contentModels[contentType]
         }
 
         const unionCaseName = nameJoin(name, contentType)
@@ -82,7 +83,15 @@ export function getReference(
       peerId: {type: GraphQLID},
       record: {
         type: graphQLRecordType,
-        resolve: createProxyingResolver(async ({contentType, recordId}, _args, {loaders}) => {
+        args: context.isPublic
+          ? {
+              language: {type: GraphQLNonNull(context.graphQlLanguages)}
+            }
+          : {},
+        resolve: createProxyingResolver(async ({contentType, recordId}, {language}, {loaders}) => {
+          if (context.isPublic) {
+            return loaders.publicContentI18n.load(recordId + '_' + language)
+          }
           return loaders.content.load(recordId)
         })
       },

@@ -46,7 +46,7 @@ import {MemberContext} from './memberContext'
 import {Client, Issuer} from 'openid-client'
 import {LanguageConfig} from './interfaces/languageConfig'
 import {OptionalContent} from './db/content'
-import {BusinessLogic} from './business/contentModelBusiness'
+import {BusinessLogic, flattenI18nLeafFieldsMap} from './business/contentModelBusiness'
 import {ContentModelSchema} from './interfaces/contentModelSchema'
 
 export interface ContentModel {
@@ -84,6 +84,7 @@ export interface DataLoaderContext {
 
   readonly content: DataLoader<string, OptionalContent>
   readonly publicContent: DataLoader<string, OptionalContent>
+  readonly publicContentI18n: DataLoader<string, OptionalContent>
 
   readonly userRolesByID: DataLoader<string, OptionalUserRole>
 
@@ -245,6 +246,22 @@ export async function contextFromRequest(
     return mailLog
   }
 
+  async function loadPublicI18n(ids: readonly string[]) {
+    const splitIdsLangs = ids.map(id => id.split('_'))
+    const result = await dbAdapter.content.getContentsByID(
+      splitIdsLangs.map(([id]) => id),
+      true
+    )
+    result.forEach((record, i) => {
+      const model = contentModels?.find(m => m.identifier === record?.contentType)
+      if (model) {
+        return flattenI18nLeafFieldsMap(languageConfig, model.schema, splitIdsLangs[i][1])(record)
+      }
+      return null
+    })
+    return result
+  }
+
   const loaders: DataLoaderContext = {
     navigationByID: new DataLoader(ids => dbAdapter.navigation.getNavigationsByID(ids)),
     navigationByKey: new DataLoader(keys => dbAdapter.navigation.getNavigationsByKey(keys)),
@@ -263,6 +280,7 @@ export async function contextFromRequest(
 
     content: new DataLoader(ids => dbAdapter.content.getContentsByID(ids)),
     publicContent: new DataLoader(ids => dbAdapter.content.getContentsByID(ids, true)),
+    publicContentI18n: new DataLoader(ids => loadPublicI18n(ids)),
 
     userRolesByID: new DataLoader(ids => dbAdapter.userRole.getUserRolesByID(ids)),
 

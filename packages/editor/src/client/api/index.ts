@@ -536,6 +536,19 @@ export type _Cmp_ModelB_Record_Content = {
   myRef?: Maybe<Ref_ModelA_MediaLibrary>;
   myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB>;
   myTags: Array<Maybe<Ref_ModelA>>;
+  myBlockList: Array<_Cmp_ModelB_Record_Content_MyBlockList>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList = _Cmp_ModelB_Record_Content_MyBlockList_CaseA;
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseA';
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyBlockList_CaseA_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseA_content';
+  fieldA: Scalars['String'];
 };
 
 export enum _Cmp_ModelB_Record_Content_MyEnum {
@@ -1057,6 +1070,15 @@ export type _Cmpi_ModelB_Record_Content = {
   myRef?: Maybe<Ref_Input>;
   myRefI18n?: Maybe<I18n_Ref_Input_Input>;
   myTags: Array<Maybe<Ref_Input>>;
+  myBlockList: Array<_Cmpi_ModelB_Record_Content_MyBlockList>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyBlockList = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyBlockList_CaseA>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyBlockList_CaseA = {
+  fieldA: Scalars['String'];
 };
 
 export enum _Cmpi_ModelB_Record_Content_MyEnum {
