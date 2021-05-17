@@ -81,19 +81,24 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       nameJoin(idPublic, 'record'),
       model.schema,
       contentModelsPublic,
-      true
+      true,
+      graphQlLanguages
     )
     const typePrivate = generateSchema(
       contextOptions.languageConfig,
       model.identifier,
       nameJoin(idPrivate, 'record'),
       model.schema,
-      contentModelsPrivate
+      contentModelsPrivate,
+      false,
+      graphQlLanguages
     )
     const {create: inputTypeCreate, update: inputTypeUpdate} = generateInputSchema(
       contextOptions.languageConfig,
       nameJoin(idPrivateInput, 'record'),
-      model.schema
+      model.schema,
+      false,
+      graphQlLanguages
     )
     const filter = getFilter(contextOptions.languageConfig, model.identifier, model.schema, false)
 

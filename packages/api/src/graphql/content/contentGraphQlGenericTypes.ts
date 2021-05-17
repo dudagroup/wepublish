@@ -32,15 +32,16 @@ import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia, GraphQLMediaInput} from './media'
 import {nameJoin} from './contentUtils'
 
-interface Context {
+export interface TypeGeneratorContext {
   language: LanguageConfig
   isInput: boolean
   isPublic: boolean
+  graphQlLanguages: GraphQLEnumType
   contentModels?: MapType<GraphQLObjectType>
 }
 
 function getLeaf(
-  config: Context,
+  config: TypeGeneratorContext,
   contentModelSchemas: ContentModelSchemas,
   graphQLType: GraphQLInputType | GraphQLOutputType
 ) {
@@ -54,7 +55,11 @@ function getLeaf(
   return graphQLType
 }
 
-function generateType(context: Context, contentModelSchemas: ContentModelSchemas, name = '') {
+function generateType(
+  context: TypeGeneratorContext,
+  contentModelSchemas: ContentModelSchemas,
+  name = ''
+) {
   let type: any
 
   switch (contentModelSchemas.type) {
@@ -171,7 +176,7 @@ function generateType(context: Context, contentModelSchemas: ContentModelSchemas
         type = getLeaf(
           context,
           contentModelSchemas,
-          getReference(name, contentModelSchemas, context.contentModels)
+          getReference(name, contentModelSchemas, context)
         )
       }
       break
@@ -197,7 +202,8 @@ export function generateSchema(
   id: string,
   contentModelSchema: ContentModelSchema,
   contentModels: MapType<GraphQLObjectType>,
-  isPublic = false
+  isPublic = false,
+  graphQlLanguages: GraphQLEnumType
 ) {
   const baseFields: GraphQLFieldConfigMap<unknown, unknown, unknown> = {
     id: {type: GraphQLNonNull(GraphQLID)},
@@ -222,6 +228,7 @@ export function generateSchema(
             language: languageConfig,
             isInput: false,
             isPublic,
+            graphQlLanguages,
             contentModels
           },
           {
@@ -243,14 +250,16 @@ export function generateInputSchema(
   languageConfig: LanguageConfig,
   identifier: string,
   contentModelSchema: ContentModelSchema,
-  isPublic = false
+  isPublic = false,
+  graphQlLanguages: GraphQLEnumType
 ) {
   const content = Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
     const schema = generateType(
       {
         language: languageConfig,
         isInput: true,
-        isPublic
+        isPublic,
+        graphQlLanguages
       },
       {
         type: ContentModelSchemaTypes.object,
