@@ -111,7 +111,7 @@ export class BusinessLogic {
 }
 
 interface flattenI18nLeafFieldsContext {
-  languageId: string
+  languageTag: string
 }
 
 function flattenI18nLeafFields(
@@ -125,7 +125,7 @@ function flattenI18nLeafFields(
       for (const [key, val] of Object.entries(obj)) {
         obj[key] = flattenI18nLeafFields(validatorContext, schema.fields[key], val)
       }
-      break
+      return obj
     }
 
     case ContentModelSchemaTypes.list: {
@@ -133,7 +133,7 @@ function flattenI18nLeafFields(
       for (const i in list) {
         list[i] = flattenI18nLeafFields(validatorContext, schema.contentType, list[i])
       }
-      break
+      return list
     }
 
     case ContentModelSchemaTypes.union: {
@@ -142,12 +142,12 @@ function flattenI18nLeafFields(
       if (unionCase) {
         union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
       }
-      break
+      return union
     }
 
     default:
       if ((schema as ContentModelSchemaFieldLeaf).i18n) {
-        return data[validatorContext.languageId]
+        return data[validatorContext.languageTag]
       }
       return data
   }
@@ -181,16 +181,16 @@ function flattenI18nLeafFieldsOnRecord(
 export function flattenI18nLeafFieldsMap(
   languageConfig: LanguageConfig,
   modelSchema: ContentModelSchema,
-  language: string
+  language?: string
 ) {
   const currentLang = languageConfig.languages.find(l => l.tag === language)
-  let languageId: string
+  let languageTag: string
   if (currentLang) {
-    languageId = currentLang.tag // TODO switch to id
+    languageTag = currentLang.tag
   } else {
-    languageId = 'en' // languageConfig.defaultLanguageTag
+    languageTag = languageConfig.defaultLanguageTag
   }
   return (record: any) => {
-    return flattenI18nLeafFieldsOnRecord({languageId}, modelSchema, record)
+    return flattenI18nLeafFieldsOnRecord({languageTag}, modelSchema, record)
   }
 }

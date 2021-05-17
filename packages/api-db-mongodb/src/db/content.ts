@@ -71,6 +71,18 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     return this.contents.findOne(filter)
   }
 
+  async getContentBySlug(
+    slug: string,
+    language: string,
+    isPublicApi?: boolean
+  ): Promise<Content | null> {
+    const filter: FilterQuery<any> = {$and: [{[`slugI18n.${language}`]: slug}]}
+    if (isPublicApi) {
+      filter.$and?.push(...getPublicFilter())
+    }
+    return this.contents.findOne(filter)
+  }
+
   async getContentsByID_(ids: readonly string[]): Promise<Content[]> {
     return this.contents.find({id: {$in: ids as any}}).toArray()
   }
