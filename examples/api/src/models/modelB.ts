@@ -249,6 +249,22 @@ export const contentModelB: ContentModel = {
         editor: {
           presentReferenceListAsTagPicker: true
         }
+      },
+      myBlockList: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.union,
+          cases: {
+            caseA: {
+              type: ContentModelSchemaTypes.object,
+              fields: {
+                fieldA: {
+                  type: ContentModelSchemaTypes.string
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

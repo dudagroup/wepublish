@@ -107,11 +107,29 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
             read: {
               type: typePublic,
               args: {
-                id: {type: GraphQLNonNull(GraphQLID)},
-                language: {type: GraphQLNonNull(graphQlLanguages)}
+                id: {type: GraphQLID},
+                slug: {type: GraphQLString},
+                language: {type: graphQlLanguages}
               },
-              async resolve(source, {id}, {loaders}) {
-                return loaders.publicContent.load(id)
+              async resolve(source, {id, slug, language}, {loaders, dbAdapter}) {
+                if (id) {
+                  const result = await loaders.publicContent.load(id)
+                  flattenI18nLeafFieldsMap(
+                    contextOptions.languageConfig,
+                    model.schema,
+                    language
+                  )(result)
+                  return result
+                } else if (slug && language) {
+                  const result = await dbAdapter.content.getContentBySlug(slug, language, true)
+                  flattenI18nLeafFieldsMap(
+                    contextOptions.languageConfig,
+                    model.schema,
+                    language
+                  )(result)
+                  return result
+                }
+                return null
               }
             },
 
@@ -159,7 +177,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   contextOptions.languageConfig,
                   true
                 )
-                result.nodes.map(
+                result.nodes.forEach(
                   flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
                 )
                 return result
