@@ -33,24 +33,26 @@ export function getReference(
   type: ContentModelSchemaFieldRef,
   context: TypeGeneratorContext
 ) {
-  const typeKey = context.isPublic ? 'public' : 'private' + Object.keys(type.types).join('_')
+  const scope = context.isPublic ? 'public' : 'private'
+  const typeKey = scope + '_' + Object.keys(type.types).join('_')
+
   if (typeKey in refTypes) {
     return refTypes[typeKey]
   }
 
-  const typeArray = Object.entries(type.types)
+  const refTypeArray = Object.entries(type.types)
   let graphQLRecordType: GraphQLType = GraphQLUnknown
-  if (typeArray.length === 0) {
+  if (refTypeArray.length === 0) {
     throw Error('At least one type should be definied for Reference')
-  } else if (typeArray.length === 1) {
-    const contentType = typeArray[0][0]
+  } else if (refTypeArray.length === 1) {
+    const contentType = refTypeArray[0][0]
     if (context.contentModels?.[contentType]) {
       graphQLRecordType = context.contentModels[contentType]
     }
   } else {
     graphQLRecordType = new GraphQLUnionType({
       name,
-      types: typeArray.map(([contentType, {scope}]) => {
+      types: refTypeArray.map(([contentType, {scope}]) => {
         let graphQLUnionCase: GraphQLType = GraphQLUnknown
         if (context.contentModels?.[contentType]) {
           graphQLUnionCase = context.contentModels[contentType]
