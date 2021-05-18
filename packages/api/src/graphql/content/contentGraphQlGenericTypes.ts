@@ -41,15 +41,15 @@ export interface TypeGeneratorContext {
 }
 
 function getLeaf(
-  config: TypeGeneratorContext,
+  context: TypeGeneratorContext,
   contentModelSchemas: ContentModelSchemas,
   graphQLType: GraphQLInputType | GraphQLOutputType
 ) {
-  if ((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && !config.isPublic) {
-    if (config.isInput) {
-      return getI18nInputType(graphQLType as GraphQLInputType, config.language)
+  if ((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && !context.isPublic) {
+    if (context.isInput) {
+      return getI18nInputType(graphQLType as GraphQLInputType, context.language)
     } else {
-      return getI18nOutputType(graphQLType as GraphQLOutputType, config.language)
+      return getI18nOutputType(graphQLType as GraphQLOutputType, context.language)
     }
   }
   return graphQLType
@@ -190,7 +190,10 @@ function generateType(
       }
       break
   }
-  if (!contentModelSchemas.optional) {
+  if (
+    !contentModelSchemas.optional &&
+    !((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && context.isPublic)
+  ) {
     type = GraphQLNonNull(type)
   }
   return type
