@@ -342,7 +342,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     header = useMemo(() => {
       return (
         <Row className="show-grid">
-          <Col xs={11}>
+          <Col xs={14}>
             <SelectPicker
               cleanable={false}
               data={languages}
@@ -352,7 +352,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               style={{width: 120}}
             />
           </Col>
-          <Col xs={2} style={{textAlign: 'center'}}>
+          <Col xs={1} style={{textAlign: 'center'}}>
             <Button
               appearance="link"
               onClick={() => {
@@ -362,7 +362,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               {<Icon icon="exchange" />}
             </Button>
           </Col>
-          <Col xs={11} style={{textAlign: 'right'}}>
+          <Col xs={9} style={{textAlign: 'right'}}>
             <SelectPicker
               cleanable={false}
               data={languages}
