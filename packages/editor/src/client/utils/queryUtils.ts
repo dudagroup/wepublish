@@ -213,23 +213,16 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
   if (typeof input === 'string' || input instanceof String || input instanceof File) {
     return input
   }
-  const newish = {...input}
-
-  for (const prop in newish) {
-    if (keys.some(v => v === prop)) delete newish[prop]
-    else if (newish[prop] === null) {
-    } else if (Array.isArray(newish[prop])) {
-      for (const next in newish[prop]) {
-        try {
-          newish[prop][next] = stripKeysRecursive(newish[prop][next], keys)
-        } catch (error) {
-          // ignore readonly props
-        }
-      }
-    } else if (typeof newish[prop] === 'object') {
-      newish[prop] = stripKeysRecursive(newish[prop], keys)
+  const copy = {...input}
+  for (const prop in copy) {
+    if (keys.some(v => v === prop)) delete copy[prop]
+    else if (copy[prop] === null) {
+    } else if (Array.isArray(copy[prop])) {
+      copy[prop] = (copy[prop] as any).map((item: any) => stripKeysRecursive(item, keys))
+    } else if (typeof copy[prop] === 'object') {
+      copy[prop] = stripKeysRecursive(copy[prop], keys)
     }
   }
 
-  return newish
+  return copy
 }

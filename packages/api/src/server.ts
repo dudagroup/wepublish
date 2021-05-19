@@ -117,7 +117,7 @@ export class WepublishServer {
       path: '/admin',
       cors: corsOptions,
       bodyParserConfig: {
-        limit: '10mb'
+        limit: '50mb'
       }
     })
 
@@ -126,7 +126,7 @@ export class WepublishServer {
       path: '/',
       cors: corsOptions,
       bodyParserConfig: {
-        limit: '10mb'
+        limit: '50mb'
       }
     })
 
