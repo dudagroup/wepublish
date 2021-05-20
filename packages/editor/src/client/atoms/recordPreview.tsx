@@ -47,13 +47,7 @@ export function RecordPreview({record}: RecordPreviewProps) {
 
       if (previewObject?.media?.image) {
         const url = previewObject?.media.url as string
-        if (
-          url.endsWith('jpg') ||
-          url.endsWith('jpeg') ||
-          url.endsWith('png') ||
-          url.endsWith('gif') ||
-          url.endsWith('svg')
-        ) {
+        if (/\.(jpe?g|png|gif|svg)$/i.test(url)) {
           return <img src={previewObject.media.url} style={{height: 100, width: 'auto'}} />
         }
       }
