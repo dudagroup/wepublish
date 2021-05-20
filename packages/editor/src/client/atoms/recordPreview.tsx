@@ -46,7 +46,17 @@ export function RecordPreview({record}: RecordPreviewProps) {
       }
 
       if (previewObject?.media?.image) {
-        return <img src={previewObject?.media.url} style={{height: 100, width: 'auto'}} />
+        const url = previewObject?.media.url as string
+        if (
+          url.endsWith('jpg') ||
+          url.endsWith('jpeg' || url.endsWith('png' || url.endsWith('gif') || url.endsWith('svg')))
+        ) {
+          return <img src={previewObject.media.url} style={{height: 100, width: 'auto'}} />
+        }
+      }
+
+      if (typeof previewObject !== 'string') {
+        previewObject = enrichedRecord.title || enrichedRecord.id
       }
 
       return <>{previewObject}</>
