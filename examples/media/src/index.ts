@@ -35,7 +35,7 @@ if (cluster.isMaster) {
   startMediaServer({
     storageBackend: new LocalStorageBackend(storagePath),
     imageBackend: new SharpImageBackend(),
-    maxUploadSize: 1024 * 1024 * 10, // 10
+    maxUploadSize: 1024 * 1024 * 50, // 50
     logger: false,
     port,
     address,
