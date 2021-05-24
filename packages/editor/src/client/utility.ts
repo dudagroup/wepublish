@@ -196,3 +196,7 @@ export function destructUnionCase(value: any) {
     }
   }
 }
+
+export function isWebCompatibleImage(url: string) {
+  return /\.(jpe?g|png|gif|svg)$/i.test(url)
+}

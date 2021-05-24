@@ -74,13 +74,13 @@ export const I18nWrapper = memo(function I18nWrapper({label, children, display}:
     )
     center = (
       <Whisper placement="top" trigger="hover" speaker={tooltip}>
-        <IconButton icon={<Icon icon="left" />} circle size="sm" />
+        <IconButton icon={<Icon icon="magic2" />} circle size="sm" />
       </Whisper>
     )
   }
   return (
     <Row className="show-grid" style={{display: 'flex', alignItems: 'center'}}>
-      <Col xs={11}>
+      <Col xs={14}>
         <Form fluid>
           <FormGroup>
             <ControlLabel>{label}</ControlLabel>
@@ -88,10 +88,10 @@ export const I18nWrapper = memo(function I18nWrapper({label, children, display}:
           </FormGroup>
         </Form>
       </Col>
-      <Col xs={2} style={{textAlign: 'center', paddingTop: '5px'}}>
+      <Col xs={1} style={{textAlign: 'center', paddingTop: '5px'}}>
         {center}
       </Col>
-      <Col xs={11}>{preview}</Col>
+      <Col xs={9}>{preview}</Col>
     </Row>
   )
 })

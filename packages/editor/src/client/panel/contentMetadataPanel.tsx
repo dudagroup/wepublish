@@ -105,6 +105,7 @@ export function ContentMetadataPanel({
         <FormGroup>
           <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
           <FormControl
+            style={{width: '58.33333333%'}}
             value={title}
             placeholder={t('content.overview.internalTitlePlaceholder')}
             onChange={title => onChangeDefaultMetadata?.({...defaultMetadata, title})}
