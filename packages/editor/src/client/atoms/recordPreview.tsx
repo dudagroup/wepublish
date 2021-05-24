@@ -1,6 +1,7 @@
 import React, {useContext} from 'react'
 import {useRecordHook} from '../control/recordHook'
 import {ConfigContext} from '../Editorcontext'
+import {isWebCompatibleImage} from '../utility'
 
 interface RecordPreviewProps {
   readonly record: {
@@ -47,7 +48,7 @@ export function RecordPreview({record}: RecordPreviewProps) {
 
       if (previewObject?.media?.image) {
         const url = previewObject?.media.url as string
-        if (/\.(jpe?g|png|gif|svg)$/i.test(url)) {
+        if (isWebCompatibleImage(url)) {
           return <img src={previewObject.media.url} style={{height: 100, width: 'auto'}} />
         }
       }

@@ -9,6 +9,7 @@ import {BlockAbstractProps} from './BlockAbstract'
 import prettyBytes from 'pretty-bytes'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {MediaDetail, MediaInput, MediaOutput} from '../../interfaces/mediaType'
+import {isWebCompatibleImage} from '../../utility'
 
 function BlockMedia({
   value,
@@ -85,13 +86,13 @@ function BlockMedia({
 
   let panel
 
-  if (value?.media?.image) {
+  if (value?.media?.image && isWebCompatibleImage(value.media.url)) {
     const {url, image, createdAt, modifiedAt, fileSize, extension, filename} = value?.media
     const {width, height} = image
 
     panel = (
       <>
-        <div className="wep-media-panel" style={{backgroundColor: 'dark'}}>
+        <div className="wep-media-panel" style={{backgroundColor: 'dark', height: '300px'}}>
           <FocalPointInput
             imageURL={url}
             imageWidth={width}
@@ -112,8 +113,10 @@ function BlockMedia({
           style={{paddingLeft: 5, paddingRight: 10, paddingTop: 20, paddingBottom: 20}}>
           <DescriptionList>
             <DescriptionListItem label={t('images.panels.filename')}>
-              {filename || t('images.panels.untitled')}
-              {extension}
+              <a href={url} target="_blank" rel="noreferrer">
+                {filename || t('images.panels.untitled')}
+                {extension}
+              </a>
             </DescriptionListItem>
             <DescriptionListItem label={t('images.panels.dimension')}>
               {t('images.panels.imageDimension', {width, height})}
@@ -148,30 +151,70 @@ function BlockMedia({
       </>
     )
   } else if (value?.file || value?.media?.filename) {
-    let name = ''
+    let modifiedAt = new Date(0)
+    let filename = ''
+    let fileSize = 0
+    let url = ''
     if (value?.media?.filename && value?.media?.extension) {
-      name = value.media.filename + value.media.extension
+      filename = (value.media.filename || t('images.panels.untitled')) + value.media.extension
+      modifiedAt = value.media.modifiedAt
+      fileSize = value.media.fileSize
+      url = value?.media.url
     } else {
-      name = value.file.name
+      filename = value.file.name
+      modifiedAt = new Date(value.file.lastModified)
+      fileSize = value.file.size
     }
     panel = (
-      <Panel bodyFill={true} style={{height: '180px'}}>
-        <Button
-          onClick={() => {
-            dispatch({
-              type: ContentEditActionEnum.update,
-              path: [...schemaPath],
-              value: null
-            })
-          }}>
-          {t('global.buttons.delete')}
-        </Button>
-        <FileDropInput disabled={true} text={name} onDrop={handleDrop} />
-      </Panel>
+      <>
+        <div style={{height: '300px'}}>
+          <FileDropInput disabled={true} text={filename} onDrop={handleDrop} />
+        </div>
+        <div
+          className="wep-media-meta"
+          style={{paddingLeft: 5, paddingRight: 10, paddingTop: 20, paddingBottom: 20}}>
+          <DescriptionList>
+            <DescriptionListItem label={t('images.panels.filename')}>
+              {url ? (
+                <a href={url} target="_blank" rel="noreferrer">
+                  {filename}
+                </a>
+              ) : (
+                filename
+              )}
+            </DescriptionListItem>
+            {/* {createdAt && (
+              <DescriptionListItem label={t('images.panels.created')}>
+                {new Date(createdAt).toLocaleString()}
+              </DescriptionListItem>
+            )} */}
+            {modifiedAt && (
+              <DescriptionListItem label={t('images.panels.updated')}>
+                {modifiedAt.toLocaleString()}
+              </DescriptionListItem>
+            )}
+            <DescriptionListItem label={t('images.panels.fileSize')}>
+              {prettyBytes(fileSize)}
+            </DescriptionListItem>
+          </DescriptionList>
+          <Button
+            appearance="ghost"
+            color="red"
+            onClick={() => {
+              dispatch({
+                type: ContentEditActionEnum.update,
+                path: [...schemaPath],
+                value: null
+              })
+            }}>
+            {t('global.buttons.delete')}
+          </Button>
+        </div>
+      </>
     )
   } else {
     panel = (
-      <Panel bodyFill={true} style={{height: '150px'}}>
+      <Panel bodyFill={true} style={{height: '300px'}}>
         <FileDropInput
           icon={<Icon icon="upload" />}
           text={t('global.buttons.dropMedia')}

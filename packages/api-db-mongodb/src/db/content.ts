@@ -130,8 +130,8 @@ export class MongoDBContentAdapter implements DBContentAdapter {
 
     const textFilter: FilterQuery<any> = {}
 
-    function cleanupUserInput(string: string) {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, ' ')
+    function escapeRegExp(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     }
 
     let visibilityFilter: FilterQuery<any> = {}
@@ -145,10 +145,10 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     if (filter) {
       const {title, search, shared, ...genericFilters} = filter
       if (title !== undefined) {
-        textFilter.title = {$regex: cleanupUserInput(title), $options: 'i'}
+        textFilter.title = {$regex: escapeRegExp(title), $options: 'i'}
       }
       if (search !== undefined) {
-        textFilter.searchIndex = {$regex: cleanupUserInput(search), $options: 'i'}
+        textFilter.searchIndex = {$regex: escapeRegExp(search), $options: 'i'}
       }
 
       if (genericFilters) {

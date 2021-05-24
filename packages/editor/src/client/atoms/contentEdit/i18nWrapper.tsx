@@ -8,7 +8,9 @@ export interface I18nProps {
 
 export const I18nWrapper = memo(function I18nWrapper({lane1, lane2}: I18nProps) {
   return (
-    <Row className="show-grid" style={{display: 'flex', alignItems: 'center', marginBottom: 24}}>
+    <Row
+      className="show-grid"
+      style={{display: 'flex', alignItems: 'flex-start', marginBottom: 24}}>
       <Col xs={14}>
         <FormGroup>{lane1}</FormGroup>
       </Col>
