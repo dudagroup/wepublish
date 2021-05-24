@@ -453,11 +453,16 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             width: '100%'
           }}>
           <div
-            className="wep-editor-metalight"
+            className="wep-editor-langcontrol"
             style={{
               width: '100%',
               maxWidth: 1140,
-              marginTop: 20
+              position: 'fixed',
+              paddingTop: 10,
+              top: 42,
+              boxShadow: '0 5px 13px -14px #888',
+              background: '#fff',
+              zIndex: 100
             }}>
             {header}
           </div>
@@ -466,8 +471,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             style={{
               width: '100%',
               maxWidth: 1140,
-              marginTop: 20,
+              marginTop: 60,
               border: '1px dashed #e5e5ea',
+              background: '#fcfcfc',
               borderRadius: 6
             }}>
             <ContentMetadataPanel

@@ -9,11 +9,11 @@ export interface I18nProps {
 export const I18nWrapper = memo(function I18nWrapper({lane1, lane2}: I18nProps) {
   return (
     <Row className="show-grid" style={{display: 'flex', alignItems: 'center', marginBottom: 24}}>
-      <Col xs={11}>
+      <Col xs={14}>
         <FormGroup>{lane1}</FormGroup>
       </Col>
-      <Col xs={2} style={{textAlign: 'center', paddingTop: '5px'}}></Col>
-      <Col xs={11}>
+      <Col xs={1} style={{textAlign: 'center', paddingTop: '5px'}}></Col>
+      <Col xs={9}>
         <FormGroup>{lane2}</FormGroup>
       </Col>
     </Row>
