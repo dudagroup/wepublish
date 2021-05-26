@@ -48,7 +48,8 @@ import {GraphQLAuthProvider} from './auth'
 import {logger} from '../server'
 
 export function getGraphQLPublicQuery<TSource, TContext, TArgs>(
-  content?: GraphQLObjectType<any, Context>
+  content?: GraphQLObjectType<any, Context>,
+  extension?: GraphQLObjectType<any, Context>
 ) {
   let contentFields = {}
   if (content) {
@@ -61,10 +62,22 @@ export function getGraphQLPublicQuery<TSource, TContext, TArgs>(
       }
     }
   }
+  let extensionsFields = {}
+  if (extension) {
+    extensionsFields = {
+      extensions: {
+        type: GraphQLNonNull(extension),
+        resolve: () => {
+          return {}
+        }
+      }
+    }
+  }
 
   return new GraphQLObjectType<undefined, Context>({
     name: 'Query',
     fields: {
+      ...extensionsFields,
       ...contentFields,
 
       // Settings

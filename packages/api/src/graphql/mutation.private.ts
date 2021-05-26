@@ -314,7 +314,7 @@ export function getGraphQLPrivateMutation<TSource, TContext, TArgs>(
       revokeActiveSession: {
         type: GraphQLNonNull(GraphQLBoolean),
         args: {},
-        async resolve(root, {}, {authenticateUser, dbAdapter}) {
+        async resolve(root, _, {authenticateUser, dbAdapter}) {
           const session = authenticateUser()
           return session ? await dbAdapter.session.deleteUserSessionByToken(session.token) : false
         }
@@ -323,7 +323,7 @@ export function getGraphQLPrivateMutation<TSource, TContext, TArgs>(
       sessions: {
         type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLSession))),
         args: {},
-        async resolve(root, {}, {authenticateUser, dbAdapter}) {
+        async resolve(root, _, {authenticateUser, dbAdapter}) {
           const {user} = authenticateUser()
           return dbAdapter.session.getUserSessions(user)
         }

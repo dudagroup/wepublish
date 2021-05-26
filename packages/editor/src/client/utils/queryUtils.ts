@@ -264,13 +264,17 @@ export function validateRecursive(
     case ContentModelSchemaTypes.list: {
       const list = data as unknown[]
       const copy: any[] = []
-      for (const item of list) {
-        const r = validateRecursive(validatorContext, schema.contentType, item)
-        if (r !== null && r !== undefined) {
-          copy.push(r)
+
+      if (list && Array.isArray(list)) {
+        for (const item of list) {
+          const r = validateRecursive(validatorContext, schema.contentType, item)
+          if (r !== null && r !== undefined) {
+            copy.push(r)
+          }
         }
       }
-      return copy
+
+      return data
     }
 
     case ContentModelSchemaTypes.union: {

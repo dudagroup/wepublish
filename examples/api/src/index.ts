@@ -339,6 +339,30 @@ async function asyncMain() {
         }
       })
     },
+    graphQLExtensionPublic: {
+      mutation: new GraphQLObjectType<undefined, Context>({
+        name: 'ExtensionMutationFoo',
+        fields: {
+          example: {
+            type: GraphQLNonNull(GraphQLString),
+            resolve: () => {
+              return 'foo'
+            }
+          }
+        }
+      }),
+      query: new GraphQLObjectType<undefined, Context>({
+        name: 'ExtensionFoo',
+        fields: {
+          example: {
+            type: GraphQLNonNull(GraphQLString),
+            resolve: () => {
+              return 'foo'
+            }
+          }
+        }
+      })
+    },
     logger
   })
 

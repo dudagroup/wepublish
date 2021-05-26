@@ -27,10 +27,7 @@ import {Configs} from '../interfaces/extensionConfig'
 import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
 import LanguageControl from '../atoms/contentEdit/LanguageControl'
-import {
-  ContentModelSchemaFieldObject,
-  ContentModelSchemaTypes
-} from '../interfaces/contentModelSchema'
+import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 
 export interface ArticleEditorProps {
   readonly id?: string

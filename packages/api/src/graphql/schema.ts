@@ -1,7 +1,7 @@
 import {GraphQLObjectType, GraphQLSchema} from 'graphql'
 import {getGraphQLPrivateQuery} from './query.private'
 import {getGraphQLPrivateMutation} from './mutation.private'
-import {GraphQLPublicMutation} from './mutation.public'
+import {getGraphQLPublicMutation} from './mutation.public'
 import {getGraphQLContent} from './content/content'
 import {ContextOptions} from '../context'
 import {getGraphQLPublicQuery} from './query.public'
@@ -10,7 +10,9 @@ import {Context} from '..'
 export function getGraphQLWepublishSchemas(
   contextOptions: ContextOptions,
   extensionQueryPrivate?: GraphQLObjectType<any, Context>,
-  extensionMutationPrivate?: GraphQLObjectType<any, Context>
+  extensionMutationPrivate?: GraphQLObjectType<any, Context>,
+  extensionQueryPublic?: GraphQLObjectType<any, Context>,
+  extensionMutationPublic?: GraphQLObjectType<any, Context>
 ) {
   const contentSchema = getGraphQLContent(contextOptions)
   return {
@@ -19,8 +21,8 @@ export function getGraphQLWepublishSchemas(
       mutation: getGraphQLPrivateMutation(contentSchema?.mutationPrivate, extensionMutationPrivate)
     }),
     publicSchema: new GraphQLSchema({
-      query: getGraphQLPublicQuery(contentSchema?.queryPublic),
-      mutation: GraphQLPublicMutation
+      query: getGraphQLPublicQuery(contentSchema?.queryPublic, extensionQueryPublic),
+      mutation: getGraphQLPublicMutation(contentSchema?.mutationPublic, extensionMutationPublic)
     })
   }
 }
