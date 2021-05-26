@@ -16,7 +16,7 @@ export function isNullOrUndefined(value: unknown) {
 }
 
 // https://gist.github.com/mathewbyrne/1280286#gistcomment-2588056
-export function slugify(str: string) {
+export function slugify(str: string, allowSlash?: boolean) {
   return str
     .toLowerCase()
     .trim()
@@ -44,9 +44,9 @@ export function slugify(str: string) {
     .replace(/[ẍ]/gi, 'x')
     .replace(/[ÝŶŸỲỴỶỸ]/gi, 'y')
     .replace(/[ŹŻŽ]/gi, 'z')
-    .replace(/[·/_,:;\\']/gi, '-')
+    .replace(allowSlash ? /[·_,:;\\']/gi : /[·/_,:;\\']/gi, '-')
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '') //eslint-disable-line
+    .replace(allowSlash ? /[^/\w\-]+/g : /[^\w\-]+/g, '') //eslint-disable-line
     .replace(/--+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '')

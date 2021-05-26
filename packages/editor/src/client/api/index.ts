@@ -627,7 +627,7 @@ export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
   __typename?: '_cmp_modelB_record_content_myUnion_caseA_content';
-  foooooooooooooooooooooooooooo: I18n_String;
+  foo: I18n_String;
 };
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
@@ -1136,7 +1136,7 @@ export type _Cmpi_ModelB_Record_Content_MyUnion = {
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
-  foooooooooooooooooooooooooooo: I18n_String_Input;
+  foo: I18n_String_Input;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
