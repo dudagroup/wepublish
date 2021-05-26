@@ -154,6 +154,11 @@ export interface Oauth2Provider {
   readonly redirectUri: string[]
 }
 
+export interface ApiExtension {
+  query: GraphQLObjectType<any, Context>
+  mutation: GraphQLObjectType<any, Context>
+}
+
 export interface ContextOptions {
   readonly hostURL: string
   readonly websiteURL: string
@@ -166,10 +171,8 @@ export interface ContextOptions {
   readonly paymentProviders: PaymentProvider[]
   readonly contentModels?: ContentModel[]
   readonly languageConfig: LanguageConfig
-  readonly graphQLExtensionPrivate?: {
-    query: GraphQLObjectType<any, Context>
-    mutation: GraphQLObjectType<any, Context>
-  }
+  readonly graphQLExtensionPrivate?: ApiExtension
+  readonly graphQLExtensionPublic?: ApiExtension
   readonly hooks?: Hooks
 }
 

@@ -5,6 +5,7 @@ import {
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfigMap,
   GraphQLID,
+  GraphQLInputObjectType,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -787,6 +788,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       name: nameJoin('content', 'public'),
       fields: queryPublic
     }),
+    mutationPublic: undefined,
     queryPrivate: new GraphQLObjectType<undefined, Context>({
       name: 'content',
       fields: query
