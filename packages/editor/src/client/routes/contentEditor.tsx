@@ -198,12 +198,12 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     }
 
     const content = validateRecursive(
-      {removeKeys: ['__typename', '__ephemeralReactStateMeta']},
+      {},
       {
         type: ContentModelSchemaTypes.object,
         fields: contentConfig.schema.content
       },
-      contentData
+      stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
     )
 
     let meta
@@ -211,12 +211,12 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       const {__typename: waste, ...rest} = customMetadata
 
       meta = validateRecursive(
-        {removeKeys: ['__typename', '__ephemeralReactStateMeta']},
+        {},
         {
           type: ContentModelSchemaTypes.object,
           fields: contentConfig.schema.meta
         },
-        rest
+        stripKeysRecursive(rest, ['__typename', '__ephemeralReactStateMeta'])
       )
     }
 
