@@ -69,7 +69,7 @@ export function ContentMetadataPanel({
                   if (typeof val === 'string') {
                     onChangeDefaultMetadata?.({
                       ...defaultMetadata,
-                      slugI18n: {...slugI18n, [lang]: slugify(val)}
+                      slugI18n: {...slugI18n, [lang]: slugify(val, true)}
                     })
                   }
                 }
@@ -90,7 +90,7 @@ export function ContentMetadataPanel({
           onBlur={() =>
             onChangeDefaultMetadata?.({
               ...defaultMetadata,
-              slugI18n: {...slugI18n, [lang]: slugify(slug)}
+              slugI18n: {...slugI18n, [lang]: slugify(slug, true)}
             })
           }
         />
