@@ -219,7 +219,6 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
   for (const prop in copy) {
     if (keys.some(v => v === prop)) delete copy[prop]
     else if (copy[prop] === null) {
-      // delete copy[prop]
     } else if (Array.isArray(copy[prop])) {
       copy[prop] = (copy[prop] as any).map((item: any) => stripKeysRecursive(item, keys))
     } else if (typeof copy[prop] === 'object') {
@@ -231,7 +230,7 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
 }
 
 export interface ValidatorContext {
-  removeKeys: string[]
+  _?: string
 }
 
 export function validateRecursive(
@@ -251,9 +250,7 @@ export function validateRecursive(
       const obj = data as MapType<any>
       const copy: any = {}
       for (const [key, val] of Object.entries(obj)) {
-        if (!validatorContext.removeKeys.some(v => v === key)) {
-          copy[key] = validateRecursive(validatorContext, schema.fields[key], val)
-        }
+        copy[key] = validateRecursive(validatorContext, schema.fields[key], val)
       }
       if (Object.keys(copy).length > 0) {
         return copy
