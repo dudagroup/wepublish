@@ -11,6 +11,8 @@ import {MapType} from '../../interfaces/utilTypes'
 import Instructions from './Instructions'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {generateEmptyContent} from '../../control/contentUtil'
+import {isNullOrUndefined} from '../../utility'
+import {useTranslation} from 'react-i18next'
 
 export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
@@ -30,98 +32,134 @@ export function BlockObject({
 }: BlockAbstractProps<ContentModelSchemaFieldObject, MapType<any>>) {
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
+  let toggle
+  const isActive = !isNullOrUndefined(value)
+  const {t} = useTranslation()
 
-  const content = Object.entries(model.fields).map(item => {
-    const [key, fieldModel] = item
-    const v = value[key]
-    const name = fieldModel.editor?.name || key
-
-    const childSchemaPath = [...schemaPath]
-    childSchemaPath.push(key)
-
-    if ((fieldModel as ContentModelSchemaFieldLeaf).i18n) {
-      if (!v) {
-        return (
-          <FormGroup key={key}>
-            <div className="wep-label" style={labelStyle}>
-              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-            </div>
-            <Toggle
-              size="sm"
-              checked={false}
-              onChange={() => {
-                dispatch({
-                  type: ContentEditActionEnum.update,
-                  value: generateEmptyContent(fieldModel, languageContext.languagesConfig),
-                  path: childSchemaPath
-                })
-              }}
-            />
-          </FormGroup>
-        )
-      }
-
-      let componentLane1 = null
-      if (langLane1) {
-        componentLane1 = (
-          <>
-            <div className="wep-label" style={labelStyle}>
-              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-            </div>
-            <BlockAbstract
-              configs={configs}
-              schemaPath={[...childSchemaPath, langLane1]}
-              dispatch={dispatch}
-              model={fieldModel}
-              languageContext={languageContext}
-              value={v[langLane1]}></BlockAbstract>
-          </>
-        )
-      }
-
-      let componentLane2 = null
-      if (langLane2) {
-        componentLane2 = (
-          <>
-            <div className="wep-label" style={labelStyle}>
-              <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-              <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-            </div>
-            <BlockAbstract
-              configs={configs}
-              schemaPath={[...childSchemaPath, langLane2]}
-              dispatch={dispatch}
-              model={fieldModel}
-              languageContext={languageContext}
-              value={v[langLane2]}></BlockAbstract>
-          </>
-        )
-      }
-      return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />
-    }
-
-    return (
-      <FormGroup key={key}>
-        <div className="wep-label" style={labelStyle}>
-          <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-          <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-        </div>
-        {
-          <BlockAbstract
-            configs={configs}
-            schemaPath={childSchemaPath}
-            dispatch={dispatch}
-            model={fieldModel}
-            languageContext={languageContext}
-            value={v}></BlockAbstract>
-        }
-      </FormGroup>
+  if (model.optional) {
+    toggle = (
+      <>
+        <Toggle
+          size="sm"
+          style={{marginTop: 4, marginBottom: 4, fontSize: 15}}
+          checkedChildren={t('global.buttons.enabled')}
+          unCheckedChildren={t('global.buttons.disabled')}
+          checked={isActive}
+          onChange={() => {
+            if (isActive) {
+              dispatch({type: ContentEditActionEnum.update, value: null, path: schemaPath})
+            } else {
+              dispatch({
+                type: ContentEditActionEnum.update,
+                value: generateEmptyContent(model, languageContext.languagesConfig),
+                path: schemaPath
+              })
+            }
+          }}
+        />
+      </>
     )
-  })
+  }
 
-  return <>{content}</>
+  let content = null
+  if (isActive) {
+    content = Object.entries(model.fields).map(item => {
+      const [key, fieldModel] = item
+      const v = value[key]
+      const name = fieldModel.editor?.name || key
+
+      const childSchemaPath = [...schemaPath]
+      childSchemaPath.push(key)
+
+      if ((fieldModel as ContentModelSchemaFieldLeaf).i18n) {
+        if (!v) {
+          return (
+            <FormGroup key={key}>
+              <div className="wep-label" style={labelStyle}>
+                <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+                <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+              </div>
+              <Toggle
+                size="sm"
+                checked={false}
+                onChange={() => {
+                  dispatch({
+                    type: ContentEditActionEnum.update,
+                    value: generateEmptyContent(fieldModel, languageContext.languagesConfig),
+                    path: childSchemaPath
+                  })
+                }}
+              />
+            </FormGroup>
+          )
+        }
+
+        let componentLane1 = null
+        if (langLane1) {
+          componentLane1 = (
+            <>
+              <div className="wep-label" style={labelStyle}>
+                <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+                <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+              </div>
+              <BlockAbstract
+                configs={configs}
+                schemaPath={[...childSchemaPath, langLane1]}
+                dispatch={dispatch}
+                model={fieldModel}
+                languageContext={languageContext}
+                value={v[langLane1]}></BlockAbstract>
+            </>
+          )
+        }
+
+        let componentLane2 = null
+        if (langLane2) {
+          componentLane2 = (
+            <>
+              <div className="wep-label" style={labelStyle}>
+                <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+                <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+              </div>
+              <BlockAbstract
+                configs={configs}
+                schemaPath={[...childSchemaPath, langLane2]}
+                dispatch={dispatch}
+                model={fieldModel}
+                languageContext={languageContext}
+                value={v[langLane2]}></BlockAbstract>
+            </>
+          )
+        }
+        return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />
+      }
+
+      return (
+        <FormGroup key={key}>
+          <div className="wep-label" style={labelStyle}>
+            <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+          </div>
+          {
+            <BlockAbstract
+              configs={configs}
+              schemaPath={childSchemaPath}
+              dispatch={dispatch}
+              model={fieldModel}
+              languageContext={languageContext}
+              value={v}></BlockAbstract>
+          }
+        </FormGroup>
+      )
+    })
+  }
+
+  return (
+    <>
+      {toggle}
+      {content}
+    </>
+  )
 }
 
 export default BlockObject

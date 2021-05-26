@@ -235,6 +235,15 @@ export const contentModelB: ContentModel = {
           }
         }
       },
+      myOptionalObject: {
+        type: ContentModelSchemaTypes.object,
+        optional: true,
+        fields: {
+          myFieldA: {
+            type: ContentModelSchemaTypes.string
+          }
+        }
+      },
       myTags: {
         type: ContentModelSchemaTypes.list,
         contentType: {

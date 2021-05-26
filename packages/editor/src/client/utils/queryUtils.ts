@@ -7,6 +7,8 @@ import {
 import gql from 'graphql-tag'
 import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {Configs} from '../interfaces/extensionConfig'
+import {MapType} from '../interfaces/utilTypes'
+import {destructUnionCase} from '../utility'
 
 export const ContentModelPrefix = '_cm'
 export const ContentModelPrefixPrivate = '_cmp'
@@ -217,6 +219,7 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
   for (const prop in copy) {
     if (keys.some(v => v === prop)) delete copy[prop]
     else if (copy[prop] === null) {
+      // delete copy[prop]
     } else if (Array.isArray(copy[prop])) {
       copy[prop] = (copy[prop] as any).map((item: any) => stripKeysRecursive(item, keys))
     } else if (typeof copy[prop] === 'object') {
@@ -225,4 +228,109 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
   }
 
   return copy
+}
+
+export interface ValidatorContext {
+  removeKeys: string[]
+}
+
+export function validateRecursive(
+  validatorContext: ValidatorContext,
+  schema: ContentModelSchemas,
+  data: any
+): any {
+  if (typeof data === 'string' || data instanceof String || data instanceof File) {
+    return data
+  }
+
+  switch (schema.type) {
+    case ContentModelSchemaTypes.object: {
+      if (schema.optional && !data) {
+        return null
+      }
+      const obj = data as MapType<any>
+      const copy: any = {}
+      for (const [key, val] of Object.entries(obj)) {
+        if (!validatorContext.removeKeys.some(v => v === key)) {
+          copy[key] = validateRecursive(validatorContext, schema.fields[key], val)
+        }
+      }
+      if (Object.keys(copy).length > 0) {
+        return copy
+      }
+      return null
+    }
+
+    case ContentModelSchemaTypes.list: {
+      const list = data as unknown[]
+      const copy: any[] = []
+      for (const item of list) {
+        const r = validateRecursive(validatorContext, schema.contentType, item)
+        if (r !== null && r !== undefined) {
+          copy.push(r)
+        }
+      }
+      return copy
+    }
+
+    case ContentModelSchemaTypes.union: {
+      const union = data as MapType<any>
+      const {unionCase, val} = destructUnionCase(union)
+      if (unionCase) {
+        const r = validateRecursive(validatorContext, schema.cases[unionCase], val)
+        if (r !== null && r !== undefined) {
+          return {[unionCase]: r}
+        }
+      }
+      return null
+    }
+
+    // case ContentModelSchemaTypes.reference: {
+    //   if (schema.i18n) {
+    //     if (data) {
+    //       for (const val of Object.values(data)) {
+    //       }
+    //     }
+    //     break
+    //   }
+
+    //   break
+    // }
+
+    // case ContentModelSchemaTypes.media: {
+    //   if (schema.i18n) {
+    //     if (data) {
+    //       for (const val of Object.values(data)) {
+    //       }
+    //     }
+    //     break
+    //   }
+    //   break
+    // }
+
+    // case ContentModelSchemaTypes.string: {
+    //   if (schema.i18n) {
+    //     if (data) {
+    //       for (const [lang, val] of Object.entries(data)) {
+    //         if (val) {
+    //         }
+    //       }
+    //     }
+    //   } else if (data) {
+    //   }
+    //   break
+    // }
+
+    // case ContentModelSchemaTypes.richText: {
+    //   if (schema.i18n) {
+    //     for (const [lang, val] of Object.entries(data)) {
+    //     }
+    //     break
+    //   }
+    //   break
+    // }
+
+    default:
+      return data
+  }
 }

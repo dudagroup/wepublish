@@ -42,15 +42,18 @@ export class MongoDBContentAdapter implements DBContentAdapter {
   }
 
   async updateContent({input}: UpdateContentArgs): Promise<Content> {
-    const {value} = await this.contents.findOneAndUpdate(
-      {id: input.id},
-      [
-        {
-          $set: input
-        }
-      ] as any,
-      {returnOriginal: false}
-    )
+    const currentValue = await this.contents.findOne({id: input.id})
+    if (!currentValue) {
+      throw Error(`Did not find content with id ${input.id}`)
+    }
+    const inputData = {
+      ...currentValue,
+      ...input
+    }
+
+    const {value} = await this.contents.findOneAndReplace({id: input.id}, inputData, {
+      returnOriginal: false
+    })
 
     if (!value) {
       throw Error(`Did not find content with id ${input.id}`)
