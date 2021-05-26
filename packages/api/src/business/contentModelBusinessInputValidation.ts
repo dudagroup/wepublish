@@ -109,16 +109,20 @@ async function validateRecursive(
   switch (schema.type) {
     case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
-      for (const [key, val] of Object.entries(obj)) {
-        await validateRecursive(validatorContext, schema.fields[key], val)
+      if (obj) {
+        for (const [key, val] of Object.entries(obj)) {
+          await validateRecursive(validatorContext, schema.fields[key], val)
+        }
       }
       break
     }
 
     case ContentModelSchemaTypes.list: {
       const list = data as unknown[]
-      for (const item of list) {
-        await validateRecursive(validatorContext, schema.contentType, item)
+      if (list) {
+        for (const item of list) {
+          await validateRecursive(validatorContext, schema.contentType, item)
+        }
       }
       break
     }

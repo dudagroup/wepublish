@@ -90,9 +90,8 @@ function generateType(
         type = new GraphQLInputObjectType({
           name,
           fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-            val.optional = true
             accu[`${key}`] = {
-              type: generateType(context, val, nameJoin(name, key))
+              type: generateType(context, {...val, optional: true}, nameJoin(name, key))
             }
             return accu
           }, {} as GraphQLInputFieldConfigMap)
@@ -169,7 +168,7 @@ function generateType(
       break
 
     case ContentModelSchemaTypes.reference:
-      contentModelSchemas.optional = true
+      contentModelSchemas.optional = true // TODO reconsider if reference must be optional
       if (context.isInput) {
         type = getLeaf(context, contentModelSchemas, GraphQLReferenceInput)
       } else {
@@ -182,7 +181,7 @@ function generateType(
       break
 
     case ContentModelSchemaTypes.media:
-      contentModelSchemas.optional = true
+      contentModelSchemas.optional = true // TODO reconsider if media must be optional
       if (context.isInput) {
         type = getLeaf(context, contentModelSchemas, GraphQLMediaInput)
       } else {

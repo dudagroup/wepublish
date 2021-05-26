@@ -103,7 +103,7 @@ export type _Cmp_Article_Record_Content_Blocks_ImageGallery = {
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Content = {
   __typename?: '_cmp_article_record_content_blocks_imageGallery_content';
-  images: Array<Maybe<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>>;
+  images: Array<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>;
 };
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Images = {
@@ -535,6 +535,7 @@ export type _Cmp_ModelB_Record_Content = {
   myOptionalUnion?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_Private_ModelA_MediaLibrary>;
   myRefI18n?: Maybe<I18n_Ref_Private_ModelA_ModelB>;
+  myOptionalObject?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref_Private_ModelA>>;
   myBlockList: Array<_Cmp_ModelB_Record_Content_MyBlockList>;
 };
@@ -577,6 +578,11 @@ export enum _Cmp_ModelB_Record_Content_MyOptionalEnum {
   /** Bar */
   Bar = 'bar'
 }
+
+export type _Cmp_ModelB_Record_Content_MyOptionalObject = {
+  __typename?: '_cmp_modelB_record_content_myOptionalObject';
+  myFieldA: Scalars['String'];
+};
 
 export type _Cmp_ModelB_Record_Content_MyOptionalUnion = _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA | _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB;
 
@@ -621,7 +627,7 @@ export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
   __typename?: '_cmp_modelB_record_content_myUnion_caseA_content';
-  foo: I18n_String;
+  foooooooooooooooooooooooooooo: I18n_String;
 };
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
@@ -710,7 +716,7 @@ export type _Cmpi_Article_Record_Content_Blocks_Image = {
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery = {
-  images: Array<Maybe<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>>;
+  images: Array<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>;
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery_Images = {
@@ -1069,6 +1075,7 @@ export type _Cmpi_ModelB_Record_Content = {
   myOptionalUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_Input>;
   myRefI18n?: Maybe<I18n_Ref_Input_Input>;
+  myOptionalObject?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref_Input>>;
   myBlockList: Array<_Cmpi_ModelB_Record_Content_MyBlockList>;
 };
@@ -1106,6 +1113,10 @@ export enum _Cmpi_ModelB_Record_Content_MyOptionalEnum {
   Bar = 'bar'
 }
 
+export type _Cmpi_ModelB_Record_Content_MyOptionalObject = {
+  myFieldA: Scalars['String'];
+};
+
 export type _Cmpi_ModelB_Record_Content_MyOptionalUnion = {
   caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseA>;
   caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB>;
@@ -1125,7 +1136,7 @@ export type _Cmpi_ModelB_Record_Content_MyUnion = {
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
-  foo: I18n_String_Input;
+  foooooooooooooooooooooooooooo: I18n_String_Input;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {

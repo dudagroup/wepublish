@@ -15,7 +15,8 @@ import {
   getCreateMutation,
   getUpdateMutation,
   getReadQuery,
-  stripKeysRecursive
+  stripKeysRecursive,
+  validateRecursive
 } from '../utils/queryUtils'
 import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
 
@@ -26,6 +27,10 @@ import {Configs} from '../interfaces/extensionConfig'
 import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
 import LanguageControl from '../atoms/contentEdit/LanguageControl'
+import {
+  ContentModelSchemaFieldObject,
+  ContentModelSchemaTypes
+} from '../interfaces/contentModelSchema'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -191,11 +196,31 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   }, [createError, updateError, publishError])
 
   function createInput(): any {
-    const content = stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
+    if (!contentConfig) {
+      return
+    }
+
+    const content = validateRecursive(
+      {removeKeys: ['__typename', '__ephemeralReactStateMeta']},
+      {
+        type: ContentModelSchemaTypes.object,
+        fields: contentConfig.schema.content
+      },
+      contentData
+    )
+
     let meta
     if (customMetadata) {
       const {__typename: waste, ...rest} = customMetadata
-      meta = rest
+
+      meta = validateRecursive(
+        {removeKeys: ['__typename', '__ephemeralReactStateMeta']},
+        {
+          type: ContentModelSchemaTypes.object,
+          fields: contentConfig.schema.meta
+        },
+        rest
+      )
     }
 
     return {
