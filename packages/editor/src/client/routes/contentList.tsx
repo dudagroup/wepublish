@@ -183,7 +183,8 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </FlexboxGrid>
 
       <Table
-        autoHeight
+        virtualized
+        height={config.previewSize === 'big' ? 810 : 510}
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
