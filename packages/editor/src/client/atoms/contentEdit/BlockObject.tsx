@@ -2,9 +2,10 @@ import React from 'react'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
 import {
   ContentModelSchemaFieldLeaf,
-  ContentModelSchemaFieldObject
+  ContentModelSchemaFieldObject,
+  ContentModelSchemaTypes
 } from '../../interfaces/contentModelSchema'
-import {ControlLabel, FormGroup, Toggle} from 'rsuite'
+import {Col, ControlLabel, FormGroup, Row, Toggle} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {I18nWrapper} from './i18nWrapper'
 import {MapType} from '../../interfaces/utilTypes'
@@ -20,7 +21,7 @@ export interface LanguageContext {
   readonly langLane2: string
 }
 
-const labelStyle = {marginTop: '32px'}
+const labelStyle = {marginTop: '32px', height: '24px'}
 
 export function BlockObject({
   dispatch,
@@ -117,12 +118,10 @@ export function BlockObject({
         if (langLane2) {
           componentLane2 = (
             <>
-              <div className="wep-label" style={labelStyle}>
-                <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-                <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-              </div>
+              <div className="wep-label" style={labelStyle}></div>
               <BlockAbstract
                 configs={configs}
+                disabled
                 schemaPath={[...childSchemaPath, langLane2]}
                 dispatch={dispatch}
                 model={fieldModel}
@@ -134,22 +133,32 @@ export function BlockObject({
         return <I18nWrapper key={key} lane1={componentLane1} lane2={componentLane2} />
       }
 
+      let colWith = 14
+      if (
+        fieldModel.type === ContentModelSchemaTypes.list ||
+        fieldModel.type === ContentModelSchemaTypes.union ||
+        fieldModel.type === ContentModelSchemaTypes.object
+      ) {
+        colWith = 24
+      }
       return (
-        <FormGroup key={key}>
-          <div className="wep-label" style={labelStyle}>
-            <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-            <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
-          </div>
-          {
-            <BlockAbstract
-              configs={configs}
-              schemaPath={childSchemaPath}
-              dispatch={dispatch}
-              model={fieldModel}
-              languageContext={languageContext}
-              value={v}></BlockAbstract>
-          }
-        </FormGroup>
+        <Row key={key} className="show-grid" style={{marginBottom: 24}}>
+          <Col xs={colWith}>
+            <FormGroup>
+              <div className="wep-label" style={labelStyle}>
+                <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
+                <Instructions instructions={fieldModel.editor?.instructions}></Instructions>
+              </div>
+              <BlockAbstract
+                configs={configs}
+                schemaPath={childSchemaPath}
+                dispatch={dispatch}
+                model={fieldModel}
+                languageContext={languageContext}
+                value={v}></BlockAbstract>
+            </FormGroup>
+          </Col>
+        </Row>
       )
     })
   }

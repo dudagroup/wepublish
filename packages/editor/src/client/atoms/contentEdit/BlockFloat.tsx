@@ -8,12 +8,13 @@ import {BlockAbstractProps} from './BlockAbstract'
 function BlockFloat({
   value,
   schemaPath,
-  dispatch
+  dispatch,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldFloat, number>) {
   return (
     <InputNumber
       value={value}
-      disabled={isNullOrUndefined(value)}
+      disabled={isNullOrUndefined(value) || disabled}
       step={0.001}
       onChange={val =>
         dispatch({type: ContentEditActionEnum.update, value: Number(val), path: schemaPath})

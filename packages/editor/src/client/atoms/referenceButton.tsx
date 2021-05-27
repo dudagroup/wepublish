@@ -6,9 +6,11 @@ import {ReferencePreview} from './referencePreview'
 export function ReferenceButton({
   reference,
   onClick,
-  onClose
+  onClose,
+  disabled
 }: {
   readonly reference?: Reference | null
+  readonly disabled?: boolean
   readonly onClose: (event: React.MouseEvent<HTMLElement>) => void
   readonly onClick: () => void
 }) {
@@ -17,7 +19,8 @@ export function ReferenceButton({
     ref = <ReferencePreview reference={reference} onClose={onClose} />
   } else {
     ref = (
-      <Button appearance="ghost" active onClick={onClick}>
+      // eslint-disable-next-line i18next/no-literal-string
+      <Button disabled={disabled} appearance="ghost" active onClick={onClick}>
         Reference to
       </Button>
     )

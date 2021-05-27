@@ -1,6 +1,6 @@
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {Form, FormControl, Toggle} from 'rsuite'
+import {Input, Toggle} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
 import {isNullOrUndefined} from '../../utility'
@@ -10,7 +10,8 @@ function BlockString({
   dispatch,
   schemaPath,
   model,
-  value
+  value,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldString, string | null>) {
   let toggle
   const isActive = !isNullOrUndefined(value)
@@ -21,7 +22,12 @@ function BlockString({
       <>
         <Toggle
           size="sm"
-          style={{marginTop: 4, marginBottom: 4, fontSize: 15}}
+          style={{
+            marginTop: 4,
+            marginBottom: 4,
+            fontSize: 15,
+            visibility: disabled ? 'hidden' : 'inherit'
+          }}
           checkedChildren={t('global.buttons.enabled')}
           unCheckedChildren={t('global.buttons.disabled')}
           checked={isActive}
@@ -38,11 +44,13 @@ function BlockString({
   }
 
   return (
-    <Form style={{width: '100%', margin: 0}}>
+    <div style={{width: '100%', margin: 0}}>
       {toggle}
-      <FormControl
+      <Input
+        style={{width: '100%'}}
         componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
         readOnly={!isActive && model.optional}
+        disabled={disabled}
         type={model.editor?.inputType || 'text'}
         rows={model.editor?.inputRows}
         maxLength={model.editor?.maxCharacters}
@@ -52,7 +60,7 @@ function BlockString({
           dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
         }
       />
-    </Form>
+    </div>
   )
 }
 

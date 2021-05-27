@@ -128,13 +128,17 @@ function generateType(
 
       break
     case ContentModelSchemaTypes.enum:
-      type = new GraphQLEnumType({
-        name,
-        values: contentModelSchemas.values.reduce((accu, item) => {
-          accu[`${item.value}`] = {value: item.value, description: item.description}
-          return accu
-        }, {} as GraphQLEnumValueConfigMap)
-      })
+      type = getLeaf(
+        context,
+        contentModelSchemas,
+        new GraphQLEnumType({
+          name,
+          values: contentModelSchemas.values.reduce((accu, item) => {
+            accu[`${item.value}`] = {value: item.value, description: item.description}
+            return accu
+          }, {} as GraphQLEnumValueConfigMap)
+        })
+      )
       break
     case ContentModelSchemaTypes.object:
       if (context.isInput) {

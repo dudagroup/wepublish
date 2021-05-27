@@ -9,14 +9,17 @@ function BlockDateTime({
   dispatch,
   schemaPath,
   model,
-  value
+  value,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldString, string | null>) {
   const isActive = !isNullOrUndefined(value)
   return (
     <>
       <DatePicker
+        style={{width: '100%'}}
         value={value && isActive ? new Date(value) : undefined}
         cleanable={model.optional}
+        disabled={disabled}
         onChange={val => {
           dispatch({
             type: ContentEditActionEnum.update,

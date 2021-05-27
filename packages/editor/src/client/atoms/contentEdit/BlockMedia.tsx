@@ -14,7 +14,8 @@ import {isWebCompatibleImage} from '../../utility'
 function BlockMedia({
   value,
   schemaPath,
-  dispatch
+  dispatch,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldRef, (MediaOutput & MediaInput) | null>) {
   const {t} = useTranslation()
 
@@ -98,6 +99,7 @@ function BlockMedia({
             imageWidth={width}
             imageHeight={height}
             maxHeight={300}
+            disabled={disabled}
             focalPoint={value.focalPoint}
             onChange={point => {
               dispatch({
@@ -138,6 +140,7 @@ function BlockMedia({
           <Button
             appearance="ghost"
             color="red"
+            disabled={disabled}
             onClick={() => {
               dispatch({
                 type: ContentEditActionEnum.update,

@@ -5,6 +5,7 @@ import {generateEmptyContent} from '../../control/contentUtil'
 import {ContentModelSchemaFieldUnion} from '../../interfaces/contentModelSchema'
 import {destructUnionCase} from '../../utility'
 import BlockAbstract, {BlockAbstractProps} from './BlockAbstract'
+import {genericBlockMinWidth} from './BlockStyle'
 
 export function BlockUnion({
   value,
@@ -28,6 +29,7 @@ export function BlockUnion({
   return (
     <div>
       <SelectPicker
+        style={{minWidth: genericBlockMinWidth}}
         cleanable={!!model.optional}
         searchable={false}
         data={data}

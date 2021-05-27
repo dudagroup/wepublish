@@ -23,6 +23,7 @@ export interface BlockAbstractProps<M = any, V = any> {
   readonly model: M
   readonly languageContext: LanguageContext
   readonly configs: Configs
+  readonly disabled?: boolean
 }
 
 function BlockAbstract(props: BlockAbstractProps) {
@@ -64,5 +65,9 @@ function BlockAbstract(props: BlockAbstractProps) {
 }
 
 export default memo(BlockAbstract, (a, b) => {
-  return Object.is(a.value, b.value)
+  return (
+    Object.is(a.value, b.value) &&
+    Object.is(a.languageContext.langLane1, b.languageContext.langLane1) &&
+    Object.is(a.languageContext.langLane2, b.languageContext.langLane2)
+  )
 })

@@ -12,7 +12,8 @@ function BlockRef({
   schemaPath,
   model,
   dispatch,
-  configs
+  configs,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldRef, Reference | null>) {
   const [isChooseModalOpen, setChooseModalOpen] = useState(false)
 
@@ -20,6 +21,7 @@ function BlockRef({
     <>
       <ReferenceButton
         reference={value}
+        disabled={disabled}
         onClick={() => setChooseModalOpen(true)}
         onClose={() => {
           dispatch({

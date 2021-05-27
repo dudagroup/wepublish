@@ -12,7 +12,8 @@ function BlockRichText({
   dispatch,
   schemaPath,
   model,
-  value
+  value,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldRichText, RichTextBlockValue>) {
   const empty = [
     {
@@ -53,7 +54,8 @@ function BlockRichText({
       {toggle}
       <RichTextBlock
         value={v}
-        disabled={!isActive && model.optional}
+        displayOnly={disabled}
+        disabled={(!isActive && model.optional) || disabled}
         onChange={richText => {
           const update = isFunctionalUpdate(richText) ? richText(v) : richText
           dispatch({
