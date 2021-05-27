@@ -675,6 +675,7 @@ export type _Cmpi_ArticleDeleteArgs = {
 export type _Cmpi_ArticlePublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -858,6 +859,7 @@ export type _Cmpi_AuthorDeleteArgs = {
 export type _Cmpi_AuthorPublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -920,6 +922,7 @@ export type _Cmpi_MediaLibraryDeleteArgs = {
 export type _Cmpi_MediaLibraryPublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -980,6 +983,7 @@ export type _Cmpi_ModelADeleteArgs = {
 export type _Cmpi_ModelAPublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -1049,6 +1053,7 @@ export type _Cmpi_ModelBDeleteArgs = {
 export type _Cmpi_ModelBPublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -1201,6 +1206,7 @@ export type AllMutationsDeleteArgs = {
 export type AllMutationsPublishArgs = {
   id: Scalars['ID'];
   publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -4129,6 +4135,7 @@ export type ContentListRefFragment = (
 export type PublishContentMutationVariables = Exact<{
   id: Scalars['ID'];
   publicationDate: Scalars['DateTime'];
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 }>;
 
 
@@ -6669,10 +6676,10 @@ export type ContentGetQueryHookResult = ReturnType<typeof useContentGetQuery>;
 export type ContentGetLazyQueryHookResult = ReturnType<typeof useContentGetLazyQuery>;
 export type ContentGetQueryResult = Apollo.QueryResult<ContentGetQuery, ContentGetQueryVariables>;
 export const PublishContentDocument = gql`
-    mutation PublishContent($id: ID!, $publicationDate: DateTime!) {
+    mutation PublishContent($id: ID!, $publicationDate: DateTime!, $dePublicationDate: DateTime) {
   content {
     _all {
-      publish(id: $id, publicationDate: $publicationDate) {
+      publish(id: $id, publicationDate: $publicationDate, dePublicationDate: $dePublicationDate) {
         id
       }
     }
@@ -6696,6 +6703,7 @@ export type PublishContentMutationFn = Apollo.MutationFunction<PublishContentMut
  *   variables: {
  *      id: // value for 'id'
  *      publicationDate: // value for 'publicationDate'
+ *      dePublicationDate: // value for 'dePublicationDate'
  *   },
  * });
  */

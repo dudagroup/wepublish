@@ -1,33 +1,47 @@
 import React, {useState} from 'react'
-
 import {DefaultMetadata} from './contentMetadataPanel'
-
 import {useTranslation} from 'react-i18next'
 import {Button, ControlLabel, DatePicker, Form, FormGroup, Message, Modal} from 'rsuite'
-
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 
 export interface PublishArticlePanelProps {
-  initialPublishDate?: Date
-  pendingPublishDate?: Date
+  publicationDate?: string
+  dePublicationDate?: string
   metadata: DefaultMetadata
 
   onClose(): void
-  onConfirm(publishDate: Date): void
+  onConfirm(publishDate: Date, depublishDate?: Date): void
 }
 
 export function PublishContentPanel({
-  initialPublishDate,
-  pendingPublishDate,
+  publicationDate,
+  dePublicationDate,
   metadata,
   onClose,
   onConfirm
 }: PublishArticlePanelProps) {
   const now = new Date()
-  const [publishDate, setPublishDate] = useState<Date | undefined>(initialPublishDate ?? now)
-
+  const initialPublishDate = publicationDate ? new Date(publicationDate) : now
+  const [publishDate, setPublishDate] = useState<Date>(initialPublishDate)
+  const [dePublishDate, setDePublishDate] = useState<Date | undefined>(
+    dePublicationDate ? new Date(dePublicationDate) : undefined
+  )
   const {t} = useTranslation()
-
+  let warning = null
+  if (initialPublishDate && initialPublishDate.getTime() > now.getTime()) {
+    warning = (
+      <>
+        <Message
+          type="warning"
+          description={t('articleEditor.panels.articlePending', {
+            pendingPublishDate: initialPublishDate
+          })}
+        />
+        <br />
+        <br />
+      </>
+    )
+  }
   return (
     <>
       <Modal.Header>
@@ -35,18 +49,14 @@ export function PublishContentPanel({
       </Modal.Header>
 
       <Modal.Body>
-        {pendingPublishDate && (
-          <Message
-            type="warning"
-            description={t('articleEditor.panels.articlePending', {pendingPublishDate})}
-          />
-        )}
+        {warning}
         <Form fluid={true}>
           <FormGroup>
             <ControlLabel>{t('articleEditor.panels.publishDate')}</ControlLabel>
             <DatePicker
               block
               value={publishDate}
+              cleanable={false}
               format="YYYY-MM-DD HH:mm"
               ranges={[
                 {
@@ -55,6 +65,22 @@ export function PublishContentPanel({
                 }
               ]}
               onChange={publishDate => setPublishDate(publishDate)}
+            />
+          </FormGroup>
+          <FormGroup>
+            <ControlLabel>{t('articleEditor.panels.depublishDate')}</ControlLabel>
+            <DatePicker
+              block
+              value={dePublishDate}
+              cleanable={true}
+              format="YYYY-MM-DD HH:mm"
+              ranges={[
+                {
+                  label: 'Now',
+                  value: new Date()
+                }
+              ]}
+              onChange={dePublishDate => setDePublishDate(dePublishDate)}
             />
           </FormGroup>
         </Form>
@@ -73,7 +99,7 @@ export function PublishContentPanel({
         <Button
           appearance="primary"
           disabled={!publishDate}
-          onClick={() => onConfirm(publishDate!)}>
+          onClick={() => onConfirm(publishDate, dePublishDate)}>
           {t('articleEditor.panels.confirm')}
         </Button>
         <Button appearance="subtle" onClick={() => onClose()}>

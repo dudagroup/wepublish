@@ -39,10 +39,10 @@ export interface ArticleEditorProps {
 
 interface ContentBody {
   id: string
-  createdAt: Date
-  modifiedAt: Date
-  publicationDate?: Date
-  dePublicationDate?: Date
+  createdAt: string
+  modifiedAt: string
+  publicationDate?: string
+  dePublicationDate?: string
   revision: number
   shared: boolean
   state: string
@@ -81,7 +81,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   const [isMetaVisible, setMetaVisible] = useState(false)
   const [isPublishDialogOpen, setPublishDialogOpen] = useState(false)
 
-  const [publishedAt, setPublishedAt] = useState<Date>()
   const [metadata, setMetadata] = useState<DefaultMetadata>({
     title: '',
     shared: false,
@@ -170,8 +169,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       const {shared, title, slugI18n, content, meta} = stripKeysRecursive(recordData, [
         '__typename'
       ])
-      const publishedAt = new Date()
-      if (publishedAt) setPublishedAt(new Date(publishedAt))
 
       setMetadata({
         title,
@@ -264,17 +261,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     }
   }
 
-  async function handlePublish(publishDate: Date) {
+  async function handlePublish(publicationDate: Date, dePublicationDate?: Date) {
     if (contentdId) {
-      const {data} = await updateContent({
-        variables: {id: contentdId, input: createInput()}
-      })
-
       if (data) {
+        console.log(dePublicationDate ? dePublicationDate.toISOString() : undefined)
         await publishContent({
           variables: {
             id: contentdId,
-            publicationDate: publishDate.toISOString()
+            publicationDate: publicationDate.toISOString(),
+            dePublicationDate: dePublicationDate ? dePublicationDate.toISOString() : undefined
           }
         })
       }
@@ -536,12 +531,12 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
 
       <Modal show={isPublishDialogOpen} size={'sm'} onHide={() => setPublishDialogOpen(false)}>
         <PublishContentPanel
-          initialPublishDate={publishedAt}
-          pendingPublishDate={recordData?.publicationDate}
+          publicationDate={recordData?.publicationDate}
+          dePublicationDate={recordData?.dePublicationDate}
           metadata={metadata}
           onClose={() => setPublishDialogOpen(false)}
-          onConfirm={publishDate => {
-            handlePublish(publishDate)
+          onConfirm={(publishDate, dePublishDate) => {
+            handlePublish(publishDate, dePublishDate)
             setPublishDialogOpen(false)
           }}
         />
