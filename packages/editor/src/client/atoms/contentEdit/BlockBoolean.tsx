@@ -7,11 +7,13 @@ import {BlockAbstractProps} from './BlockAbstract'
 function BlockBoolean({
   value,
   schemaPath,
-  dispatch
+  dispatch,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldBoolean, boolean>) {
   return (
     <Toggle
       checked={value}
+      disabled={disabled}
       onChange={val =>
         dispatch({type: ContentEditActionEnum.update, value: Boolean(val), path: schemaPath})
       }

@@ -183,7 +183,8 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </FlexboxGrid>
 
       <Table
-        autoHeight
+        virtualized
+        height={config.previewSize === 'big' ? 800 : 510}
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
@@ -255,7 +256,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column> */}
-        <Column width={200} align="right" fixed="right">
+        <Column width={160} align="right" fixed="right">
           <HeaderCell>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 0'}}>
             {(rowData: Content) => (

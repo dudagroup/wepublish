@@ -14,7 +14,8 @@ import {isWebCompatibleImage} from '../../utility'
 function BlockMedia({
   value,
   schemaPath,
-  dispatch
+  dispatch,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldRef, (MediaOutput & MediaInput) | null>) {
   const {t} = useTranslation()
 
@@ -98,6 +99,7 @@ function BlockMedia({
             imageWidth={width}
             imageHeight={height}
             maxHeight={300}
+            disabled={disabled}
             focalPoint={value.focalPoint}
             onChange={point => {
               dispatch({
@@ -119,7 +121,7 @@ function BlockMedia({
               </a>
             </DescriptionListItem>
             <DescriptionListItem label={t('images.panels.dimension')}>
-              {t('images.panels.imageDimension', {width, height})}
+              {t('images.panels.imageDimension', {imageWidth: width, imageHeight: height})}
             </DescriptionListItem>
             {createdAt && (
               <DescriptionListItem label={t('images.panels.created')}>
@@ -138,6 +140,7 @@ function BlockMedia({
           <Button
             appearance="ghost"
             color="red"
+            disabled={disabled}
             onClick={() => {
               dispatch({
                 type: ContentEditActionEnum.update,

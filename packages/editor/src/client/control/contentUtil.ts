@@ -40,6 +40,9 @@ export function generateEmptyContent(
       return accu
     }, r)
   }
+  if (field.type === ContentModelSchemaTypes.id) {
+    return defaultVal('')
+  }
   if (field.type === ContentModelSchemaTypes.string) {
     return defaultVal('')
   }

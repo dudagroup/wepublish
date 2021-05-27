@@ -27,7 +27,8 @@ export interface ValidatorContext {
 async function validateRecursive(
   validatorContext: ValidatorContext,
   schema: ContentModelSchemas,
-  data: any
+  data: any,
+  persistentData?: any
 ) {
   async function handleRef(
     data: unknown,
@@ -53,7 +54,7 @@ async function validateRecursive(
     }
   }
 
-  async function handleMedia(data: unknown) {
+  async function handleMedia(data: unknown, persistentData?: MediaPersisted) {
     const mediaInput = data as MediaInput
     const mediaDb = data as MediaPersisted
 
@@ -69,8 +70,8 @@ async function validateRecursive(
       if (image.format && image.width && image.height) {
         mediaDb.image = {
           format: image.format,
-          height: image.width,
-          width: image.height
+          height: image.height,
+          width: image.width
         }
       } else {
         mediaDb.image = null
@@ -78,7 +79,19 @@ async function validateRecursive(
 
       delete mediaInput.file
       delete mediaInput.media
+      return mediaDb
+    } else if (mediaDb && persistentData?.id) {
+      mediaDb.id = persistentData.id
+      mediaDb.createdAt = persistentData.createdAt
+      mediaDb.modifiedAt = persistentData.modifiedAt
+      mediaDb.filename = persistentData.filename
+      mediaDb.fileSize = persistentData.fileSize
+      mediaDb.extension = persistentData.extension
+      mediaDb.mimeType = persistentData.mimeType
+      mediaDb.image = persistentData.image
+      return mediaDb
     }
+    return null
   }
 
   async function validateRichTextRecursive(
@@ -111,7 +124,7 @@ async function validateRecursive(
       const obj = data as MapType<any>
       if (obj) {
         for (const [key, val] of Object.entries(obj)) {
-          await validateRecursive(validatorContext, schema.fields[key], val)
+          await validateRecursive(validatorContext, schema.fields[key], val, persistentData?.[key])
         }
       }
       break
@@ -120,8 +133,10 @@ async function validateRecursive(
     case ContentModelSchemaTypes.list: {
       const list = data as unknown[]
       if (list) {
+        let i = 0
         for (const item of list) {
-          await validateRecursive(validatorContext, schema.contentType, item)
+          await validateRecursive(validatorContext, schema.contentType, item, persistentData?.[i])
+          i++
         }
       }
       break
@@ -131,7 +146,12 @@ async function validateRecursive(
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
       if (unionCase) {
-        await validateRecursive(validatorContext, schema.cases[unionCase], val)
+        await validateRecursive(
+          validatorContext,
+          schema.cases[unionCase],
+          val,
+          persistentData?.[unionCase]
+        )
       }
       break
     }
@@ -152,13 +172,13 @@ async function validateRecursive(
     case ContentModelSchemaTypes.media: {
       if (schema.i18n) {
         if (data) {
-          for (const val of Object.values(data)) {
-            await handleMedia(val)
+          for (const [lang, val] of Object.entries(data)) {
+            await handleMedia(val as MediaPersisted, persistentData?.[lang])
           }
         }
         break
       }
-      await handleMedia(data)
+      await handleMedia(data, persistentData)
       break
     }
 
@@ -202,7 +222,8 @@ async function validateRecursive(
 export async function validateInput(
   validatorContext: ValidatorContext,
   schema?: MapType<ContentModelSchemas>,
-  data?: MapType<any>
+  data?: MapType<any>,
+  persistentData?: MapType<any>
 ) {
   if (!(data && schema)) return
 
@@ -215,6 +236,6 @@ export async function validateInput(
   )
 
   for (const [key, val] of Object.entries(schema)) {
-    await validateRecursive(validatorContext, val, data[key])
+    await validateRecursive(validatorContext, val, data[key], persistentData?.[key])
   }
 }

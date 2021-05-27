@@ -8,13 +8,14 @@ import {BlockAbstractProps} from './BlockAbstract'
 function BlockInt({
   value,
   schemaPath,
-  dispatch
+  dispatch,
+  disabled
 }: BlockAbstractProps<ContentModelSchemaFieldInt, number>) {
   const Max32BitIntSize = Math.pow(2, 31) - 1
   return (
     <InputNumber
       value={value}
-      disabled={isNullOrUndefined(value)}
+      disabled={isNullOrUndefined(value) || disabled}
       step={1}
       onChange={val =>
         dispatch({

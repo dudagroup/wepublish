@@ -8,6 +8,7 @@ import {ContentModelSummary, ContentTypeEnum, useContentListLazyQuery} from '../
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {Reference} from '../../interfaces/referenceType'
 import {MapType} from '../../interfaces/utilTypes'
+import {genericBlockMinWidth} from './BlockStyle'
 
 export function BlockTags({
   dispatch,
@@ -74,7 +75,7 @@ export function BlockTags({
       value={value.map(r => {
         return r.recordId
       })}
-      style={{minWidth: 300, paddingBottom: 7}}
+      style={{minWidth: genericBlockMinWidth, paddingBottom: 7}}
       labelKey="title"
       valueKey="id"
       onChange={handleChange}

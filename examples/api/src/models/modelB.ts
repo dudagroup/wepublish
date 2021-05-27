@@ -8,6 +8,9 @@ export const contentModelB: ContentModel = {
   namePlural: 'Models B',
   schema: {
     content: {
+      myId: {
+        type: ContentModelSchemaTypes.id
+      },
       myString: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
@@ -28,6 +31,16 @@ export const contentModelB: ContentModel = {
         i18n: true,
         defaultValue: 'custom default value!'
       },
+      myMultilineStringI18n: {
+        type: ContentModelSchemaTypes.string,
+        filterable: true,
+        searchable: true,
+        i18n: true,
+        editor: {
+          inputType: 'textarea',
+          inputRows: 5
+        }
+      },
       myOptionalString: {
         type: ContentModelSchemaTypes.string,
         optional: true,
@@ -47,13 +60,22 @@ export const contentModelB: ContentModel = {
         type: ContentModelSchemaTypes.richText,
         searchable: true,
         config: {
-          bold: true,
           h1: true,
           h2: true,
           h3: true,
           h4: true,
           h5: true,
           h6: true,
+          bold: true,
+          italic: true,
+          underline: true,
+          emoji: true,
+          strikethrough: true,
+          subscript: true,
+          superscript: true,
+          table: true,
+          unorderedList: true,
+          url: true,
           orderedList: true,
           ref: {
             [MODEL_A]: {
@@ -67,13 +89,22 @@ export const contentModelB: ContentModel = {
         searchable: true,
         i18n: true,
         config: {
-          bold: true,
           h1: true,
           h2: true,
           h3: true,
           h4: true,
           h5: true,
           h6: true,
+          bold: true,
+          italic: true,
+          underline: true,
+          emoji: true,
+          strikethrough: true,
+          subscript: true,
+          superscript: true,
+          table: true,
+          unorderedList: true,
+          url: true,
           orderedList: true,
           ref: {
             [MODEL_A]: {
@@ -87,22 +118,59 @@ export const contentModelB: ContentModel = {
         filterable: true,
         defaultValue: 333
       },
+      myIntI18n: {
+        type: ContentModelSchemaTypes.int,
+        filterable: true,
+        defaultValue: 333,
+        i18n: true
+      },
       myFloat: {
         type: ContentModelSchemaTypes.float,
         filterable: true
       },
+      myFloatI18n: {
+        type: ContentModelSchemaTypes.float,
+        filterable: true,
+        i18n: true
+      },
       myBoolean: {
         type: ContentModelSchemaTypes.boolean,
         filterable: true
+      },
+      myBooleanI18n: {
+        type: ContentModelSchemaTypes.boolean,
+        filterable: true,
+        i18n: true
       },
       myDateTime: {
         type: ContentModelSchemaTypes.dateTime,
         optional: true,
         filterable: true
       },
+      myDateTimeI18n: {
+        type: ContentModelSchemaTypes.dateTime,
+        optional: true,
+        filterable: true,
+        i18n: true
+      },
       myEnum: {
         type: ContentModelSchemaTypes.enum,
         filterable: true,
+        values: [
+          {
+            value: 'foo',
+            description: 'Foo'
+          },
+          {
+            value: 'bar',
+            description: 'Bar'
+          }
+        ]
+      },
+      myEnumI18n: {
+        type: ContentModelSchemaTypes.enum,
+        filterable: true,
+        i18n: true,
         values: [
           {
             value: 'foo',
@@ -241,6 +309,10 @@ export const contentModelB: ContentModel = {
         fields: {
           myFieldA: {
             type: ContentModelSchemaTypes.string
+          },
+          myFieldAI18n: {
+            type: ContentModelSchemaTypes.string,
+            i18n: true
           }
         }
       },
@@ -274,6 +346,13 @@ export const contentModelB: ContentModel = {
             }
           }
         }
+      },
+      myMedia: {
+        type: ContentModelSchemaTypes.media
+      },
+      myMediaI18n: {
+        type: ContentModelSchemaTypes.media,
+        i18n: true
       }
     }
   }
