@@ -114,6 +114,7 @@
         "pending": "Pending",
         "published": "Published",
         "publishDate": "Publish Date",
+        "depublishDate": "Depublish Date",
         "untitled": "Untitled",
         "close": "Close",
         "preTitle": "Pre-title",

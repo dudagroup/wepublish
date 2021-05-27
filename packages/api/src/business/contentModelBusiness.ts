@@ -83,7 +83,7 @@ export class BusinessLogic {
     return this.context.dbAdapter.content.deleteContent({id})
   }
 
-  async publishContent(id: string, publicationDate: Date) {
+  async publishContent(id: string, publicationDate: Date, depublicationDate: Date) {
     const {roles} = this.context.authenticate()
     authorise(CanPublishContent, roles)
 
@@ -91,6 +91,7 @@ export class BusinessLogic {
       input: {
         id,
         publicationDate: publicationDate || new Date(),
+        dePublicationDate: depublicationDate || undefined,
         modifiedAt: new Date()
       }
     })

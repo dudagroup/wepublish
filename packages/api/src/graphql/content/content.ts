@@ -242,10 +242,11 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               type: typePrivate,
               args: {
                 id: {type: GraphQLNonNull(GraphQLID)},
-                publicationDate: {type: GraphQLDateTime}
+                publicationDate: {type: GraphQLDateTime},
+                dePublicationDate: {type: GraphQLDateTime}
               },
-              async resolve(source, {id, publicationDate}, {business}) {
-                return business.publishContent(id, publicationDate)
+              async resolve(source, {id, publicationDate, dePublicationDate}, {business}) {
+                return business.publishContent(id, publicationDate, dePublicationDate)
               }
             },
 
@@ -762,10 +763,11 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
             type: GraphQLNonNull(GraphQLContentModelSummary),
             args: {
               id: {type: GraphQLNonNull(GraphQLID)},
-              publicationDate: {type: GraphQLDateTime}
+              publicationDate: {type: GraphQLDateTime},
+              dePublicationDate: {type: GraphQLDateTime}
             },
-            async resolve(source, {id, publicationDate}, {business}) {
-              return business.publishContent(id, publicationDate)
+            async resolve(source, {id, publicationDate, dePublicationDate}, {business}) {
+              return business.publishContent(id, publicationDate, dePublicationDate)
             }
           },
           unpublish: {

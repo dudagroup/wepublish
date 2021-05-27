@@ -15,7 +15,7 @@ query ContentList(
       list(
         type: $type
         context: $context
-        filter: { title: $filter }
+        filter: {title: $filter}
         after: $after
         before: $before
         first: $first
@@ -66,10 +66,10 @@ fragment ContentListRef on ContentModelSummary {
   dePublicationDate
 }
 
-mutation PublishContent($id: ID!, $publicationDate: DateTime!) {
+mutation PublishContent($id: ID!, $publicationDate: DateTime!, $dePublicationDate: DateTime) {
   content {
     _all {
-      publish(id: $id, publicationDate: $publicationDate) {
+      publish(id: $id, publicationDate: $publicationDate, dePublicationDate: $dePublicationDate) {
         id
       }
     }
