@@ -63,9 +63,16 @@ export class BusinessLogic {
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
+
+    const persistentData = await this.context.dbAdapter.content.getContentByID(input.id)
     const validatorContext: ValidatorContext = {context: this.context, searchTerms: {}}
-    await validateInput(validatorContext, schema.schema.content, input.content)
-    await validateInput(validatorContext, schema.schema.meta, input.meta)
+    await validateInput(
+      validatorContext,
+      schema.schema.content,
+      input.content,
+      persistentData?.content
+    )
+    await validateInput(validatorContext, schema.schema.meta, input.meta, persistentData?.meta)
 
     return this.context.dbAdapter.content.updateContent({
       input: {

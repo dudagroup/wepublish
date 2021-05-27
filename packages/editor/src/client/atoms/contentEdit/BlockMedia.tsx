@@ -121,7 +121,7 @@ function BlockMedia({
               </a>
             </DescriptionListItem>
             <DescriptionListItem label={t('images.panels.dimension')}>
-              {t('images.panels.imageDimension', {width, height})}
+              {t('images.panels.imageDimension', {imageWidth: width, imageHeight: height})}
             </DescriptionListItem>
             {createdAt && (
               <DescriptionListItem label={t('images.panels.created')}>
