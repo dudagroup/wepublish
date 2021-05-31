@@ -276,6 +276,10 @@ export const RichTextBlock = memo(function RichTextBlock({
           setLocation(editor.selection)
         }}
         onKeyDown={e => {
+          if (e.getModifierState('Shift') && e.key.toLowerCase() === 'enter') {
+            e.preventDefault()
+            editor.insertText('\n')
+          }
           if (e.ctrlKey || e.metaKey) activateHotkey(e)
         }}
       />
