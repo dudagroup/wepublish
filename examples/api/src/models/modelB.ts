@@ -135,11 +135,14 @@ export const contentModelB: ContentModel = {
       },
       myBoolean: {
         type: ContentModelSchemaTypes.boolean,
-        filterable: true
+        defaultValue: true
+      },
+      myOptionalBoolean: {
+        type: ContentModelSchemaTypes.boolean,
+        optional: true
       },
       myBooleanI18n: {
         type: ContentModelSchemaTypes.boolean,
-        filterable: true,
         i18n: true
       },
       myDateTime: {
