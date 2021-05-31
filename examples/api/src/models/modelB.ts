@@ -24,6 +24,12 @@ export const contentModelB: ContentModel = {
           placeholder: 'placeholder example'
         }
       },
+      myUrlString: {
+        type: ContentModelSchemaTypes.string,
+        editor: {
+          inputType: 'url'
+        }
+      },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
