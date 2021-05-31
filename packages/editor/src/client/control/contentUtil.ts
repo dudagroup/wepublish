@@ -1,9 +1,15 @@
 import {LanguagesConfig} from '../api'
 import {
   ContentModelSchemaFieldBase,
+  ContentModelSchemaFieldBoolean,
+  ContentModelSchemaFieldDate,
   ContentModelSchemaFieldEnum,
+  ContentModelSchemaFieldFloat,
+  ContentModelSchemaFieldId,
+  ContentModelSchemaFieldInt,
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject,
+  ContentModelSchemaFieldString,
   ContentModelSchemaFieldUnion,
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
@@ -41,10 +47,12 @@ export function generateEmptyContent(
     }, r)
   }
   if (field.type === ContentModelSchemaTypes.id) {
-    return defaultVal('')
+    const schema = field as ContentModelSchemaFieldId
+    return defaultVal(schema.defaultValue || '')
   }
   if (field.type === ContentModelSchemaTypes.string) {
-    return defaultVal('')
+    const schema = field as ContentModelSchemaFieldString
+    return defaultVal(schema.defaultValue || '')
   }
   if (field.type === ContentModelSchemaTypes.richText) {
     return defaultVal([
@@ -60,19 +68,23 @@ export function generateEmptyContent(
   }
   if (field.type === ContentModelSchemaTypes.enum) {
     const schema = field as ContentModelSchemaFieldEnum
-    return defaultVal(schema.values[0].value)
+    return defaultVal(schema.defaultValue || schema.values[0].value)
   }
   if (field.type === ContentModelSchemaTypes.int) {
-    return defaultVal(0)
+    const schema = field as ContentModelSchemaFieldInt
+    return defaultVal(schema.defaultValue || 0)
   }
   if (field.type === ContentModelSchemaTypes.float) {
-    return defaultVal(0)
+    const schema = field as ContentModelSchemaFieldFloat
+    return defaultVal(schema.defaultValue || 0)
   }
   if (field.type === ContentModelSchemaTypes.boolean) {
-    return defaultVal(true)
+    const schema = field as ContentModelSchemaFieldBoolean
+    return defaultVal(schema.defaultValue || false)
   }
   if (field.type === ContentModelSchemaTypes.dateTime) {
-    return defaultVal(new Date().toISOString())
+    const schema = field as ContentModelSchemaFieldDate
+    return defaultVal(schema.defaultValue || new Date().toISOString())
   }
   if (field.type === ContentModelSchemaTypes.list) {
     return []
