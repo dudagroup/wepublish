@@ -1,0 +1,31 @@
+name: Cleanup NPM Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Cleanup NPM Packages'
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/delete-package-versions@v1
+        with:
+          package-name: 'api'
+          num-old-versions-to-delete: 10
+      - uses: actions/delete-package-versions@v1
+        with:
+          package-name: 'api-db-mongodb'
+          num-old-versions-to-delete: 10
+      - uses: actions/delete-package-versions@v1
+        with:
+          package-name: 'api-media-karma'
+          num-old-versions-to-delete: 10
+      - uses: actions/delete-package-versions@v1
+        with:
+          package-name: 'editor'
+          num-old-versions-to-delete: 10
