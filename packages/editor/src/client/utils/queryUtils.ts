@@ -132,6 +132,7 @@ function getFragment(configs: Configs, schema: ContentModel) {
   const fragment = `
     fragment Content_${schema.identifier} on ${fragmentName} {
       id
+      contentType
       createdAt
       modifiedAt
       publicationDate
