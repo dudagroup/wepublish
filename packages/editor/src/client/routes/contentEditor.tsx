@@ -39,6 +39,7 @@ export interface ArticleEditorProps {
 
 export interface ContentBody {
   id: string
+  contentType: string
   createdAt: string
   modifiedAt: string
   publicationDate?: string
@@ -267,7 +268,11 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
 
   async function handlePreview() {
     if (contentConfig?.getPreviewLink && previewToken?.content._all.previewToken) {
-      const url = contentConfig.getPreviewLink(previewToken?.content._all.previewToken, recordData)
+      const url = contentConfig.getPreviewLink(
+        previewToken?.content._all.previewToken,
+        langLaneL,
+        recordData
+      )
       if (url) {
         window.open(url, '_blank')
       }

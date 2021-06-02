@@ -60,10 +60,12 @@ export const config: EditorConfig = {
           />
         )
       },
-      getPreviewLink: (token, recordData) => {
-        return `http://localhost:${process.env.WEBSITE_EXAMPLE_PORT || 5000}/preview/?id=${
+      getPreviewLink: (token, language, recordData) => {
+        return `http://localhost:${
+          process.env.WEBSITE_EXAMPLE_PORT || 5000
+        }/preview/?lang=${language}&contentType=${recordData.contentType}&id=${
           recordData.id
-        }&token=${token}`
+        }&slug=${recordData.slugI18n[language]}&token=${token}`
       }
     },
     {

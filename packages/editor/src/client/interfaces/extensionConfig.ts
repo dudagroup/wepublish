@@ -57,7 +57,11 @@ export type getContentViewFunction = (
   langLaneR: string
 ) => JSX.Element
 
-export type getPreviewLinkFunction = (token: string, recordData: ContentBody) => string
+export type getPreviewLinkFunction = (
+  token: string,
+  language: string,
+  recordData: ContentBody
+) => string
 
 export type getMetaViewFunction<M = any> = (
   metadata: DefaultMetadata,
