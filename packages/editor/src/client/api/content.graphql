@@ -93,3 +93,11 @@ mutation DeleteContent($id: ID!) {
     }
   }
 }
+
+query PreviewContent {
+  content {
+    _all {
+      previewToken
+    }
+  }
+}

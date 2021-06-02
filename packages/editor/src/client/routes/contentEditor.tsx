@@ -6,7 +6,7 @@ import {RouteActionType} from '@karma.run/react'
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
 
 import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPanel'
-import {usePublishContentMutation} from '../api'
+import {usePreviewContentQuery, usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
 import {PublishContentPanel} from '../panel/contentPublishPanel'
@@ -37,7 +37,7 @@ export interface ArticleEditorProps {
   readonly onApply?: (ref: Reference) => void
 }
 
-interface ContentBody {
+export interface ContentBody {
   id: string
   createdAt: string
   modifiedAt: string
@@ -75,6 +75,10 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   )
 
   const [publishContent, {loading: isPublishing, error: publishError}] = usePublishContentMutation({
+    fetchPolicy: 'no-cache'
+  })
+
+  const {data: previewToken} = usePreviewContentQuery({
     fetchPolicy: 'no-cache'
   })
 
@@ -261,6 +265,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     }
   }
 
+  async function handlePreview() {
+    if (contentConfig?.getPreviewLink && previewToken?.content._all.previewToken) {
+      const url = contentConfig.getPreviewLink(previewToken?.content._all.previewToken, recordData)
+      if (url) {
+        window.open(url, '_blank')
+      }
+    }
+  }
+
   async function handlePublish(publicationDate: Date, dePublicationDate?: Date) {
     if (contentdId) {
       if (data) {
@@ -443,6 +456,20 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
+
+                    {contentConfig.getPreviewLink && (
+                      <IconButton
+                        style={{
+                          marginLeft: '20px'
+                        }}
+                        appearance="subtle"
+                        size={'lg'}
+                        icon={<Icon icon="external-link" />}
+                        disabled={isDisabled}
+                        onClick={() => handlePreview()}>
+                        {'preview'}
+                      </IconButton>
+                    )}
 
                     <IconButton
                       style={{

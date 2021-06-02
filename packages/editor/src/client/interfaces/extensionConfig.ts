@@ -3,6 +3,8 @@ import {IconNames} from 'rsuite/lib/Icon'
 import {ContentConfig, Config} from '../api'
 import {ContentEditAction} from '../control/contentReducer'
 import {DefaultMetadata} from '../panel/contentMetadataPanel'
+import {ContentBody} from '../routes/contentEditor'
+import {Reference} from './referenceType'
 
 export interface ExtensionBase {
   identifier: string
@@ -41,6 +43,7 @@ export interface ContentModelExtension<M = any> extends ExtensionBase {
   }
   getMetaView?: getMetaViewFunction<M>
   getContentView?: getContentViewFunction
+  getPreviewLink?: getPreviewLinkFunction
 }
 
 export type getContentViewFunction = (
@@ -53,6 +56,8 @@ export type getContentViewFunction = (
   langLaneL: string,
   langLaneR: string
 ) => JSX.Element
+
+export type getPreviewLinkFunction = (token: string, recordData: ContentBody) => string
 
 export type getMetaViewFunction<M = any> = (
   metadata: DefaultMetadata,

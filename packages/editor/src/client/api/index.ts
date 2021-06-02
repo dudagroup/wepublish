@@ -517,17 +517,26 @@ export type _Cmp_ModelB_Record = {
 
 export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
+  myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String;
+  myMultilineStringI18n: I18n_String;
   myOptionalString?: Maybe<Scalars['String']>;
   myOptionalStringI18n?: Maybe<I18n_String>;
   myRichText: Scalars['RichText'];
   myRichTextI18n: I18n_RichText;
   myInt: Scalars['Int'];
+  myIntI18n: I18n_Int;
   myFloat: Scalars['Float'];
+  myFloatI18n: I18n_Float;
   myBoolean: Scalars['Boolean'];
+  myOptionalBoolean?: Maybe<Scalars['Boolean']>;
+  myBooleanI18n: I18n_Boolean;
   myDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n?: Maybe<I18n_DateTime>;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
+  myEnumI18n: I18n__Cmp_ModelB_Record_Content_MyEnumI18n;
   myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmp_ModelB_Record_Content_MyListNested>;
@@ -538,6 +547,8 @@ export type _Cmp_ModelB_Record_Content = {
   myOptionalObject?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref_Private_ModelA>>;
   myBlockList: Array<_Cmp_ModelB_Record_Content_MyBlockList>;
+  myMedia?: Maybe<Media>;
+  myMediaI18n?: Maybe<I18n_Media>;
 };
 
 export type _Cmp_ModelB_Record_Content_MyBlockList = _Cmp_ModelB_Record_Content_MyBlockList_CaseA;
@@ -553,6 +564,13 @@ export type _Cmp_ModelB_Record_Content_MyBlockList_CaseA_Content = {
 };
 
 export enum _Cmp_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export enum _Cmp_ModelB_Record_Content_MyEnumI18n {
   /** Foo */
   Foo = 'foo',
   /** Bar */
@@ -582,6 +600,7 @@ export enum _Cmp_ModelB_Record_Content_MyOptionalEnum {
 export type _Cmp_ModelB_Record_Content_MyOptionalObject = {
   __typename?: '_cmp_modelB_record_content_myOptionalObject';
   myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
 };
 
 export type _Cmp_ModelB_Record_Content_MyOptionalUnion = _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA | _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB;
@@ -1062,17 +1081,26 @@ export type _Cmpi_ModelBUnpublishArgs = {
 };
 
 export type _Cmpi_ModelB_Record_Content = {
+  myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String_Input;
+  myMultilineStringI18n: I18n_String_Input;
   myOptionalString?: Maybe<Scalars['String']>;
   myOptionalStringI18n?: Maybe<I18n_String_Input>;
   myRichText: Scalars['RichText'];
   myRichTextI18n: I18n_RichText_Input;
   myInt: Scalars['Int'];
+  myIntI18n: I18n_Int_Input;
   myFloat: Scalars['Float'];
+  myFloatI18n: I18n_Float_Input;
   myBoolean: Scalars['Boolean'];
+  myOptionalBoolean?: Maybe<Scalars['Boolean']>;
+  myBooleanI18n: I18n_Boolean_Input;
   myDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n?: Maybe<I18n_DateTime_Input>;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
+  myEnumI18n: I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input;
   myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmpi_ModelB_Record_Content_MyListNested>;
@@ -1083,6 +1111,8 @@ export type _Cmpi_ModelB_Record_Content = {
   myOptionalObject?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref_Input>>;
   myBlockList: Array<_Cmpi_ModelB_Record_Content_MyBlockList>;
+  myMedia?: Maybe<Media_Input>;
+  myMediaI18n?: Maybe<I18n_Media_Input_Input>;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyBlockList = {
@@ -1094,6 +1124,13 @@ export type _Cmpi_ModelB_Record_Content_MyBlockList_CaseA = {
 };
 
 export enum _Cmpi_ModelB_Record_Content_MyEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export enum _Cmpi_ModelB_Record_Content_MyEnumI18n {
   /** Foo */
   Foo = 'foo',
   /** Bar */
@@ -1120,6 +1157,7 @@ export enum _Cmpi_ModelB_Record_Content_MyOptionalEnum {
 
 export type _Cmpi_ModelB_Record_Content_MyOptionalObject = {
   myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String_Input;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyOptionalUnion = {
@@ -1167,6 +1205,7 @@ export type All = {
   __typename?: 'All';
   list: ListByTypeConnection;
   read: ContentModelSummary;
+  previewToken: Scalars['String'];
 };
 
 
@@ -1669,11 +1708,15 @@ export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
   i18n__content__myStringI18n?: Maybe<FilterText>;
+  i18n__content__myMultilineStringI18n?: Maybe<FilterText>;
   content__myInt?: Maybe<FilterInt>;
+  i18n__content__myIntI18n?: Maybe<FilterInt>;
   content__myFloat?: Maybe<FilterFloat>;
-  content__myBoolean?: Maybe<FilterBoolean>;
+  i18n__content__myFloatI18n?: Maybe<FilterFloat>;
   content__myDateTime?: Maybe<FilterDate>;
+  i18n__content__myDateTimeI18n?: Maybe<FilterDate>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
+  i18n__content__myEnumI18n?: Maybe<Filter_ModelB_Content_MyEnumI18n>;
   content__myOptionalEnum?: Maybe<Filter_ModelB_Content_MyOptionalEnum>;
   content__myRef__recordId?: Maybe<FilterReference>;
   content__myTags__recordId?: Maybe<FilterReference>;
@@ -1693,6 +1736,20 @@ export enum Filter_ModelB_Content_MyEnum_Enum {
   Bar = 'bar'
 }
 
+export type Filter_ModelB_Content_MyEnumI18n = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyEnumI18n_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyEnumI18n_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyEnumI18n_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
 export type Filter_ModelB_Content_MyOptionalEnum = {
   /** equal to */
   eq?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
@@ -1706,11 +1763,6 @@ export enum Filter_ModelB_Content_MyOptionalEnum_Enum {
   /** Bar */
   Bar = 'bar'
 }
-
-export type FilterBoolean = {
-  /** equal to */
-  eq?: Maybe<Scalars['Boolean']>;
-};
 
 export type FilterDate = {
   /** greater than */
@@ -1762,6 +1814,71 @@ export type GalleryImageEdge = {
 export type GalleryImageEdgeInput = {
   caption?: Maybe<Scalars['String']>;
   imageID?: Maybe<Scalars['ID']>;
+};
+
+export type I18n__Cmp_ModelB_Record_Content_MyEnumI18n = {
+  __typename?: 'i18n__cmp_modelB_record_content_myEnumI18n';
+  en?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+  de?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+  fr?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+};
+
+export type I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input = {
+  en?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+  de?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+  fr?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+};
+
+export type I18n_Boolean = {
+  __typename?: 'i18n_Boolean';
+  en?: Maybe<Scalars['Boolean']>;
+  de?: Maybe<Scalars['Boolean']>;
+  fr?: Maybe<Scalars['Boolean']>;
+};
+
+export type I18n_Boolean_Input = {
+  en?: Maybe<Scalars['Boolean']>;
+  de?: Maybe<Scalars['Boolean']>;
+  fr?: Maybe<Scalars['Boolean']>;
+};
+
+export type I18n_DateTime = {
+  __typename?: 'i18n_DateTime';
+  en?: Maybe<Scalars['DateTime']>;
+  de?: Maybe<Scalars['DateTime']>;
+  fr?: Maybe<Scalars['DateTime']>;
+};
+
+export type I18n_DateTime_Input = {
+  en?: Maybe<Scalars['DateTime']>;
+  de?: Maybe<Scalars['DateTime']>;
+  fr?: Maybe<Scalars['DateTime']>;
+};
+
+export type I18n_Float = {
+  __typename?: 'i18n_Float';
+  en?: Maybe<Scalars['Float']>;
+  de?: Maybe<Scalars['Float']>;
+  fr?: Maybe<Scalars['Float']>;
+};
+
+export type I18n_Float_Input = {
+  en?: Maybe<Scalars['Float']>;
+  de?: Maybe<Scalars['Float']>;
+  fr?: Maybe<Scalars['Float']>;
+};
+
+export type I18n_Int = {
+  __typename?: 'i18n_Int';
+  en?: Maybe<Scalars['Int']>;
+  de?: Maybe<Scalars['Int']>;
+  fr?: Maybe<Scalars['Int']>;
+};
+
+export type I18n_Int_Input = {
+  en?: Maybe<Scalars['Int']>;
+  de?: Maybe<Scalars['Int']>;
+  fr?: Maybe<Scalars['Int']>;
 };
 
 export type I18n_Media = {
@@ -4184,6 +4301,20 @@ export type DeleteContentMutation = (
     & { _all: (
       { __typename?: 'AllMutations' }
       & Pick<AllMutations, 'delete'>
+    ) }
+  ) }
+);
+
+export type PreviewContentQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PreviewContentQuery = (
+  { __typename?: 'Query' }
+  & { content: (
+    { __typename?: 'content' }
+    & { _all: (
+      { __typename?: 'All' }
+      & Pick<All, 'previewToken'>
     ) }
   ) }
 );
@@ -6783,6 +6914,40 @@ export function useDeleteContentMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteContentMutationHookResult = ReturnType<typeof useDeleteContentMutation>;
 export type DeleteContentMutationResult = Apollo.MutationResult<DeleteContentMutation>;
 export type DeleteContentMutationOptions = Apollo.BaseMutationOptions<DeleteContentMutation, DeleteContentMutationVariables>;
+export const PreviewContentDocument = gql`
+    query PreviewContent {
+  content {
+    _all {
+      previewToken
+    }
+  }
+}
+    `;
+
+/**
+ * __usePreviewContentQuery__
+ *
+ * To run a query within a React component, call `usePreviewContentQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePreviewContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePreviewContentQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePreviewContentQuery(baseOptions?: Apollo.QueryHookOptions<PreviewContentQuery, PreviewContentQueryVariables>) {
+        return Apollo.useQuery<PreviewContentQuery, PreviewContentQueryVariables>(PreviewContentDocument, baseOptions);
+      }
+export function usePreviewContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreviewContentQuery, PreviewContentQueryVariables>) {
+          return Apollo.useLazyQuery<PreviewContentQuery, PreviewContentQueryVariables>(PreviewContentDocument, baseOptions);
+        }
+export type PreviewContentQueryHookResult = ReturnType<typeof usePreviewContentQuery>;
+export type PreviewContentLazyQueryHookResult = ReturnType<typeof usePreviewContentLazyQuery>;
+export type PreviewContentQueryResult = Apollo.QueryResult<PreviewContentQuery, PreviewContentQueryVariables>;
 export const ConfigDocument = gql`
     query Config {
   config {
