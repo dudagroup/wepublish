@@ -1,8 +1,6 @@
 import {
-  GraphQLBoolean,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
-  GraphQLID,
   GraphQLInputObjectType,
   GraphQLInt,
   GraphQLList,
@@ -20,20 +18,7 @@ import {GraphQLPeer} from '../peer'
 export const GraphQLContentFilter = new GraphQLInputObjectType({
   name: 'ContentFilter',
   fields: {
-    title: {type: GraphQLString},
-    draft: {type: GraphQLBoolean},
-    published: {type: GraphQLBoolean},
-    pending: {type: GraphQLBoolean},
-    authors: {type: GraphQLList(GraphQLNonNull(GraphQLID))},
-    tags: {type: GraphQLList(GraphQLNonNull(GraphQLString))}
-  }
-})
-
-export const GraphQLPublicContentFilter = new GraphQLInputObjectType({
-  name: 'ContentFilter',
-  fields: {
-    authors: {type: GraphQLList(GraphQLNonNull(GraphQLID))},
-    tags: {type: GraphQLList(GraphQLNonNull(GraphQLString))}
+    title: {type: GraphQLString}
   }
 })
 

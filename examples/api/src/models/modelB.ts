@@ -40,7 +40,6 @@ export const contentModelB: ContentModel = {
       myMultilineStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
-        searchable: true,
         i18n: true,
         editor: {
           inputType: 'textarea',

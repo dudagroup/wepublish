@@ -16,7 +16,8 @@ export interface Content<T = any> {
   title: string
   slugI18n?: MapType<string>
 
-  searchIndex?: MapType<string>
+  searchIndexI18n?: MapType<string>
+  searchIndex?: string
 
   content: T
   meta: T

@@ -22,7 +22,6 @@ import {
   getGraphQLPeerCustomContent,
   GraphQLContentFilter,
   GraphQLContentSort,
-  GraphQLPublicContentFilter,
   GraphQLPublicContentSort
 } from './contentGraphQLTypes'
 import {GraphQLPageInfo, GraphQLSortOrder} from '../common'
@@ -182,7 +181,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
                 skip: {type: GraphQLInt},
-                filter: {type: GraphQLPublicContentFilter},
+                filter: {type: filter},
                 sort: {
                   type: GraphQLPublicContentSort,
                   defaultValue: ContentSort.PublishedAt
@@ -201,7 +200,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     sort,
                     order,
                     cursor: InputCursor(after, before),
-                    limit: Limit(first, last, skip)
+                    limit: Limit(first, last, skip),
+                    language
                   },
                   contextOptions.languageConfig,
                   true

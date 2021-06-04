@@ -57,7 +57,8 @@ function collectArgsForcontent(
   contentModelSchema: ContentModelSchema
 ) {
   const fields: GraphQLInputFieldConfigMap = {
-    title: {type: GraphQLString} // default filter
+    title: {type: GraphQLString},
+    search: {type: GraphQLString}
   }
   for (const [key, schema] of Object.entries(contentModelSchema)) {
     const childName = nameJoin(name, key)
