@@ -156,32 +156,32 @@ export const RichTextBlock = memo(function RichTextBlock({
             }}>
             {config.h1 && (
               <FormatButton format={BlockFormat.H1}>
-                <H1Icon />
+                <b>H1</b>
               </FormatButton>
             )}
             {config.h2 && (
               <FormatButton format={BlockFormat.H2}>
-                <H2Icon />
+                <b>H2</b>
               </FormatButton>
             )}
             {config.h3 && (
               <FormatButton format={BlockFormat.H3}>
-                <H3Icon />
+                <b>H3</b>
               </FormatButton>
             )}
             {config.h4 && (
               <FormatButton format={BlockFormat.H4}>
-                <H3Icon />
+                <b>H4</b>
               </FormatButton>
             )}
             {config.h5 && (
               <FormatButton format={BlockFormat.H5}>
-                <H3Icon />
+                <b>H5</b>
               </FormatButton>
             )}
             {config.h6 && (
               <FormatButton format={BlockFormat.H6}>
-                <H3Icon />
+                <b>H6</b>
               </FormatButton>
             )}
             {(config.h1 || config.h2 || config.h3 || config.h4 || config.h5 || config.h6) && (

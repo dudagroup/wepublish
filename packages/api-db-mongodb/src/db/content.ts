@@ -107,7 +107,7 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     languageConfig: LanguageConfig,
     isPublicApi: boolean
   ): Promise<ConnectionResult<any>> {
-    const limitCount = Math.min(limit.count, MaxResultsPerPage)
+    const limitCount = limit.count
     const sortDirection = limit.type === LimitType.First ? order : -order
 
     const cursorData = cursor.type !== InputCursorType.None ? Cursor.from(cursor.data) : undefined
@@ -148,10 +148,30 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     if (filter) {
       const {title, search, shared, ...genericFilters} = filter
       if (title !== undefined) {
-        textFilter.title = {$regex: escapeRegExp(title), $options: 'i'}
+        if (!textFilter.$or) {
+          textFilter.$or = []
+        }
+        textFilter.$or.push({
+          title: {$regex: escapeRegExp(title), $options: 'i'}
+        })
       }
       if (search !== undefined) {
-        textFilter.searchIndex = {$regex: escapeRegExp(search), $options: 'i'}
+        const excapedSearchTerm = escapeRegExp(search)
+        if (!textFilter.$or) {
+          textFilter.$or = []
+        }
+        textFilter.$or.push({
+          [`searchIndexI18n.${language || languageConfig.defaultLanguageTag}`]: {
+            $regex: excapedSearchTerm,
+            $options: 'i'
+          }
+        })
+        textFilter.$or.push({
+          searchIndex: {
+            $regex: excapedSearchTerm,
+            $options: 'i'
+          }
+        })
       }
 
       if (genericFilters) {

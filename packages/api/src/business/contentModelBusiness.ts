@@ -37,7 +37,11 @@ export class BusinessLogic {
     if (!schema) {
       throw Error(`Schema ${identifier} not found`)
     }
-    const validatorContext: ValidatorContext = {context: this.context, searchTerms: {}}
+    const validatorContext: ValidatorContext = {
+      context: this.context,
+      searchTermsI18n: {},
+      searchTerms: ''
+    }
     await validateInput(validatorContext, schema.schema.content, input.content)
     await validateInput(validatorContext, schema.schema.meta, input.meta)
 
@@ -50,6 +54,7 @@ export class BusinessLogic {
         modifiedAt: new Date(),
         publicationDate: undefined,
         dePublicationDate: undefined,
+        searchIndexI18n: validatorContext.searchTermsI18n,
         searchIndex: validatorContext.searchTerms
       }
     })
@@ -65,7 +70,11 @@ export class BusinessLogic {
     }
 
     const persistentData = await this.context.dbAdapter.content.getContentByID(input.id)
-    const validatorContext: ValidatorContext = {context: this.context, searchTerms: {}}
+    const validatorContext: ValidatorContext = {
+      context: this.context,
+      searchTermsI18n: {},
+      searchTerms: ''
+    }
     await validateInput(
       validatorContext,
       schema.schema.content,
@@ -79,6 +88,7 @@ export class BusinessLogic {
         ...input,
         contentType: identifier,
         modifiedAt: new Date(),
+        searchIndexI18n: validatorContext.searchTermsI18n,
         searchIndex: validatorContext.searchTerms
       }
     })
