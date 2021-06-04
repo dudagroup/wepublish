@@ -2,20 +2,8 @@ name: Cleanup NPM Packages
 
 on:
   workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Cleanup NPM Packages'
-jobs:
-  printInputs:
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo "Log level: ${{ github.event.inputs.logLevel }}"
-        echo "Tags: ${{ github.event.inputs.tags }}" 
+
+jobs: 
   cleanup:
     runs-on: ubuntu-latest
     steps:
