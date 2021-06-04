@@ -139,6 +139,9 @@ function flattenI18nLeafFields(
 ) {
   switch (schema.type) {
     case ContentModelSchemaTypes.object: {
+      if (!data) {
+        return data
+      }
       const obj = data as MapType<any>
       for (const [key, val] of Object.entries(obj)) {
         obj[key] = flattenI18nLeafFields(validatorContext, schema.fields[key], val)
@@ -147,6 +150,9 @@ function flattenI18nLeafFields(
     }
 
     case ContentModelSchemaTypes.list: {
+      if (!data) {
+        return data
+      }
       const list = data as unknown[]
       for (const i in list) {
         list[i] = flattenI18nLeafFields(validatorContext, schema.contentType, list[i])
@@ -155,6 +161,9 @@ function flattenI18nLeafFields(
     }
 
     case ContentModelSchemaTypes.union: {
+      if (!data) {
+        return data
+      }
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
       if (unionCase) {
