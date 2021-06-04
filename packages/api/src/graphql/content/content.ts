@@ -132,7 +132,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   } else {
                     result = await loaders.publicContent.load(id)
                   }
-                  if (!result) {
+                  if (result?.contentType !== model.identifier) {
                     return null
                   }
                   flattenI18nLeafFieldsMap(
@@ -360,6 +360,10 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
 
                 if (canGetContent || canGetSharedContent) {
                   const content = await loaders.content.load(id)
+
+                  if (content?.contentType !== model.identifier) {
+                    return null
+                  }
 
                   if (canGetContent) {
                     return content

@@ -64,7 +64,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     return config.identifier === type
   })
   if (!contentConfig) {
-    throw Error(`Content type ${type} not supported`)
+    return <p>Content Type {type} is not a valid content type</p>
   }
 
   const [createContent, {loading: isCreating, data: createData, error: createError}] = useMutation(
@@ -131,16 +131,16 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   }
 
   const contentdId = id || createData?.content[type].create.id
+  const isNew = !id
 
-  const isNew = id === undefined
   const {data, loading: isLoading} = useQuery(getReadQuery(configs, contentConfig), {
-    skip: isNew || createData != null,
+    skip: isNew,
     errorPolicy: 'all',
     fetchPolicy: 'no-cache',
     variables: {id: contentdId!}
   })
 
-  const isNotFound = data && !data.content
+  const isNotFound = data && !data?.content[type]?.read
   const recordData: ContentBody = data?.content[type]?.read
 
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
@@ -436,7 +436,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                 </IconButton>
               )}
               <div className="wep-navi-publishcontrols">
-                {isNew && createData == null ? (
+                {isNew == null ? (
                   <IconButton
                     style={{
                       marginLeft: '20px'
