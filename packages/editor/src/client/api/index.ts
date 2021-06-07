@@ -519,6 +519,7 @@ export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
   myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String;
   myMultilineStringI18n: I18n_String;
   myOptionalString?: Maybe<Scalars['String']>;
@@ -1082,6 +1083,7 @@ export type _Cmpi_ModelBUnpublishArgs = {
 export type _Cmpi_ModelB_Record_Content = {
   myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String_Input;
   myMultilineStringI18n: I18n_String_Input;
   myOptionalString?: Maybe<Scalars['String']>;
@@ -1203,6 +1205,7 @@ export type All = {
   __typename?: 'All';
   list: ListByTypeConnection;
   read: ContentModelSummary;
+  previewToken: Scalars['String'];
 };
 
 
@@ -4302,6 +4305,20 @@ export type DeleteContentMutation = (
   ) }
 );
 
+export type PreviewContentQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PreviewContentQuery = (
+  { __typename?: 'Query' }
+  & { content: (
+    { __typename?: 'content' }
+    & { _all: (
+      { __typename?: 'All' }
+      & Pick<All, 'previewToken'>
+    ) }
+  ) }
+);
+
 export type ConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6897,6 +6914,40 @@ export function useDeleteContentMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteContentMutationHookResult = ReturnType<typeof useDeleteContentMutation>;
 export type DeleteContentMutationResult = Apollo.MutationResult<DeleteContentMutation>;
 export type DeleteContentMutationOptions = Apollo.BaseMutationOptions<DeleteContentMutation, DeleteContentMutationVariables>;
+export const PreviewContentDocument = gql`
+    query PreviewContent {
+  content {
+    _all {
+      previewToken
+    }
+  }
+}
+    `;
+
+/**
+ * __usePreviewContentQuery__
+ *
+ * To run a query within a React component, call `usePreviewContentQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePreviewContentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePreviewContentQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePreviewContentQuery(baseOptions?: Apollo.QueryHookOptions<PreviewContentQuery, PreviewContentQueryVariables>) {
+        return Apollo.useQuery<PreviewContentQuery, PreviewContentQueryVariables>(PreviewContentDocument, baseOptions);
+      }
+export function usePreviewContentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreviewContentQuery, PreviewContentQueryVariables>) {
+          return Apollo.useLazyQuery<PreviewContentQuery, PreviewContentQueryVariables>(PreviewContentDocument, baseOptions);
+        }
+export type PreviewContentQueryHookResult = ReturnType<typeof usePreviewContentQuery>;
+export type PreviewContentLazyQueryHookResult = ReturnType<typeof usePreviewContentLazyQuery>;
+export type PreviewContentQueryResult = Apollo.QueryResult<PreviewContentQuery, PreviewContentQueryVariables>;
 export const ConfigDocument = gql`
     query Config {
   config {

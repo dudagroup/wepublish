@@ -24,6 +24,12 @@ export const contentModelB: ContentModel = {
           placeholder: 'placeholder example'
         }
       },
+      myUrlString: {
+        type: ContentModelSchemaTypes.string,
+        editor: {
+          inputType: 'url'
+        }
+      },
       myStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
@@ -34,7 +40,6 @@ export const contentModelB: ContentModel = {
       myMultilineStringI18n: {
         type: ContentModelSchemaTypes.string,
         filterable: true,
-        searchable: true,
         i18n: true,
         editor: {
           inputType: 'textarea',

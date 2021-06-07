@@ -19,9 +19,8 @@ import {
 
 export interface ValidatorContext {
   context: Omit<Context, 'business'>
-  searchTerms: {
-    [lang: string]: string
-  }
+  searchTermsI18n: MapType<string>
+  searchTerms: string
 }
 
 async function validateRecursive(
@@ -96,18 +95,23 @@ async function validateRecursive(
 
   async function validateRichTextRecursive(
     lang: string,
+    isI18n: boolean,
     richTextNode: RichTextNode | RichTextAbstractNode
   ) {
     const richTextAbstractNode = richTextNode as RichTextAbstractNode
     if (richTextAbstractNode.children?.length > 0) {
       const richTextReferenceNode = richTextNode as RichTextAbstractNode
       for (const child of richTextReferenceNode.children) {
-        await validateRichTextRecursive(lang, child)
+        await validateRichTextRecursive(lang, isI18n, child)
       }
     }
 
     if ((richTextNode as RichTextTextNode).text) {
-      validatorContext.searchTerms[lang] += (richTextNode as RichTextTextNode).text + ' '
+      if (isI18n) {
+        validatorContext.searchTermsI18n[lang] += (richTextNode as RichTextTextNode).text + ' '
+      } else {
+        validatorContext.searchTerms += (richTextNode as RichTextTextNode).text + ' '
+      }
     }
 
     if ((richTextNode as RichTextReferenceNode).type === ElementNodeType.Reference) {
@@ -187,13 +191,12 @@ async function validateRecursive(
         if (data) {
           for (const [lang, val] of Object.entries(data)) {
             if (val) {
-              validatorContext.searchTerms[lang] += val + ' '
+              validatorContext.searchTermsI18n[lang] += val + ' '
             }
           }
         }
       } else if (data) {
-        validatorContext.searchTerms[validatorContext.context.languageConfig.defaultLanguageTag] +=
-          data + ' '
+        validatorContext.searchTerms += data + ' '
       }
       break
     }
@@ -202,14 +205,18 @@ async function validateRecursive(
       if (schema.i18n) {
         for (const [lang, val] of Object.entries(data)) {
           const richTextNodes = val as RichTextNode[]
-          await validateRichTextRecursive(lang, {children: richTextNodes})
+          await validateRichTextRecursive(lang, true, {children: richTextNodes})
         }
         break
       }
       const richTextNodes = data as RichTextNode[]
-      await validateRichTextRecursive(validatorContext.context.languageConfig.defaultLanguageTag, {
-        children: richTextNodes
-      })
+      await validateRichTextRecursive(
+        validatorContext.context.languageConfig.defaultLanguageTag,
+        false,
+        {
+          children: richTextNodes
+        }
+      )
 
       break
     }
@@ -227,7 +234,7 @@ export async function validateInput(
 ) {
   if (!(data && schema)) return
 
-  validatorContext.searchTerms = validatorContext.context.languageConfig.languages.reduce(
+  validatorContext.searchTermsI18n = validatorContext.context.languageConfig.languages.reduce(
     (accu, item) => {
       accu[item.tag] = ''
       return accu

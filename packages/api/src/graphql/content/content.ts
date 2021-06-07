@@ -5,7 +5,6 @@ import {
   GraphQLEnumValueConfigMap,
   GraphQLFieldConfigMap,
   GraphQLID,
-  GraphQLInputObjectType,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -23,7 +22,6 @@ import {
   getGraphQLPeerCustomContent,
   GraphQLContentFilter,
   GraphQLContentSort,
-  GraphQLPublicContentFilter,
   GraphQLPublicContentSort
 } from './contentGraphQLTypes'
 import {GraphQLPageInfo, GraphQLSortOrder} from '../common'
@@ -31,6 +29,7 @@ import {
   authorise,
   CanDeleteContent,
   CanGetContent,
+  CanGetContentPreviewLink,
   CanGetContents,
   CanGetPeerContent,
   CanGetPeerContents,
@@ -115,11 +114,27 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               args: {
                 id: {type: GraphQLID},
                 slug: {type: GraphQLString},
-                language: {type: graphQlLanguages}
+                language: {type: graphQlLanguages},
+                previewToken: {type: GraphQLString}
               },
-              async resolve(source, {id, slug, language}, {loaders, dbAdapter}) {
+              async resolve(
+                source,
+                {id, slug, language, previewToken},
+                {loaders, dbAdapter, verifyJWT}
+              ) {
+                if (previewToken) {
+                  verifyJWT(previewToken)
+                }
                 if (id) {
-                  const result = await loaders.publicContent.load(id)
+                  let result
+                  if (previewToken) {
+                    result = await loaders.content.load(id)
+                  } else {
+                    result = await loaders.publicContent.load(id)
+                  }
+                  if (result?.contentType !== model.identifier) {
+                    return null
+                  }
                   flattenI18nLeafFieldsMap(
                     contextOptions.languageConfig,
                     model.schema,
@@ -127,7 +142,14 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   )(result)
                   return result
                 } else if (slug && language) {
-                  const result = await dbAdapter.content.getContentBySlug(slug, language, true)
+                  const result = await dbAdapter.content.getContentBySlug(
+                    slug,
+                    language,
+                    !previewToken
+                  )
+                  if (!result) {
+                    return null
+                  }
                   flattenI18nLeafFieldsMap(
                     contextOptions.languageConfig,
                     model.schema,
@@ -159,7 +181,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 first: {type: GraphQLInt},
                 last: {type: GraphQLInt},
                 skip: {type: GraphQLInt},
-                filter: {type: GraphQLPublicContentFilter},
+                filter: {type: filter},
                 sort: {
                   type: GraphQLPublicContentSort,
                   defaultValue: ContentSort.PublishedAt
@@ -178,7 +200,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     sort,
                     order,
                     cursor: InputCursor(after, before),
-                    limit: Limit(first, last, skip)
+                    limit: Limit(first, last, skip),
+                    language
                   },
                   contextOptions.languageConfig,
                   true
@@ -337,6 +360,10 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
 
                 if (canGetContent || canGetSharedContent) {
                   const content = await loaders.content.load(id)
+
+                  if (content?.contentType !== model.identifier) {
+                    return null
+                  }
 
                   if (canGetContent) {
                     return content
@@ -735,6 +762,19 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               } else {
                 throw new NotAuthorisedError()
               }
+            }
+          },
+          previewToken: {
+            type: GraphQLNonNull(GraphQLString),
+            async resolve(root, _, context) {
+              const {authenticate, generateJWT} = context
+              const {roles} = authenticate()
+              authorise(CanGetContentPreviewLink, roles)
+
+              return generateJWT({
+                id: '',
+                expiresInMinutes: 24 * 60
+              })
             }
           }
         }

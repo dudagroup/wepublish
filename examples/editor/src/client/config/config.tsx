@@ -59,6 +59,13 @@ export const config: EditorConfig = {
             langLaneR={langLaneR}
           />
         )
+      },
+      getPreviewLink: (token, language, recordData) => {
+        return `http://localhost:${
+          process.env.WEBSITE_EXAMPLE_PORT || 5000
+        }/preview/?lang=${language}&contentType=${recordData.contentType}&id=${
+          recordData.id
+        }&slug=${recordData.slugI18n[language]}&token=${token}`
       }
     },
     {

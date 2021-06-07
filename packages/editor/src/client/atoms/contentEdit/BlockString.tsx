@@ -1,6 +1,6 @@
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {Input, Toggle} from 'rsuite'
+import {Icon, IconButton, Input, InputGroup, Toggle} from 'rsuite'
 import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
 import {isNullOrUndefined} from '../../utility'
@@ -16,6 +16,18 @@ function BlockString({
   let toggle
   const isActive = !isNullOrUndefined(value)
   const {t} = useTranslation()
+
+  let button = null
+  if (model.editor?.inputType === 'url' && value) {
+    button = (
+      <IconButton
+        icon={<Icon icon="external-link" />}
+        onClick={() => {
+          window.open(value, '_blank')
+        }}
+      />
+    )
+  }
 
   if (model.optional) {
     toggle = (
@@ -46,20 +58,23 @@ function BlockString({
   return (
     <div style={{width: '100%', margin: 0}}>
       {toggle}
-      <Input
-        style={{width: '100%'}}
-        componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
-        readOnly={!isActive && model.optional}
-        disabled={disabled}
-        type={model.editor?.inputType || 'text'}
-        rows={model.editor?.inputRows}
-        maxLength={model.editor?.maxCharacters}
-        placeholder={model.editor?.placeholder}
-        value={value || ''}
-        onChange={val =>
-          dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
-        }
-      />
+      <InputGroup>
+        <Input
+          style={{width: '100%'}}
+          componentClass={model.editor?.inputType === 'textarea' ? 'textarea' : undefined}
+          readOnly={!isActive && model.optional}
+          disabled={disabled}
+          type={model.editor?.inputType || 'text'}
+          rows={model.editor?.inputRows}
+          maxLength={model.editor?.maxCharacters}
+          placeholder={model.editor?.placeholder}
+          value={value || ''}
+          onChange={val =>
+            dispatch({type: ContentEditActionEnum.update, value: val, path: schemaPath})
+          }
+        />
+        {button}
+      </InputGroup>
     </div>
   )
 }

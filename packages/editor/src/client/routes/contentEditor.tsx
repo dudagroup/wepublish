@@ -6,7 +6,7 @@ import {RouteActionType} from '@karma.run/react'
 import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
 
 import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPanel'
-import {usePublishContentMutation} from '../api'
+import {usePreviewContentQuery, usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
 import {PublishContentPanel} from '../panel/contentPublishPanel'
@@ -37,8 +37,9 @@ export interface ArticleEditorProps {
   readonly onApply?: (ref: Reference) => void
 }
 
-interface ContentBody {
+export interface ContentBody {
   id: string
+  contentType: string
   createdAt: string
   modifiedAt: string
   publicationDate?: string
@@ -63,7 +64,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     return config.identifier === type
   })
   if (!contentConfig) {
-    throw Error(`Content type ${type} not supported`)
+    return <p>Content Type {type} is not a valid content type</p>
   }
 
   const [createContent, {loading: isCreating, data: createData, error: createError}] = useMutation(
@@ -75,6 +76,10 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   )
 
   const [publishContent, {loading: isPublishing, error: publishError}] = usePublishContentMutation({
+    fetchPolicy: 'no-cache'
+  })
+
+  const {data: previewToken} = usePreviewContentQuery({
     fetchPolicy: 'no-cache'
   })
 
@@ -126,16 +131,16 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   }
 
   const contentdId = id || createData?.content[type].create.id
+  const isNew = !id
 
-  const isNew = id === undefined
   const {data, loading: isLoading} = useQuery(getReadQuery(configs, contentConfig), {
-    skip: isNew || createData != null,
+    skip: isNew,
     errorPolicy: 'all',
     fetchPolicy: 'no-cache',
     variables: {id: contentdId!}
   })
 
-  const isNotFound = data && !data.content
+  const isNotFound = data && !data?.content[type]?.read
   const recordData: ContentBody = data?.content[type]?.read
 
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
@@ -258,6 +263,19 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         title: t('articleEditor.overview.draftCreated'),
         duration: 2000
       })
+    }
+  }
+
+  async function handlePreview() {
+    if (contentConfig?.getPreviewLink && previewToken?.content._all.previewToken) {
+      const url = contentConfig.getPreviewLink(
+        previewToken?.content._all.previewToken,
+        langLaneL,
+        recordData
+      )
+      if (url) {
+        window.open(url, '_blank')
+      }
     }
   }
 
@@ -418,7 +436,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                 </IconButton>
               )}
               <div className="wep-navi-publishcontrols">
-                {isNew && createData == null ? (
+                {isNew == null ? (
                   <IconButton
                     style={{
                       marginLeft: '20px'
@@ -443,6 +461,20 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
+
+                    {contentConfig.getPreviewLink && (
+                      <IconButton
+                        style={{
+                          marginLeft: '20px'
+                        }}
+                        appearance="subtle"
+                        size={'lg'}
+                        icon={<Icon icon="external-link" />}
+                        disabled={isDisabled}
+                        onClick={() => handlePreview()}>
+                        {'preview'}
+                      </IconButton>
+                    )}
 
                     <IconButton
                       style={{

@@ -1,3 +1,5 @@
+import {UserInputError} from 'apollo-server-express'
+
 export enum SortOrder {
   Ascending = 1,
   Descending = -1
@@ -15,8 +17,6 @@ export interface ConnectionResult<T> {
   pageInfo: PageInfo
   totalCount: number
 }
-
-import {UserInputError} from 'apollo-server-express'
 
 export enum InputCursorType {
   After = 'after',
@@ -59,9 +59,18 @@ export interface Limit {
   readonly skip?: number
 }
 
+export const MaxResultsPerPage = 1000
+
 export function Limit(first?: number, last?: number, skip?: number): Limit {
   if ((first == null && last == null) || (first != null && last != null)) {
     throw new UserInputError('You must provide either `first` or `last`.')
+  }
+  if ((first && first > MaxResultsPerPage) || (last && last > MaxResultsPerPage)) {
+    throw new UserInputError(
+      `Exceeded max results per page. ${
+        first ? 'first' : 'last'
+      } must be lower than ${MaxResultsPerPage}`
+    )
   }
   const count = first || last!
   return {
