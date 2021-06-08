@@ -450,6 +450,20 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                   </IconButton>
                 ) : (
                   <>
+                    {contentConfig.getPreviewLink && (
+                      <IconButton
+                        style={{
+                          marginLeft: '20px'
+                        }}
+                        appearance="subtle"
+                        size={'lg'}
+                        icon={<Icon icon="eye" />}
+                        disabled={isDisabled}
+                        onClick={() => handlePreview()}>
+                        {'Preview'}
+                      </IconButton>
+                    )}
+
                     <IconButton
                       style={{
                         marginLeft: '20px'
@@ -461,20 +475,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
-
-                    {contentConfig.getPreviewLink && (
-                      <IconButton
-                        style={{
-                          marginLeft: '20px'
-                        }}
-                        appearance="subtle"
-                        size={'lg'}
-                        icon={<Icon icon="external-link" />}
-                        disabled={isDisabled}
-                        onClick={() => handlePreview()}>
-                        {'preview'}
-                      </IconButton>
-                    )}
 
                     <IconButton
                       style={{

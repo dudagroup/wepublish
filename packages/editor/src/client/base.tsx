@@ -258,7 +258,7 @@ export function Base({children, configs}: BaseProps) {
         <Container
           style={{
             paddingTop: '60px',
-            paddingBottom: '60px',
+            paddingBottom: '0px',
             paddingLeft: '40px',
             paddingRight: '40px'
           }}>
