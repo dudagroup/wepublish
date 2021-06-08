@@ -76,7 +76,20 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
       <List.Item key={index} index={index}>
         <FlexboxGrid align="middle">
           <FlexboxGrid.Item colspan={1}>
-            <IconButton
+            {buttonUp}
+            {buttonDown}
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={22}>
+            <BlockAbstract
+              configs={props.configs}
+              schemaPath={[...childSchemaPath, index]}
+              dispatch={dispatch}
+              model={model.contentType}
+              languageContext={languageContext}
+              value={item}></BlockAbstract>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={1} style={{textAlign: 'right'}}>
+            {/* <IconButton
               icon={<Icon icon="plus" />}
               size="xs"
               appearance="subtle"
@@ -89,11 +102,11 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
                   insert: [generateEmptyContent(model.contentType, languageContext.languagesConfig)]
                 })
               }}
-            />
+            /> */}
 
             <IconButton
-              icon={<Icon icon="minus" />}
-              size="xs"
+              icon={<Icon icon="minus-circle" />}
+              size="md"
               appearance="subtle"
               onClick={() => {
                 dispatch({
@@ -106,19 +119,6 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
               }}
             />
           </FlexboxGrid.Item>
-          <FlexboxGrid.Item colspan={22}>
-            <BlockAbstract
-              configs={props.configs}
-              schemaPath={[...childSchemaPath, index]}
-              dispatch={dispatch}
-              model={model.contentType}
-              languageContext={languageContext}
-              value={item}></BlockAbstract>
-          </FlexboxGrid.Item>
-          <FlexboxGrid.Item colspan={1} style={{textAlign: 'right'}}>
-            {buttonUp}
-            {buttonDown}
-          </FlexboxGrid.Item>
         </FlexboxGrid>
       </List.Item>
     )
@@ -128,6 +128,7 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
     <>
       <List>{content}</List>
       <IconButton
+        appearance="ghost"
         icon={<Icon icon="plus" />}
         style={{marginTop: 5}}
         onClick={() => {
