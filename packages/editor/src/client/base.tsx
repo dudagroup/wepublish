@@ -115,20 +115,10 @@ export function Base({children, configs}: BaseProps) {
   return (
     <div style={{display: 'flex', height: '100vh', width: '100vw'}}>
       <Container>
-        <Sidebar
-          style={{display: 'flex', flexDirection: 'column', overflowX: 'hidden'}}
-          width={isExpanded ? 260 : 56}
-          collapsible>
-          <Sidenav expanded={isExpanded} defaultOpenKeys={['1']} style={{flex: '1 1 auto'}}>
+        <Sidebar style={{display: 'flex', flexDirection: 'column', overflowX: 'hidden'}}>
+          <Sidenav defaultOpenKeys={['1']} style={{flex: '1 1 auto'}}>
             <Sidenav.Header>
-              <div style={headerStyles}>
-                <IconButton
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  icon={<Icon icon={isExpanded ? 'angle-left' : 'angle-right'} />}
-                  circle
-                  size="md"
-                />
-              </div>
+              <div style={headerStyles}></div>
             </Sidenav.Header>
             <Sidenav.Body>
               <Nav>
