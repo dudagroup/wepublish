@@ -152,12 +152,15 @@ export const contentModelB: ContentModel = {
       },
       myDateTime: {
         type: ContentModelSchemaTypes.dateTime,
+        filterable: true
+      },
+      myOptionalDateTime: {
+        type: ContentModelSchemaTypes.dateTime,
         optional: true,
         filterable: true
       },
       myDateTimeI18n: {
         type: ContentModelSchemaTypes.dateTime,
-        optional: true,
         filterable: true,
         i18n: true
       },

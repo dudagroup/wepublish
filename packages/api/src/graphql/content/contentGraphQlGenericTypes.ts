@@ -24,6 +24,7 @@ import {createProxyingIsTypeOf} from '../../utility'
 import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldString,
   ContentModelSchemas,
   ContentModelSchemaTypes
 } from '../../interfaces/contentModelSchema'
@@ -155,11 +156,23 @@ function generateType(
       } else {
         type = new GraphQLObjectType({
           name,
-          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
+          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
             accu[`${key}`] = {
-              type: generateType(context, val, nameJoin(name, key)),
-              deprecationReason: val.deprecationReason,
-              description: val.instructions
+              type: generateType(context, modelSchema, nameJoin(name, key)),
+              resolve(parent: any) {
+                if (typeof parent === 'object' && parent !== null && key in parent) {
+                  return parent[`${key}`]
+                }
+                if (modelSchema.optional) {
+                  return null
+                }
+                if ((modelSchema as ContentModelSchemaFieldString).defaultValue) {
+                  return (modelSchema as ContentModelSchemaFieldString).defaultValue
+                }
+                return null
+              },
+              deprecationReason: modelSchema.deprecationReason,
+              description: modelSchema.instructions
             }
             return accu
           }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)

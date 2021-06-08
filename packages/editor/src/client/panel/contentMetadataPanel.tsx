@@ -3,7 +3,6 @@ import React from 'react'
 import {
   ControlLabel,
   Form,
-  FormControl,
   FormGroup,
   Toggle,
   Panel,
@@ -11,7 +10,8 @@ import {
   Whisper,
   IconButton,
   Icon,
-  Tooltip
+  Tooltip,
+  Input
 } from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {MapType} from '../interfaces/utilTypes'
@@ -46,7 +46,7 @@ export function ContentMetadataPanel({
   const {title, slugI18n, shared} = defaultMetadata
   const {t} = useTranslation()
 
-  const [componentLane1, componentLane2] = langLanes.map(lang => {
+  const [componentLane1, componentLane2] = langLanes.map((lang, index) => {
     const slug = slugI18n?.[lang] || ''
 
     let deriveButton = null
@@ -82,8 +82,9 @@ export function ContentMetadataPanel({
 
     return (
       <InputGroup key={lang} style={{width: '100%'}}>
-        <FormControl
+        <Input
           value={slug}
+          disabled={index > 0}
           onChange={val =>
             onChangeDefaultMetadata?.({...defaultMetadata, slugI18n: {...slugI18n, [lang]: val}})
           }
@@ -104,7 +105,7 @@ export function ContentMetadataPanel({
       <Form fluid>
         <FormGroup>
           <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
-          <FormControl
+          <Input
             style={{width: '58.33333333%'}}
             value={title}
             placeholder={t('content.overview.internalTitlePlaceholder')}

@@ -533,8 +533,9 @@ export type _Cmp_ModelB_Record_Content = {
   myBoolean: Scalars['Boolean'];
   myOptionalBoolean?: Maybe<Scalars['Boolean']>;
   myBooleanI18n: I18n_Boolean;
-  myDateTime?: Maybe<Scalars['DateTime']>;
-  myDateTimeI18n?: Maybe<I18n_DateTime>;
+  myDateTime: Scalars['DateTime'];
+  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n: I18n_DateTime;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmp_ModelB_Record_Content_MyEnumI18n;
   myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
@@ -1097,8 +1098,9 @@ export type _Cmpi_ModelB_Record_Content = {
   myBoolean: Scalars['Boolean'];
   myOptionalBoolean?: Maybe<Scalars['Boolean']>;
   myBooleanI18n: I18n_Boolean_Input;
-  myDateTime?: Maybe<Scalars['DateTime']>;
-  myDateTimeI18n?: Maybe<I18n_DateTime_Input>;
+  myDateTime: Scalars['DateTime'];
+  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n: I18n_DateTime_Input;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input;
   myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
@@ -1561,11 +1563,6 @@ export enum ContentContextEnum {
 
 export type ContentFilter = {
   title?: Maybe<Scalars['String']>;
-  draft?: Maybe<Scalars['Boolean']>;
-  published?: Maybe<Scalars['Boolean']>;
-  pending?: Maybe<Scalars['Boolean']>;
-  authors?: Maybe<Array<Scalars['ID']>>;
-  tags?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -1690,22 +1687,27 @@ export type FacebookVideoBlockInput = {
 
 export type Filter_Article = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_Author = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_MediaLibrary = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_ModelA = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
   i18n__content__myStringI18n?: Maybe<FilterText>;
   i18n__content__myMultilineStringI18n?: Maybe<FilterText>;
@@ -1714,6 +1716,7 @@ export type Filter_ModelB = {
   content__myFloat?: Maybe<FilterFloat>;
   i18n__content__myFloatI18n?: Maybe<FilterFloat>;
   content__myDateTime?: Maybe<FilterDate>;
+  content__myOptionalDateTime?: Maybe<FilterDate>;
   i18n__content__myDateTimeI18n?: Maybe<FilterDate>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
   i18n__content__myEnumI18n?: Maybe<Filter_ModelB_Content_MyEnumI18n>;
