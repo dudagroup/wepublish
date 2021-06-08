@@ -89,6 +89,7 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
         style={{position: 'fixed', bottom: 10, right: 40, background: '#fff'}}>
         <ButtonToolbar>
           <Button
+            style={{marginRight: 10}}
             color="green"
             disabled={!reference}
             onClick={e => {
@@ -165,7 +166,7 @@ export function RemoveLinkFormatButton() {
   return (
     <Button
       icon="unlink"
-      size="sm"
+      style={{marginRight: 10}}
       appearance="ghost"
       color="red"
       active={WepublishEditor.isFormatActive(editor, InlineFormat.Reference)}
