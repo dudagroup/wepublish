@@ -450,6 +450,20 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                   </IconButton>
                 ) : (
                   <>
+                    {contentConfig.getPreviewLink && (
+                      <IconButton
+                        style={{
+                          marginLeft: '20px'
+                        }}
+                        appearance="subtle"
+                        size={'lg'}
+                        icon={<Icon icon="eye" />}
+                        disabled={isDisabled}
+                        onClick={() => handlePreview()}>
+                        {'Preview'}
+                      </IconButton>
+                    )}
+
                     <IconButton
                       style={{
                         marginLeft: '20px'
@@ -461,20 +475,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.save')}
                     </IconButton>
-
-                    {contentConfig.getPreviewLink && (
-                      <IconButton
-                        style={{
-                          marginLeft: '20px'
-                        }}
-                        appearance="subtle"
-                        size={'lg'}
-                        icon={<Icon icon="external-link" />}
-                        disabled={isDisabled}
-                        onClick={() => handlePreview()}>
-                        {'preview'}
-                      </IconButton>
-                    )}
 
                     <IconButton
                       style={{
@@ -506,12 +506,12 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             style={{
               width: '100%',
               maxWidth: 1140,
-              position: 'fixed',
+              position: 'sticky',
               paddingTop: 10,
               top: 42,
               boxShadow: '0 5px 13px -14px #888',
               background: '#fff',
-              zIndex: 100
+              zIndex: 10
             }}>
             {header}
           </div>
