@@ -4,6 +4,7 @@ import {ContentEditActionEnum} from '../../control/contentReducer'
 import {ContentModelSchemaFieldString} from '../../interfaces/contentModelSchema'
 import {isNullOrUndefined} from '../../utility'
 import {BlockAbstractProps} from './BlockAbstract'
+import {genericBlockMinWidth} from './BlockStyle'
 
 function BlockDateTime({
   dispatch,
@@ -16,9 +17,9 @@ function BlockDateTime({
   return (
     <>
       <DatePicker
-        style={{width: '100%'}}
+        style={{minWidth: genericBlockMinWidth}}
         value={value && isActive ? new Date(value) : undefined}
-        cleanable={model.optional}
+        cleanable={!!model.optional}
         disabled={disabled}
         onChange={val => {
           dispatch({
