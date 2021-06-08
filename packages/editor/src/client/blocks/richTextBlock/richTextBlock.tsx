@@ -5,19 +5,11 @@ import {withHistory} from 'slate-history'
 import {withReact, ReactEditor, Editable, Slate} from 'slate-react'
 import {BlockProps} from '../../atoms/blockList'
 import {EmojiPicker} from '../../atoms/emojiPicker'
-import {
-  Toolbar,
-  ToolbarDivider,
-  H1Icon,
-  H2Icon,
-  H3Icon,
-  SubMenuButton,
-  SubMenuDrawerButton
-} from '../../atoms/toolbar'
+import {Toolbar, ToolbarDivider, SubMenuButton, SubMenuDrawerButton} from '../../atoms/toolbar'
 import {RichTextBlockValue} from '../types'
 import {FormatButton, FormatIconButton, EditorSubMenuButton} from './toolbar/buttons'
 import {renderElement, renderLeaf} from './editor/render'
-import {BlockFormat, TextFormat} from './editor/formats'
+import {BlockFormat, InlineFormat, TextFormat} from './editor/formats'
 import {withRichText, withTable} from './editor/plugins'
 import {withNormalizeNode} from './editor/normalizing'
 import {TableMenu} from './toolbar/tableMenu'
@@ -229,7 +221,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.url && (
               <>
-                <SubMenuButton icon="link">
+                <SubMenuButton icon="link" format={InlineFormat.Link}>
                   <LinkMenu />
                 </SubMenuButton>
                 <ToolbarDivider />
@@ -238,7 +230,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.ref && (
               <>
-                <SubMenuDrawerButton icon="paste">
+                <SubMenuDrawerButton icon="paste" format={InlineFormat.Reference}>
                   <RefMenu types={config?.ref} />
                 </SubMenuDrawerButton>
                 <ToolbarDivider />
