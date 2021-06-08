@@ -5,7 +5,16 @@ import {Transforms, Range, Editor} from 'slate'
 import {useSlate} from 'slate-react'
 import {WepublishEditor} from '../editor/wepublishEditor'
 import {InlineFormat} from '../editor/formats'
-import {Button, ButtonToolbar, ControlLabel, Form, FormControl, FormGroup} from 'rsuite'
+import {
+  Button,
+  ButtonToolbar,
+  ControlLabel,
+  Divider,
+  Form,
+  FormControl,
+  FormGroup,
+  Panel
+} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {Reference} from '../../../interfaces/referenceType'
 import {ReferencePreview} from '../../../atoms/referencePreview'
@@ -44,24 +53,26 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
 
   return (
     <>
-      <Form fluid style={{marginBottom: 60}}>
+      <Form fluid>
         <FormGroup>
-          <ControlLabel>{t('blocks.richText.text')}</ControlLabel>
+          <ControlLabel>{t('blocks.richText.linkedText')}</ControlLabel>
           <FormControl
-            style={{width: '45%'}}
+            style={{width: '30%'}}
             value={title}
             onChange={title => {
               setTitle(title)
             }}
           />
         </FormGroup>
+
         <FormGroup>
-          <h3>{t('blocks.richText.selectedRef')}</h3>
+          <ControlLabel>{t('blocks.richText.selectedRef')}</ControlLabel>
           <ReferencePreview
             reference={reference}
             onClose={() => setReferences(undefined)}></ReferencePreview>
         </FormGroup>
       </Form>
+      <Divider></Divider>
       <RefSelectPanel
         refConfig={types}
         configs={configs}
@@ -73,7 +84,9 @@ export function RefMenu({types}: {types: ContentModelSchemaFieldRefTypeMap}) {
           setReferences(ref)
         }}
       />
-      <div className="wep-refmenu-btns" style={{position: 'absolute', bottom: 0, right: 0}}>
+      <div
+        className="wep-refmenu-btns"
+        style={{position: 'fixed', bottom: 10, right: 40, background: '#fff'}}>
         <ButtonToolbar>
           <Button
             color="green"
