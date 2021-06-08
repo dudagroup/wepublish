@@ -21,7 +21,7 @@ export interface LanguageContext {
   readonly langLane2: string
 }
 
-const labelStyle = {marginTop: '32px', height: '24px'}
+const labelStyle = {marginTop: 30, height: '24px'}
 
 export function BlockObject({
   dispatch,
@@ -142,7 +142,7 @@ export function BlockObject({
         colWith = 24
       }
       return (
-        <Row key={key} className="show-grid" style={{marginBottom: 24}}>
+        <Row key={key} className="show-grid" style={{marginBottom: 0}}>
           <Col xs={colWith}>
             <FormGroup>
               <div className="wep-label" style={labelStyle}>

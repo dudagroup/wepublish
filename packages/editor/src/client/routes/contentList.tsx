@@ -183,9 +183,9 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </FlexboxGrid>
 
       <Table
-        virtualized
         height={config.previewSize === 'big' ? 800 : 510}
-        style={{marginTop: '20px'}}
+        autoHeight
+        style={{marginTop: '20px', overflowY: 'auto'}}
         loading={isLoading}
         data={articles}
         rowHeight={config.previewSize === 'big' ? 123 : undefined}
@@ -256,9 +256,9 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column> */}
-        <Column width={160} align="right" fixed="right">
-          <HeaderCell>{t('content.overview.action')}</HeaderCell>
-          <Cell style={{padding: '6px 0'}}>
+        <Column width={170} align="right" fixed="right">
+          <HeaderCell style={{paddingRight: 20}}>{t('content.overview.action')}</HeaderCell>
+          <Cell style={{padding: '6px 10px 6px 0'}}>
             {(rowData: Content) => (
               <>
                 {rowData.publicationDate && (
@@ -282,7 +282,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </Table>
 
       <Pagination
-        style={{height: '50px'}}
+        size="xs"
         lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
         activePage={page}
         displayLength={limit}

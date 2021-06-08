@@ -5,19 +5,11 @@ import {withHistory} from 'slate-history'
 import {withReact, ReactEditor, Editable, Slate} from 'slate-react'
 import {BlockProps} from '../../atoms/blockList'
 import {EmojiPicker} from '../../atoms/emojiPicker'
-import {
-  Toolbar,
-  ToolbarDivider,
-  H1Icon,
-  H2Icon,
-  H3Icon,
-  SubMenuButton,
-  SubMenuDrawerButton
-} from '../../atoms/toolbar'
+import {Toolbar, ToolbarDivider, SubMenuButton, SubMenuDrawerButton} from '../../atoms/toolbar'
 import {RichTextBlockValue} from '../types'
 import {FormatButton, FormatIconButton, EditorSubMenuButton} from './toolbar/buttons'
 import {renderElement, renderLeaf} from './editor/render'
-import {BlockFormat, TextFormat} from './editor/formats'
+import {BlockFormat, InlineFormat, TextFormat} from './editor/formats'
 import {withRichText, withTable} from './editor/plugins'
 import {withNormalizeNode} from './editor/normalizing'
 import {TableMenu} from './toolbar/tableMenu'
@@ -156,32 +148,32 @@ export const RichTextBlock = memo(function RichTextBlock({
             }}>
             {config.h1 && (
               <FormatButton format={BlockFormat.H1}>
-                <b>H1</b>
+                <b style={{fontSize: 13}}>H1</b>
               </FormatButton>
             )}
             {config.h2 && (
               <FormatButton format={BlockFormat.H2}>
-                <b>H2</b>
+                <b style={{fontSize: 13}}>H2</b>
               </FormatButton>
             )}
             {config.h3 && (
               <FormatButton format={BlockFormat.H3}>
-                <b>H3</b>
+                <b style={{fontSize: 13}}>H3</b>
               </FormatButton>
             )}
             {config.h4 && (
               <FormatButton format={BlockFormat.H4}>
-                <b>H4</b>
+                <b style={{fontSize: 13}}>H4</b>
               </FormatButton>
             )}
             {config.h5 && (
               <FormatButton format={BlockFormat.H5}>
-                <b>H5</b>
+                <b style={{fontSize: 13}}>H5</b>
               </FormatButton>
             )}
             {config.h6 && (
               <FormatButton format={BlockFormat.H6}>
-                <b>H6</b>
+                <b style={{fontSize: 13}}>H6</b>
               </FormatButton>
             )}
             {(config.h1 || config.h2 || config.h3 || config.h4 || config.h5 || config.h6) && (
@@ -229,7 +221,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.url && (
               <>
-                <SubMenuButton icon="link">
+                <SubMenuButton icon="link" format={InlineFormat.Link}>
                   <LinkMenu />
                 </SubMenuButton>
                 <ToolbarDivider />
@@ -238,7 +230,7 @@ export const RichTextBlock = memo(function RichTextBlock({
 
             {config?.ref && (
               <>
-                <SubMenuDrawerButton icon="paste">
+                <SubMenuDrawerButton icon="paste" format={InlineFormat.Reference}>
                   <RefMenu types={config?.ref} />
                 </SubMenuDrawerButton>
                 <ToolbarDivider />

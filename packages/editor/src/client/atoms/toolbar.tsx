@@ -13,6 +13,9 @@ import React, {
 import {Icon, Popover, PopoverProps, Whisper, Divider, Drawer} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
+import {useSlate} from 'slate-react'
+import {Format} from '../blocks/richTextBlock/editor/formats'
+import {WepublishEditor} from '../blocks/richTextBlock/editor/wepublishEditor'
 
 // import './toolbar.less'
 
@@ -112,13 +115,16 @@ export const SubMenuContext = createContext<SubMenuContextProps>({
 
 export interface SubMenuButtonProps extends ToolbarIconButtonProps {
   readonly children?: ReactNode
+  readonly format?: Format
 }
 
 export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
-  ({children, icon}, ref) => {
+  ({children, icon, format}, ref) => {
     // The Submenu buttons provides some local context to it's children.
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const localRef = useRef<PopoverProps>(null)
+    const editor = useSlate()
+
     // Optional forwarding ref from parent, else use local ref.
     const triggerRef = (ref || localRef) as typeof localRef
 
@@ -144,7 +150,7 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
         }}>
         <Whisper placement="auto" speaker={menu} ref={triggerRef} trigger="none">
           <ToolbarButton
-            active={isMenuOpen}
+            active={isMenuOpen || (format && WepublishEditor.isFormatActive(editor, format))}
             onMouseDown={e => {
               e.preventDefault()
               isMenuOpen ? closeMenu() : openMenu()
@@ -163,8 +169,9 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
 )
 
 export const SubMenuDrawerButton = forwardRef<PopoverProps, SubMenuButtonProps>(
-  ({children, icon}, ref) => {
+  ({children, icon, format}, ref) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const editor = useSlate()
 
     const closeMenu = () => {
       setIsMenuOpen(false)
@@ -181,7 +188,7 @@ export const SubMenuDrawerButton = forwardRef<PopoverProps, SubMenuButtonProps>(
           openMenu
         }}>
         <ToolbarButton
-          active={isMenuOpen}
+          active={isMenuOpen || (format && WepublishEditor.isFormatActive(editor, format))}
           onMouseDown={e => {
             setIsMenuOpen(true)
           }}>
