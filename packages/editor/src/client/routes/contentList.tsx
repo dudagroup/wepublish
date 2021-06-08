@@ -184,8 +184,8 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
 
       <Table
         virtualized
-        height={config.previewSize === 'big' ? 800 : 510}
         autoHeight
+        height={config.previewSize === 'big' ? 800 : 510}
         style={{marginTop: '20px'}}
         loading={isLoading}
         data={articles}
@@ -283,7 +283,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </Table>
 
       <Pagination
-        style={{height: '50px'}}
+        size="xs"
         lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
         activePage={page}
         displayLength={limit}
