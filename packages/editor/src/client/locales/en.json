@@ -632,6 +632,7 @@
         "reference": "Reference",
         "selectedRef": "Selected reference",
         "text": "Text",
+        "linkedText": "Linked text",
         "apply": "Apply",
         "cancel": "Cancel",
         "insert": "Insert",
