@@ -6,7 +6,6 @@ import {
   GraphQLType,
   GraphQLUnionType
 } from 'graphql'
-import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
 import {Context} from '../../context'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
@@ -27,17 +26,19 @@ export const GraphQLReferenceInput = new GraphQLInputObjectType({
   }
 })
 
-const refTypes: {[type: string]: any} = {}
+const refTypeCache: {[type: string]: any} = {}
+const refRecordTypeCache: {[type: string]: any} = {}
 export function getReference(
   name: string,
   type: ContentModelSchemaFieldRef,
   context: TypeGeneratorContext
 ) {
-  const scope = context.isPublic ? 'public' : 'private'
-  const typeKey = scope + '_' + Object.keys(type.types).join('_')
+  const prefix = context.isPublic ? '_cmRef' : '_cmpRef'
+  const concatedTypeNames = Object.keys(type.types).join('_')
+  const refTypeKey = prefix + '_' + concatedTypeNames // refTypeKey makes it possible to reuse identical references used over different models
 
-  if (typeKey in refTypes) {
-    return refTypes[typeKey]
+  if (refTypeKey in refTypeCache) {
+    return refTypeCache[refTypeKey]
   }
 
   const refTypeArray = Object.entries(type.types)
@@ -53,14 +54,20 @@ export function getReference(
     graphQLRecordType = new GraphQLUnionType({
       name,
       types: refTypeArray.map(([contentType, {scope}]) => {
+        const prefix = context.isPublic ? '_cmRefCase' : '_cmpRefCase'
+        const unionCaseObjectName = nameJoin(prefix, contentType)
+
+        if (unionCaseObjectName in refRecordTypeCache) {
+          return refRecordTypeCache[unionCaseObjectName]
+        }
+
         let graphQLUnionCase: GraphQLType = GraphQLUnknown
         if (context.contentModels?.[contentType]) {
           graphQLUnionCase = context.contentModels[contentType]
         }
 
-        const unionCaseName = nameJoin(name, contentType)
-        return new GraphQLObjectType({
-          name: unionCaseName,
+        refRecordTypeCache[unionCaseObjectName] = new GraphQLObjectType({
+          name: unionCaseObjectName,
           fields: {
             [contentType]: {
               type: graphQLUnionCase,
@@ -73,12 +80,13 @@ export function getReference(
             return value.contentType === contentType
           })
         })
+        return refRecordTypeCache[unionCaseObjectName]
       })
     })
   }
 
-  refTypes[typeKey] = new GraphQLObjectType<any, Context>({
-    name: `ref_${typeKey}`,
+  refTypeCache[refTypeKey] = new GraphQLObjectType<any, Context>({
+    name: `ref_${refTypeKey}`,
     fields: {
       recordId: {type: GraphQLNonNull(GraphQLID)},
       contentType: {type: GraphQLNonNull(GraphQLID)},
@@ -108,5 +116,5 @@ export function getReference(
       }
     }
   })
-  return refTypes[typeKey]
+  return refTypeCache[refTypeKey]
 }
