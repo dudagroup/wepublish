@@ -32,6 +32,7 @@ import {getI18nOutputType, getI18nInputType} from '../i18nPrimitives'
 import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia, GraphQLMediaInput} from './media'
 import {nameJoin} from './contentUtils'
+import {generateEmptyContent} from '../../business/contentUtil'
 
 export interface TypeGeneratorContext {
   language: LanguageConfig
@@ -159,18 +160,19 @@ function generateType(
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
             accu[`${key}`] = {
               type: generateType(context, modelSchema, nameJoin(name, key)),
-              resolve(parent: any) {
-                if (typeof parent === 'object' && parent !== null && key in parent) {
-                  return parent[`${key}`]
-                }
-                if (modelSchema.optional) {
-                  return null
-                }
-                if ((modelSchema as ContentModelSchemaFieldString).defaultValue) {
-                  return (modelSchema as ContentModelSchemaFieldString).defaultValue
-                }
-                return null
-              },
+              resolve: !context.isPublic
+                ? (parent: any) => {
+                    if (typeof parent === 'object' && parent !== null && key in parent) {
+                      if (
+                        modelSchema.optional ||
+                        (parent[`${key}`] !== null && parent[`${key}`] !== undefined)
+                      ) {
+                        return parent[`${key}`]
+                      }
+                    }
+                    return generateEmptyContent(modelSchema, context.language)
+                  }
+                : undefined,
               deprecationReason: modelSchema.deprecationReason,
               description: modelSchema.instructions
             }
@@ -206,10 +208,7 @@ function generateType(
       }
       break
   }
-  if (
-    !contentModelSchemas.optional &&
-    !((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && context.isPublic)
-  ) {
+  if (!contentModelSchemas.optional) {
     type = GraphQLNonNull(type)
   }
   return type
