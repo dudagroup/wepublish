@@ -67,6 +67,7 @@ function BlockAbstract(props: BlockAbstractProps) {
 export default memo(BlockAbstract, (a, b) => {
   return (
     Object.is(a.value, b.value) &&
+    a.schemaPath.concat('') === b.schemaPath.concat('') &&
     Object.is(a.languageContext.langLane1, b.languageContext.langLane1) &&
     Object.is(a.languageContext.langLane2, b.languageContext.langLane2)
   )

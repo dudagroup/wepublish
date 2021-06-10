@@ -354,6 +354,14 @@ export const contentModelB: ContentModel = {
                   type: ContentModelSchemaTypes.string
                 }
               }
+            },
+            caseB: {
+              type: ContentModelSchemaTypes.object,
+              fields: {
+                fieldB: {
+                  type: ContentModelSchemaTypes.string
+                }
+              }
             }
           }
         }
