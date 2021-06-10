@@ -9,7 +9,8 @@ import {
 } from '../graphql/permissions'
 import {
   ContentModelSchema,
-  ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldObject,
+  ContentModelSchemaFieldString,
   ContentModelSchemas,
   ContentModelSchemaTypes
 } from '../interfaces/contentModelSchema'
@@ -17,6 +18,7 @@ import {MapType} from '../interfaces/utilTypes'
 import {destructUnionCase} from '../utility'
 import {LanguageConfig} from '../interfaces/languageConfig'
 import {validateInput, ValidatorContext} from './contentModelBusinessInputValidation'
+import {generateEmptyContent} from './contentUtil'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -139,19 +141,23 @@ function flattenI18nLeafFields(
 ) {
   switch (schema.type) {
     case ContentModelSchemaTypes.object: {
-      if (!data) {
-        return data
+      if (!(data && typeof data === 'object')) {
+        if (schema.optional) {
+          return null
+        }
+        data = {}
       }
+      const schemaObject = schema as ContentModelSchemaFieldObject
       const obj = data as MapType<any>
-      for (const [key, val] of Object.entries(obj)) {
-        obj[key] = flattenI18nLeafFields(validatorContext, schema.fields[key], val)
+      for (const [key, model] of Object.entries(schemaObject.fields)) {
+        obj[key] = flattenI18nLeafFields(validatorContext, model, obj?.[key])
       }
       return obj
     }
 
     case ContentModelSchemaTypes.list: {
       if (!data) {
-        return data
+        data = []
       }
       const list = data as unknown[]
       for (const i in list) {
@@ -162,7 +168,15 @@ function flattenI18nLeafFields(
 
     case ContentModelSchemaTypes.union: {
       if (!data) {
-        return data
+        data = generateEmptyContent(schema, {
+          defaultLanguageTag: validatorContext.languageTag,
+          languages: [
+            {
+              tag: validatorContext.languageTag,
+              description: ''
+            }
+          ]
+        })
       }
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
@@ -172,11 +186,45 @@ function flattenI18nLeafFields(
       return union
     }
 
-    default:
-      if ((schema as ContentModelSchemaFieldLeaf).i18n) {
-        return data[validatorContext.languageTag]
+    default: {
+      const schemaLeaf = schema as ContentModelSchemaFieldString
+      if (schemaLeaf.i18n) {
+        if (data && validatorContext.languageTag in data) {
+          if (
+            schemaLeaf.optional ||
+            (data[validatorContext.languageTag] !== null &&
+              data[validatorContext.languageTag] !== undefined)
+          ) {
+            return data[validatorContext.languageTag]
+          }
+        }
+
+        const emptyData: any = generateEmptyContent(schemaLeaf, {
+          defaultLanguageTag: validatorContext.languageTag,
+          languages: [
+            {
+              tag: validatorContext.languageTag,
+              description: ''
+            }
+          ]
+        })
+        return emptyData[validatorContext.languageTag]
       }
-      return data
+
+      if (schemaLeaf.optional || (data !== null && data !== undefined)) {
+        return data
+      }
+      const emptyData: any = generateEmptyContent(schemaLeaf, {
+        defaultLanguageTag: validatorContext.languageTag,
+        languages: [
+          {
+            tag: validatorContext.languageTag,
+            description: ''
+          }
+        ]
+      })
+      return emptyData
+    }
   }
 }
 

@@ -314,6 +314,18 @@ export const contentModelB: ContentModel = {
           }
         }
       },
+      myObject: {
+        type: ContentModelSchemaTypes.object,
+        fields: {
+          myFieldA: {
+            type: ContentModelSchemaTypes.string
+          },
+          myFieldAI18n: {
+            type: ContentModelSchemaTypes.string,
+            i18n: true
+          }
+        }
+      },
       myOptionalObject: {
         type: ContentModelSchemaTypes.object,
         optional: true,
