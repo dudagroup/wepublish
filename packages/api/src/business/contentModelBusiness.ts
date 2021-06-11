@@ -180,7 +180,7 @@ function flattenI18nLeafFields(
       }
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
-      if (unionCase) {
+      if (unionCase && unionCase in schema.cases) {
         union[unionCase] = flattenI18nLeafFields(validatorContext, schema.cases[unionCase], val)
       }
       return union
