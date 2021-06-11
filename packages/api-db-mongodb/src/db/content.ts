@@ -13,7 +13,6 @@ import {
 } from '@wepublish/api'
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 import {CollectionName, DBContent} from './schema'
-import {MaxResultsPerPage} from './defaults'
 import {Cursor} from './cursor'
 import {LanguageConfig} from '@wepublish/api/lib/interfaces/languageConfig'
 
