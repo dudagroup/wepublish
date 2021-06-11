@@ -18,6 +18,7 @@ export interface ContentModelSchemaFieldBase {
 
 export interface ContentModelSchemaFieldLeaf extends ContentModelSchemaFieldBase {
   i18n?: boolean
+  i18nFallbackToDefaultLanguage?: boolean
   filterable?: boolean
 }
 

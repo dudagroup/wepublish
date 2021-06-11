@@ -132,6 +132,7 @@ export class BusinessLogic {
 
 interface flattenI18nLeafFieldsContext {
   languageTag: string
+  defaultLanguageTag: string
 }
 
 function flattenI18nLeafFields(
@@ -191,11 +192,25 @@ function flattenI18nLeafFields(
       if (schemaLeaf.i18n) {
         if (data && validatorContext.languageTag in data) {
           if (
-            schemaLeaf.optional ||
+            (schemaLeaf.optional && !schemaLeaf.i18nFallbackToDefaultLanguage) ||
             (data[validatorContext.languageTag] !== null &&
               data[validatorContext.languageTag] !== undefined)
           ) {
             return data[validatorContext.languageTag]
+          }
+        }
+
+        if (
+          schemaLeaf.i18nFallbackToDefaultLanguage &&
+          data &&
+          validatorContext.defaultLanguageTag in data
+        ) {
+          if (
+            schemaLeaf.optional ||
+            (data[validatorContext.defaultLanguageTag] !== null &&
+              data[validatorContext.defaultLanguageTag] !== undefined)
+          ) {
+            return data[validatorContext.defaultLanguageTag]
           }
         }
 
@@ -266,6 +281,10 @@ export function flattenI18nLeafFieldsMap(
     languageTag = languageConfig.defaultLanguageTag
   }
   return (record: any) => {
-    return flattenI18nLeafFieldsOnRecord({languageTag}, modelSchema, record)
+    return flattenI18nLeafFieldsOnRecord(
+      {languageTag, defaultLanguageTag: languageConfig.defaultLanguageTag},
+      modelSchema,
+      record
+    )
   }
 }
