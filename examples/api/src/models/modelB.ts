@@ -383,7 +383,8 @@ export const contentModelB: ContentModel = {
       },
       myMediaI18n: {
         type: ContentModelSchemaTypes.media,
-        i18n: true
+        i18n: true,
+        i18nFallbackToDefaultLanguage: true
       }
     }
   }
