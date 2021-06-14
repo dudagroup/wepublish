@@ -520,7 +520,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
             style={{
               width: '100%',
               maxWidth: 1140,
-              marginTop: 60,
+              marginTop: 20,
               border: '1px dashed #e5e5ea',
               background: '#fcfcfc',
               borderRadius: 6
