@@ -87,7 +87,7 @@ export interface GetContentsArgs {
   readonly filter?: ContentFilter
   readonly sort: ContentSort
   readonly order: SortOrder
-  readonly type?: string
+  readonly types?: string[]
   readonly language?: string
 }
 

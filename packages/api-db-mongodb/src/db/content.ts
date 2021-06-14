@@ -100,9 +100,8 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     return ids.map(id => articleMap[id] ?? null)
   }
 
-  // TODO: Deduplicate getImages, getPages, getAuthors
   async getContents(
-    {filter, sort, order, cursor, limit, type, language}: GetContentsArgs,
+    {filter, sort, order, cursor, limit, types, language}: GetContentsArgs,
     languageConfig: LanguageConfig,
     isPublicApi: boolean
   ): Promise<ConnectionResult<any>> {
@@ -194,8 +193,8 @@ export class MongoDBContentAdapter implements DBContentAdapter {
     }
 
     const typeFilter: FilterQuery<any> = {}
-    if (type) {
-      typeFilter.contentType = {$eq: type}
+    if (types && types.length > 0) {
+      typeFilter.contentType = {$in: types}
     }
 
     // TODO: Check index usage
