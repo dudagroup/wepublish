@@ -96,17 +96,18 @@ async function validateRecursive(
   async function validateRichTextRecursive(
     lang: string,
     isI18n: boolean,
+    searchable: boolean | undefined,
     richTextNode: RichTextNode | RichTextAbstractNode
   ) {
     const richTextAbstractNode = richTextNode as RichTextAbstractNode
     if (richTextAbstractNode.children?.length > 0) {
       const richTextReferenceNode = richTextNode as RichTextAbstractNode
       for (const child of richTextReferenceNode.children) {
-        await validateRichTextRecursive(lang, isI18n, child)
+        await validateRichTextRecursive(lang, isI18n, searchable, child)
       }
     }
 
-    if ((richTextNode as RichTextTextNode).text) {
+    if ((richTextNode as RichTextTextNode).text && searchable) {
       if (isI18n) {
         validatorContext.searchTermsI18n[lang] += (richTextNode as RichTextTextNode).text + ' '
       } else {
@@ -190,12 +191,12 @@ async function validateRecursive(
       if (schema.i18n) {
         if (data) {
           for (const [lang, val] of Object.entries(data)) {
-            if (val) {
+            if (val && schema.searchable) {
               validatorContext.searchTermsI18n[lang] += val + ' '
             }
           }
         }
-      } else if (data) {
+      } else if (data && schema.searchable) {
         validatorContext.searchTerms += data + ' '
       }
       break
@@ -205,7 +206,7 @@ async function validateRecursive(
       if (schema.i18n) {
         for (const [lang, val] of Object.entries(data)) {
           const richTextNodes = val as RichTextNode[]
-          await validateRichTextRecursive(lang, true, {children: richTextNodes})
+          await validateRichTextRecursive(lang, true, schema.searchable, {children: richTextNodes})
         }
         break
       }
@@ -213,6 +214,7 @@ async function validateRecursive(
       await validateRichTextRecursive(
         validatorContext.context.languageConfig.defaultLanguageTag,
         false,
+        schema.searchable,
         {
           children: richTextNodes
         }
