@@ -109,6 +109,9 @@ async function validateRecursive(
 
     if ((richTextNode as RichTextTextNode).text && searchable) {
       if (isI18n) {
+        if (!validatorContext.searchTermsI18n[lang]) {
+          validatorContext.searchTermsI18n[lang] = ''
+        }
         validatorContext.searchTermsI18n[lang] += (richTextNode as RichTextTextNode).text + ' '
       } else {
         validatorContext.searchTerms += (richTextNode as RichTextTextNode).text + ' '
@@ -192,6 +195,9 @@ async function validateRecursive(
         if (data) {
           for (const [lang, val] of Object.entries(data)) {
             if (val && schema.searchable) {
+              if (!validatorContext.searchTermsI18n[lang]) {
+                validatorContext.searchTermsI18n[lang] = ''
+              }
               validatorContext.searchTermsI18n[lang] += val + ' '
             }
           }
