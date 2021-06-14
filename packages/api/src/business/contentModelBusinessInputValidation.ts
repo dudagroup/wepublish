@@ -118,7 +118,7 @@ async function validateRecursive(
       const richTextReferenceNode = richTextNode as RichTextReferenceNode
       const contentModelSchemaFieldRichText = schema as ContentModelSchemaFieldRichText
       if (contentModelSchemaFieldRichText?.config?.ref) {
-        handleRef(richTextReferenceNode.reference, contentModelSchemaFieldRichText.config.ref)
+        await handleRef(richTextReferenceNode.reference, contentModelSchemaFieldRichText.config.ref)
       }
     }
   }
