@@ -195,7 +195,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               ) => {
                 const result = await dbAdapter.content.getContents(
                   {
-                    type: model.identifier,
+                    types: [model.identifier],
                     filter,
                     sort,
                     order,
@@ -402,7 +402,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
 
                 return dbAdapter.content.getContents(
                   {
-                    type: model.identifier,
+                    types: [model.identifier],
                     filter: {...filter, shared: !canGetContents ? true : undefined},
                     sort,
                     order,
@@ -711,7 +711,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               if (canGetContents || canGetSharedContents) {
                 const r = await dbAdapter.content.getContents(
                   {
-                    type,
+                    types: [type],
                     filter: {...filter, shared: !canGetContents ? true : undefined},
                     sort,
                     order,
