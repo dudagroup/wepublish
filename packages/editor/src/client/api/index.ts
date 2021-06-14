@@ -533,9 +533,8 @@ export type _Cmp_ModelB_Record_Content = {
   myBoolean: Scalars['Boolean'];
   myOptionalBoolean?: Maybe<Scalars['Boolean']>;
   myBooleanI18n: I18n_Boolean;
-  myDateTime: Scalars['DateTime'];
-  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
-  myDateTimeI18n: I18n_DateTime;
+  myDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n?: Maybe<I18n_DateTime>;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmp_ModelB_Record_Content_MyEnumI18n;
   myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
@@ -1098,9 +1097,8 @@ export type _Cmpi_ModelB_Record_Content = {
   myBoolean: Scalars['Boolean'];
   myOptionalBoolean?: Maybe<Scalars['Boolean']>;
   myBooleanI18n: I18n_Boolean_Input;
-  myDateTime: Scalars['DateTime'];
-  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
-  myDateTimeI18n: I18n_DateTime_Input;
+  myDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n?: Maybe<I18n_DateTime_Input>;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input;
   myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
@@ -1716,7 +1714,6 @@ export type Filter_ModelB = {
   content__myFloat?: Maybe<FilterFloat>;
   i18n__content__myFloatI18n?: Maybe<FilterFloat>;
   content__myDateTime?: Maybe<FilterDate>;
-  content__myOptionalDateTime?: Maybe<FilterDate>;
   i18n__content__myDateTimeI18n?: Maybe<FilterDate>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
   i18n__content__myEnumI18n?: Maybe<Filter_ModelB_Content_MyEnumI18n>;

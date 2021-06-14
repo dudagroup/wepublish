@@ -256,7 +256,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column> */}
-        <Column width={170} align="right" fixed="right">
+        <Column flexGrow={2} minWidth={170} align="right">
           <HeaderCell style={{paddingRight: 20}}>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 10px 6px 0'}}>
             {(rowData: Content) => (
