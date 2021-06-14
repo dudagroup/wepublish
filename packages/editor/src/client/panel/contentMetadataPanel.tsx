@@ -101,7 +101,7 @@ export function ContentMetadataPanel({
   })
 
   return (
-    <Panel collapsible defaultExpanded header="Title, URL & Peering">
+    <Panel collapsible defaultExpanded header="Internal title, URL & Peering">
       <Form fluid>
         <FormGroup>
           <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
