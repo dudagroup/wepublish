@@ -80,7 +80,10 @@ export class WepublishServer {
       playground: opts.playground ?? false,
       introspection: opts.introspection ?? false,
       tracing: opts.tracing ?? false,
-      context: ({req}) => contextFromRequest(req, opts)
+      context: ({req}) => contextFromRequest(req, opts),
+      uploads: {
+        maxFieldSize: 1024 * 1024 * 50
+      }
     })
 
     const publicServer = new ApolloServer({
@@ -88,7 +91,10 @@ export class WepublishServer {
       playground: opts.playground ?? false,
       introspection: opts.introspection ?? false,
       tracing: opts.tracing ?? false,
-      context: ({req}) => contextFromRequest(req, opts)
+      context: ({req}) => contextFromRequest(req, opts),
+      uploads: {
+        maxFieldSize: 1024 * 1024 * 2
+      }
     })
 
     const corsOptions = {
@@ -128,7 +134,7 @@ export class WepublishServer {
       path: '/',
       cors: corsOptions,
       bodyParserConfig: {
-        limit: '50mb'
+        limit: '2mb'
       }
     })
 
