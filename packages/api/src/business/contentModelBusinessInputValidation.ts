@@ -242,14 +242,6 @@ export async function validateInput(
 ) {
   if (!(data && schema)) return
 
-  validatorContext.searchTermsI18n = validatorContext.context.languageConfig.languages.reduce(
-    (accu, item) => {
-      accu[item.tag] = ''
-      return accu
-    },
-    {} as MapType<string>
-  )
-
   for (const [key, val] of Object.entries(schema)) {
     await validateRecursive(validatorContext, val, data[key], persistentData?.[key])
   }
