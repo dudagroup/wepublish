@@ -131,8 +131,8 @@ async function validateRecursive(
     case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
       if (obj) {
-        for (const [key, val] of Object.entries(obj)) {
-          await validateRecursive(validatorContext, schema.fields[key], val, persistentData?.[key])
+        for (const [key, fieldSchema] of Object.entries(schema.fields)) {
+          await validateRecursive(validatorContext, fieldSchema, obj[key], persistentData?.[key])
         }
       }
       break
@@ -153,7 +153,7 @@ async function validateRecursive(
     case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
-      if (unionCase) {
+      if (unionCase && unionCase in schema.cases) {
         await validateRecursive(
           validatorContext,
           schema.cases[unionCase],
