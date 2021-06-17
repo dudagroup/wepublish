@@ -449,6 +449,9 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       slugI18n: {
         type: GraphQLNonNull(getI18nOutputType(GraphQLString, contextOptions.languageConfig))
       },
+      isActiveI18n: {
+        type: GraphQLNonNull(getI18nOutputType(GraphQLBoolean, contextOptions.languageConfig))
+      },
       shared: {type: GraphQLNonNull(GraphQLBoolean)},
       contentType: {type: GraphQLNonNull(GraphQLContentTypeEnum)},
 
