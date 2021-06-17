@@ -147,7 +147,7 @@ function generateType(
         type = new GraphQLInputObjectType({
           name,
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
-            accu[`${key}`] = {
+            accu[key] = {
               type: generateType(context, val, nameJoin(name, key)),
               description: val.instructions
             }
@@ -158,16 +158,16 @@ function generateType(
         type = new GraphQLObjectType({
           name,
           fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
-            accu[`${key}`] = {
+            accu[key] = {
               type: generateType(context, modelSchema, nameJoin(name, key)),
               resolve: !context.isPublic
                 ? (parent: any) => {
                     if (typeof parent === 'object' && parent !== null && key in parent) {
                       if (
                         modelSchema.optional ||
-                        (parent[`${key}`] !== null && parent[`${key}`] !== undefined)
+                        (parent[key] !== null && parent[key] !== undefined)
                       ) {
-                        return parent[`${key}`]
+                        return parent[key]
                       }
                     }
                     return generateEmptyContent(modelSchema, context.language)
@@ -234,7 +234,12 @@ export function generateSchema(
     dePublicationDate: {type: GraphQLDateTime},
 
     title: {type: GraphQLNonNull(GraphQLString)},
-    slugI18n: {type: GraphQLNonNull(getI18nOutputType(GraphQLString, languageConfig))},
+    slugI18n: {
+      type: GraphQLNonNull(getI18nOutputType(GraphQLString, languageConfig))
+    },
+    isActiveI18n: {
+      type: GraphQLNonNull(getI18nOutputType(GraphQLBoolean, languageConfig))
+    },
     shared: {type: GraphQLNonNull(GraphQLBoolean)}
   }
   contentModels[identifier] = new GraphQLObjectType({
@@ -296,6 +301,7 @@ export function generateInputSchema(
       fields: {
         title: {type: GraphQLNonNull(GraphQLString)},
         slugI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLString, languageConfig))},
+        isActiveI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLBoolean, languageConfig))},
         shared: {type: GraphQLNonNull(GraphQLBoolean)},
         ...content
       }
@@ -306,6 +312,7 @@ export function generateInputSchema(
         id: {type: GraphQLNonNull(GraphQLID)},
         title: {type: GraphQLNonNull(GraphQLString)},
         slugI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLString, languageConfig))},
+        isActiveI18n: {type: GraphQLNonNull(getI18nInputType(GraphQLBoolean, languageConfig))},
         shared: {type: GraphQLNonNull(GraphQLBoolean)},
         ...content
       }

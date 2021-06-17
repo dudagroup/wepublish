@@ -49,6 +49,7 @@ export interface ContentBody {
   state: string
   title: string
   slugI18n: MapType<string>
+  isActiveI18n: MapType<boolean>
   content: any
   meta?: any
   __typename: string
@@ -92,7 +93,11 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
     slugI18n: configs.apiConfig.languages.languages.reduce((accu, lang) => {
       accu[lang.tag] = ''
       return accu
-    }, {} as MapType<string>)
+    }, {} as MapType<string>),
+    isActiveI18n: configs.apiConfig.languages.languages.reduce((accu, lang) => {
+      accu[lang.tag] = true
+      return accu
+    }, {} as MapType<boolean>)
   })
 
   const intitialCustomMetadata =
@@ -171,13 +176,15 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
 
   useEffect(() => {
     if (recordData) {
-      const {shared, title, slugI18n, content, meta} = stripKeysRecursive(recordData, [
-        '__typename'
-      ])
+      const {shared, title, slugI18n, isActiveI18n, content, meta} = stripKeysRecursive(
+        recordData,
+        ['__typename']
+      )
 
       setMetadata({
         title,
         slugI18n,
+        isActiveI18n,
         shared
       })
       setCustomMetadata(meta)
@@ -226,6 +233,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       id: contentdId,
       title: metadata.title,
       slugI18n: metadata.slugI18n,
+      isActiveI18n: metadata.isActiveI18n,
       shared: metadata.shared,
       content,
       meta
