@@ -238,7 +238,16 @@ export function generateSchema(
       type: GraphQLNonNull(getI18nOutputType(GraphQLString, languageConfig))
     },
     isActiveI18n: {
-      type: GraphQLNonNull(getI18nOutputType(GraphQLBoolean, languageConfig))
+      type: GraphQLNonNull(getI18nOutputType(GraphQLBoolean, languageConfig)),
+      resolve: (parent: any) => {
+        if ('isActiveI18n' in parent) {
+          return parent.isActiveI18n
+        }
+        return languageConfig.languages.reduce((accu, lang) => {
+          accu[lang.tag] = true
+          return accu
+        }, {} as any)
+      }
     },
     shared: {type: GraphQLNonNull(GraphQLBoolean)}
   }
