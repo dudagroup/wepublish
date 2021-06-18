@@ -36,7 +36,6 @@ import {generateEmptyContent} from '../../business/contentUtil'
 
 export interface TypeGeneratorContext {
   language: LanguageConfig
-  isInput: boolean
   isPublic: boolean
   graphQlLanguages: GraphQLEnumType
   contentModels?: MapType<GraphQLObjectType>
@@ -45,14 +44,21 @@ export interface TypeGeneratorContext {
 function getLeaf(
   context: TypeGeneratorContext,
   contentModelSchemas: ContentModelSchemas,
-  graphQLType: GraphQLInputType | GraphQLOutputType
-) {
+  graphQLType: GraphQLOutputType
+): GraphQLOutputType {
   if ((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && !context.isPublic) {
-    if (context.isInput) {
-      return getI18nInputType(graphQLType as GraphQLInputType, context.language)
-    } else {
-      return getI18nOutputType(graphQLType as GraphQLOutputType, context.language)
-    }
+    return getI18nOutputType(graphQLType, context.language)
+  }
+  return graphQLType
+}
+
+function getInputLeaf(
+  context: TypeGeneratorContext,
+  contentModelSchemas: ContentModelSchemas,
+  graphQLType: GraphQLInputType
+): GraphQLInputType {
+  if ((contentModelSchemas as ContentModelSchemaFieldLeaf).i18n && !context.isPublic) {
+    return getI18nInputType(graphQLType, context.language)
   }
   return graphQLType
 }
@@ -61,8 +67,8 @@ function generateType(
   context: TypeGeneratorContext,
   contentModelSchemas: ContentModelSchemas,
   name = ''
-) {
-  let type: any
+): GraphQLOutputType {
+  let type: GraphQLOutputType
 
   switch (contentModelSchemas.type) {
     case ContentModelSchemaTypes.id:
@@ -88,46 +94,33 @@ function generateType(
       break
     case ContentModelSchemaTypes.union:
       // Let's evaluate and maybe switch to the new tagged type https://github.com/graphql/graphql-spec/pull/733
-      if (context.isInput) {
-        type = new GraphQLInputObjectType({
-          name,
-          fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-            accu[`${key}`] = {
-              type: generateType(context, {...val, optional: true}, nameJoin(name, key))
-            }
-            return accu
-          }, {} as GraphQLInputFieldConfigMap)
-        })
-      } else {
-        type = new GraphQLUnionType({
-          name,
-          types: Object.entries(contentModelSchemas.cases).map(([unionCase, val]) => {
-            const unionCaseName = nameJoin(name, unionCase)
-            return new GraphQLObjectType({
-              name: unionCaseName,
-              fields: {
-                [unionCase]: {
-                  type: new GraphQLObjectType({
-                    name: nameJoin(unionCaseName, 'content'),
-                    fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
-                      accu[`${key}`] = {
-                        type: generateType(context, val, nameJoin(unionCaseName, key)),
-                        deprecationReason: val.deprecationReason,
-                        description: val.instructions
-                      }
-                      return accu
-                    }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
-                  })
-                }
-              },
-              isTypeOf: createProxyingIsTypeOf((value: any) => {
-                return Object.keys(value)[0] === unionCase
-              })
+      type = new GraphQLUnionType({
+        name,
+        types: Object.entries(contentModelSchemas.cases).map(([unionCase, val]) => {
+          const unionCaseName = nameJoin(name, unionCase)
+          return new GraphQLObjectType({
+            name: unionCaseName,
+            fields: {
+              [unionCase]: {
+                type: new GraphQLObjectType({
+                  name: nameJoin(unionCaseName, 'content'),
+                  fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
+                    accu[`${key}`] = {
+                      type: generateType(context, val, nameJoin(unionCaseName, key)),
+                      deprecationReason: val.deprecationReason,
+                      description: val.instructions
+                    }
+                    return accu
+                  }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
+                })
+              }
+            },
+            isTypeOf: createProxyingIsTypeOf((value: any) => {
+              return Object.keys(value)[0] === unionCase
             })
           })
         })
-      }
-
+      })
       break
     case ContentModelSchemaTypes.enum:
       type = getLeaf(
@@ -143,43 +136,30 @@ function generateType(
       )
       break
     case ContentModelSchemaTypes.object:
-      if (context.isInput) {
-        type = new GraphQLInputObjectType({
-          name,
-          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
-            accu[key] = {
-              type: generateType(context, val, nameJoin(name, key)),
-              description: val.instructions
-            }
-            return accu
-          }, {} as GraphQLInputFieldConfigMap)
-        })
-      } else {
-        type = new GraphQLObjectType({
-          name,
-          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
-            accu[key] = {
-              type: generateType(context, modelSchema, nameJoin(name, key)),
-              resolve: !context.isPublic
-                ? (parent: any) => {
-                    if (typeof parent === 'object' && parent !== null && key in parent) {
-                      if (
-                        modelSchema.optional ||
-                        (parent[key] !== null && parent[key] !== undefined)
-                      ) {
-                        return parent[key]
-                      }
+      type = new GraphQLObjectType({
+        name,
+        fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
+          accu[key] = {
+            type: generateType(context, modelSchema, nameJoin(name, key)),
+            resolve: !context.isPublic
+              ? (parent: any) => {
+                  if (typeof parent === 'object' && parent !== null && key in parent) {
+                    if (
+                      modelSchema.optional ||
+                      (parent[key] !== null && parent[key] !== undefined)
+                    ) {
+                      return parent[key]
                     }
-                    return generateEmptyContent(modelSchema, context.language)
                   }
-                : undefined,
-              deprecationReason: modelSchema.deprecationReason,
-              description: modelSchema.instructions
-            }
-            return accu
-          }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
-        })
-      }
+                  return generateEmptyContent(modelSchema, context.language)
+                }
+              : undefined,
+            deprecationReason: modelSchema.deprecationReason,
+            description: modelSchema.instructions
+          }
+          return accu
+        }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
+      })
       break
 
     case ContentModelSchemaTypes.richText:
@@ -188,24 +168,99 @@ function generateType(
 
     case ContentModelSchemaTypes.reference:
       contentModelSchemas.optional = true // TODO reconsider if reference must be optional
-      if (context.isInput) {
-        type = getLeaf(context, contentModelSchemas, GraphQLReferenceInput)
-      } else {
-        type = getLeaf(
-          context,
-          contentModelSchemas,
-          getReference(name, contentModelSchemas, context)
-        )
-      }
+      type = getLeaf(context, contentModelSchemas, getReference(name, contentModelSchemas, context))
       break
 
     case ContentModelSchemaTypes.media:
       contentModelSchemas.optional = true // TODO reconsider if media must be optional
-      if (context.isInput) {
-        type = getLeaf(context, contentModelSchemas, GraphQLMediaInput)
-      } else {
-        type = getLeaf(context, contentModelSchemas, GraphQLMedia)
-      }
+      type = getLeaf(context, contentModelSchemas, GraphQLMedia)
+      break
+  }
+  if (!contentModelSchemas.optional) {
+    type = GraphQLNonNull(type)
+  }
+  return type
+}
+
+function generateInputType(
+  context: TypeGeneratorContext,
+  contentModelSchemas: ContentModelSchemas,
+  name = ''
+): GraphQLInputType {
+  let type: GraphQLInputType
+
+  switch (contentModelSchemas.type) {
+    case ContentModelSchemaTypes.id:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLID)
+      break
+    case ContentModelSchemaTypes.string:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLString)
+      break
+    case ContentModelSchemaTypes.boolean:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLBoolean)
+      break
+    case ContentModelSchemaTypes.int:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLInt)
+      break
+    case ContentModelSchemaTypes.float:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLFloat)
+      break
+    case ContentModelSchemaTypes.dateTime:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLDateTime)
+      break
+    case ContentModelSchemaTypes.list:
+      type = GraphQLList(generateInputType(context, contentModelSchemas.contentType, name))
+      break
+    case ContentModelSchemaTypes.union:
+      // Let's evaluate and maybe switch to the new tagged type https://github.com/graphql/graphql-spec/pull/733
+      type = new GraphQLInputObjectType({
+        name,
+        fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
+          accu[`${key}`] = {
+            type: generateInputType(context, {...val, optional: true}, nameJoin(name, key))
+          }
+          return accu
+        }, {} as GraphQLInputFieldConfigMap)
+      })
+      break
+    case ContentModelSchemaTypes.enum:
+      type = getInputLeaf(
+        context,
+        contentModelSchemas,
+        new GraphQLEnumType({
+          name,
+          values: contentModelSchemas.values.reduce((accu, item) => {
+            accu[`${item.value}`] = {value: item.value, description: item.description}
+            return accu
+          }, {} as GraphQLEnumValueConfigMap)
+        })
+      )
+      break
+    case ContentModelSchemaTypes.object:
+      type = new GraphQLInputObjectType({
+        name,
+        fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
+          accu[key] = {
+            type: generateInputType(context, val, nameJoin(name, key)),
+            description: val.instructions
+          }
+          return accu
+        }, {} as GraphQLInputFieldConfigMap)
+      })
+      break
+
+    case ContentModelSchemaTypes.richText:
+      type = getInputLeaf(context, contentModelSchemas, GraphQLRichText)
+      break
+
+    case ContentModelSchemaTypes.reference:
+      contentModelSchemas.optional = true // TODO reconsider if reference must be optional
+      type = getInputLeaf(context, contentModelSchemas, GraphQLReferenceInput)
+      break
+
+    case ContentModelSchemaTypes.media:
+      contentModelSchemas.optional = true // TODO reconsider if media must be optional
+      type = getInputLeaf(context, contentModelSchemas, GraphQLMediaInput)
       break
   }
   if (!contentModelSchemas.optional) {
@@ -258,7 +313,6 @@ export function generateSchema(
         const schema = generateType(
           {
             language: languageConfig,
-            isInput: false,
             isPublic,
             graphQlLanguages,
             contentModels
@@ -286,10 +340,9 @@ export function generateInputSchema(
   graphQlLanguages: GraphQLEnumType
 ) {
   const content = Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
-    const schema = generateType(
+    const schema = generateInputType(
       {
         language: languageConfig,
-        isInput: true,
         isPublic,
         graphQlLanguages
       },
