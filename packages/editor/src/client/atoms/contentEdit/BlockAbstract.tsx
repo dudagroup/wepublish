@@ -64,11 +64,11 @@ function BlockAbstract(props: BlockAbstractProps) {
   return <>{block}</>
 }
 
-export default memo(BlockAbstract, (a, b) => {
+export default memo(BlockAbstract, (prev, next) => {
   return (
-    Object.is(a.value, b.value) &&
-    a.schemaPath.concat('') === b.schemaPath.concat('') &&
-    Object.is(a.languageContext.langLane1, b.languageContext.langLane1) &&
-    Object.is(a.languageContext.langLane2, b.languageContext.langLane2)
+    Object.is(prev.value, next.value) &&
+    prev.schemaPath.join('') === next.schemaPath.join('') &&
+    Object.is(prev.languageContext.langLane1, next.languageContext.langLane1) &&
+    Object.is(prev.languageContext.langLane2, next.languageContext.langLane2)
   )
 })
