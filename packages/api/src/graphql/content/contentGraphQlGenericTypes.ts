@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
+  GraphQLFieldConfig,
   GraphQLFieldConfigMap,
   GraphQLFloat,
   GraphQLID,
@@ -13,6 +15,7 @@ import {
   GraphQLString,
   GraphQLUnionType
 } from 'graphql'
+import {Context} from '../../context'
 import {GraphQLRichText} from '../richText'
 import {GraphQLDateTime} from 'graphql-iso-date'
 import {LanguageConfig} from '../../interfaces/languageConfig'
@@ -29,6 +32,7 @@ import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia} from './media'
 import {nameJoin} from './contentUtils'
 import {generateEmptyContent} from '../../business/contentUtil'
+import {GraphQLJson} from './contentGraphQLTypes'
 
 export interface TypeGeneratorContext {
   language: LanguageConfig
@@ -90,13 +94,9 @@ function generateType(
                 type: new GraphQLObjectType({
                   name: nameJoin(unionCaseName, 'content'),
                   fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
-                    accu[`${key}`] = {
-                      type: generateType(context, val, nameJoin(unionCaseName, key)),
-                      deprecationReason: val.deprecationReason,
-                      description: val.instructions
-                    }
+                    accu[key] = generateFieldConfig(context, val, nameJoin(unionCaseName, key))
                     return accu
-                  }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
+                  }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
                 })
               }
             },
@@ -124,26 +124,9 @@ function generateType(
       type = new GraphQLObjectType({
         name,
         fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
-          accu[key] = {
-            type: generateType(context, modelSchema, nameJoin(name, key)),
-            resolve: !context.isPublic
-              ? (parent: any) => {
-                  if (typeof parent === 'object' && parent !== null && key in parent) {
-                    if (
-                      modelSchema.optional ||
-                      (parent[key] !== null && parent[key] !== undefined)
-                    ) {
-                      return parent[key]
-                    }
-                  }
-                  return generateEmptyContent(modelSchema, context.language)
-                }
-              : undefined,
-            deprecationReason: modelSchema.deprecationReason,
-            description: modelSchema.instructions
-          }
+          accu[key] = generateFieldConfig(context, modelSchema, nameJoin(name, key))
           return accu
-        }, {} as GraphQLFieldConfigMap<unknown, unknown, unknown>)
+        }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
       })
       break
 
@@ -167,6 +150,33 @@ function generateType(
   return type
 }
 
+function generateFieldConfig(
+  context: TypeGeneratorContext,
+  contentModelSchemas: ContentModelSchemas,
+  name = ''
+): GraphQLFieldConfig<unknown, Context, unknown> {
+  const fieldConfig: GraphQLFieldConfig<unknown, Context, unknown> = {
+    type: generateType(context, contentModelSchemas, name),
+    resolve: !context.isPublic
+      ? (parent: any, args, context, {fieldName}) => {
+          if (typeof parent === 'object' && parent !== null && fieldName in parent) {
+            if (
+              contentModelSchemas.optional ||
+              (parent[fieldName] !== null && parent[fieldName] !== undefined)
+            ) {
+              return parent[fieldName]
+            }
+          }
+          return generateEmptyContent(contentModelSchemas, context.languageConfig)
+        }
+      : undefined,
+    deprecationReason: contentModelSchemas.deprecationReason,
+    description: contentModelSchemas.instructions
+  }
+
+  return fieldConfig
+}
+
 export function generateSchema(
   languageConfig: LanguageConfig,
   identifier: string,
@@ -176,7 +186,7 @@ export function generateSchema(
   isPublic = false,
   graphQlLanguages: GraphQLEnumType
 ) {
-  const baseFields: GraphQLFieldConfigMap<unknown, unknown, unknown> = {
+  const baseFields: GraphQLFieldConfigMap<unknown, Context, unknown> = {
     id: {type: GraphQLNonNull(GraphQLID)},
     contentType: {type: GraphQLNonNull(GraphQLString)},
 
@@ -202,13 +212,23 @@ export function generateSchema(
         }, {} as any)
       }
     },
-    shared: {type: GraphQLNonNull(GraphQLBoolean)}
+    shared: {type: GraphQLNonNull(GraphQLBoolean)},
+    richTextReferences: {
+      type: GraphQLJson,
+      resolve: (parent: any, args, context) => {
+        return context.loaders.publicContentI18n.loadMany(
+          Object.values(parent.richTextReferences).map((ref: any) => {
+            return ref.recordId + '_' + context.queryArgs.language
+          })
+        )
+      }
+    }
   }
   contentModels[identifier] = new GraphQLObjectType({
     name: id,
     fields: () =>
       Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
-        const schema = generateType(
+        const fieldConfig = generateFieldConfig(
           {
             language: languageConfig,
             isPublic,
@@ -221,9 +241,7 @@ export function generateSchema(
           },
           nameJoin(id, key)
         )
-        accu[`${key}`] = {
-          type: schema
-        }
+        accu[key] = fieldConfig
         return accu
       }, baseFields)
   })

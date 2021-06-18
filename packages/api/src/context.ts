@@ -111,6 +111,7 @@ export interface OAuth2Clients {
 }
 
 export interface Context {
+  queryArgs: any
   readonly hostURL: string
   readonly websiteURL: string
 
@@ -258,7 +259,12 @@ export async function contextFromRequest(
     result.forEach((record, i) => {
       const model = contentModels?.find(m => m.identifier === record?.contentType)
       if (model) {
-        return flattenI18nLeafFieldsMap(languageConfig, model.schema, splitIdsLangs[i][1])(record)
+        return flattenI18nLeafFieldsMap(
+          {defaultLanguageTag: '', languageTag: '', richTextReferences: {}},
+          languageConfig,
+          model.schema,
+          splitIdsLangs[i][1]
+        )(record)
       }
       return null
     })
@@ -368,6 +374,7 @@ export async function contextFromRequest(
   })
 
   const context: Omit<Context, 'business'> = {
+    queryArgs: {},
     hostURL,
     websiteURL,
     session: isSessionValid ? session : null,

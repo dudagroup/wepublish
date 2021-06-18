@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLEnumValueConfigMap,
   GraphQLFloat,
   GraphQLID,
+  GraphQLInputFieldConfig,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -72,9 +74,7 @@ function generateInputType(
       type = new GraphQLInputObjectType({
         name,
         fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-          accu[`${key}`] = {
-            type: generateInputType(context, {...val, optional: true}, nameJoin(name, key))
-          }
+          accu[key] = generateFieldConfig(context, {...val, optional: true}, nameJoin(name, key))
           return accu
         }, {} as GraphQLInputFieldConfigMap)
       })
@@ -96,10 +96,7 @@ function generateInputType(
       type = new GraphQLInputObjectType({
         name,
         fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
-          accu[key] = {
-            type: generateInputType(context, val, nameJoin(name, key)),
-            description: val.instructions
-          }
+          accu[key] = generateFieldConfig(context, val, nameJoin(name, key))
           return accu
         }, {} as GraphQLInputFieldConfigMap)
       })
@@ -125,6 +122,19 @@ function generateInputType(
   return type
 }
 
+function generateFieldConfig(
+  context: TypeGeneratorContext,
+  contentModelSchemas: ContentModelSchemas,
+  name = ''
+): GraphQLInputFieldConfig {
+  const fieldConfig: GraphQLInputFieldConfig = {
+    type: generateInputType(context, contentModelSchemas, name),
+    description: contentModelSchemas.instructions
+  }
+
+  return fieldConfig
+}
+
 export function generateInputSchema(
   languageConfig: LanguageConfig,
   identifier: string,
@@ -133,7 +143,7 @@ export function generateInputSchema(
   graphQlLanguages: GraphQLEnumType
 ) {
   const content = Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
-    const schema = generateInputType(
+    const fieldConfig = generateFieldConfig(
       {
         language: languageConfig,
         isPublic,
@@ -145,9 +155,7 @@ export function generateInputSchema(
       },
       nameJoin(identifier, key)
     )
-    accu[key] = {
-      type: schema
-    }
+    accu[key] = fieldConfig
     return accu
   }, {} as GraphQLInputFieldConfigMap)
   return {

@@ -50,7 +50,10 @@ import {
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
 import {generateSchema} from './contentGraphQlGenericTypes'
-import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
+import {
+  FlattenI18nLeafFieldsContext,
+  flattenI18nLeafFieldsMap
+} from '../../business/contentModelBusiness'
 import {getFilter} from './contentGraphQLFilter'
 import {getI18nOutputType} from '../i18nPrimitives'
 import {generateInputSchema} from './contentGraphQlGenericInputTypes'
@@ -118,14 +121,18 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 language: {type: graphQlLanguages},
                 previewToken: {type: GraphQLString}
               },
-              async resolve(
-                source,
-                {id, slug, language, previewToken},
-                {loaders, dbAdapter, verifyJWT}
-              ) {
+              async resolve(source, {id, slug, language, previewToken}, context) {
+                const flattenI18nLeafFieldsContext: FlattenI18nLeafFieldsContext = {
+                  defaultLanguageTag: '',
+                  languageTag: '',
+                  richTextReferences: {}
+                }
+
+                const {loaders, dbAdapter, verifyJWT} = context
                 if (previewToken) {
                   verifyJWT(previewToken)
                 }
+                context.queryArgs.language = language || context.languageConfig.defaultLanguageTag
                 if (id) {
                   let result
                   if (previewToken) {
@@ -136,11 +143,14 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   if (result?.contentType !== model.identifier) {
                     return null
                   }
+
                   flattenI18nLeafFieldsMap(
+                    flattenI18nLeafFieldsContext,
                     contextOptions.languageConfig,
                     model.schema,
                     language
                   )(result)
+                  result.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
                   return result
                 } else if (slug && language) {
                   const result = await dbAdapter.content.getContentBySlug(
@@ -152,10 +162,13 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     return null
                   }
                   flattenI18nLeafFieldsMap(
+                    flattenI18nLeafFieldsContext,
                     contextOptions.languageConfig,
                     model.schema,
                     language
                   )(result)
+                  result.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
+                  console.log('result.richTextReferences', result.richTextReferences)
                   return result
                 }
                 return null
@@ -192,9 +205,9 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
               resolve: async (
                 source,
                 {filter, sort, order, after, before, first, skip, last, language},
-                {dbAdapter}
+                context
               ) => {
-                const result = await dbAdapter.content.getContents(
+                const result = await context.dbAdapter.content.getContents(
                   {
                     types: [model.identifier],
                     filter,
@@ -208,7 +221,12 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   true
                 )
                 result.nodes.forEach(
-                  flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
+                  flattenI18nLeafFieldsMap(
+                    {defaultLanguageTag: '', languageTag: '', richTextReferences: {}},
+                    contextOptions.languageConfig,
+                    model.schema,
+                    language
+                  )
                 )
                 return result
               }
