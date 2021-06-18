@@ -7,7 +7,8 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLString
+  GraphQLString,
+  valueFromASTUntyped
 } from 'graphql'
 import {LanguageConfigItem} from '../../interfaces/languageConfig'
 import {ContentSort} from './contentInterfaces'
@@ -38,6 +39,21 @@ export const GraphQLPublicContentSort = new GraphQLEnumType({
   values: {
     PUBLISHED_AT: {value: ContentSort.PublishedAt},
     UPDATED_AT: {value: ContentSort.UpdatedAt}
+  }
+})
+
+export const GraphQLJson = new GraphQLScalarType({
+  name: 'Json',
+  serialize(value) {
+    return value
+  },
+
+  parseValue(value) {
+    return value
+  },
+
+  parseLiteral(literal) {
+    return valueFromASTUntyped(literal)
   }
 })
 
