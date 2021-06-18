@@ -5,6 +5,7 @@ export enum ContentEditActionEnum {
   setInitialState = 'setInitialState',
   update = 'update',
   splice = 'splice',
+  swap = 'swap',
   push = 'push',
   unset = 'unset',
   hasChanged = 'hasChanged'
@@ -15,6 +16,7 @@ export type ContentEditAction =
   | ContentEditActionSplice
   | ContentEditActionPush
   | ContentEditActionUnset
+  | ContentEditActionSwap
 
 export interface ContentEditActionBase {
   type: ContentEditActionEnum
@@ -37,6 +39,12 @@ export interface ContentEditActionSplice extends ContentEditActionBase {
   start: number
   delete?: number
   insert?: unknown[]
+}
+
+export interface ContentEditActionSwap extends ContentEditActionBase {
+  type: ContentEditActionEnum.swap
+  path: SchemaPath
+  index: number
 }
 
 export interface ContentEditActionPush extends ContentEditActionBase {
@@ -92,6 +100,22 @@ export function contentReducer(state: State, action: ContentEditAction) {
         state,
         createSpec(actionSplice.path, {
           $splice: [[actionSplice.start, actionSplice.delete || 0, ...insert]]
+        })
+      )
+    }
+
+    case ContentEditActionEnum.swap: {
+      const actionSwap = action as ContentEditActionSwap
+      return update(
+        state,
+        createSpec(actionSwap.path, {
+          $apply: (current: unknown[]) => {
+            const a = current[actionSwap.index]
+            const b = current[actionSwap.index + 1]
+            return update(current, {
+              $splice: [[actionSwap.index, 2, b, a]]
+            })
+          }
         })
       )
     }
