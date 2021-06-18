@@ -49,10 +49,11 @@ import {
   ContentModelPrefixPrivateInput
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
-import {generateInputSchema, generateSchema} from './contentGraphQlGenericTypes'
+import {generateSchema} from './contentGraphQlGenericTypes'
 import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
 import {getFilter} from './contentGraphQLFilter'
 import {getI18nOutputType} from '../i18nPrimitives'
+import {generateInputSchema} from './contentGraphQlGenericInputTypes'
 
 export interface PeerContent {
   peerID: string
