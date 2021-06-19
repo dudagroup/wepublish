@@ -24,6 +24,7 @@ import {createProxyingIsTypeOf} from '../../utility'
 import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldRefTypeMap,
   ContentModelSchemas,
   ContentModelSchemaTypes
 } from '../../interfaces/contentModelSchema'
@@ -32,7 +33,7 @@ import {MapType} from '../../interfaces/utilTypes'
 import {GraphQLMedia} from './media'
 import {nameJoin} from './contentUtils'
 import {generateEmptyContent} from '../../business/contentUtil'
-import {GraphQLJson} from './contentGraphQLTypes'
+import {ContentModel} from '../..'
 
 export interface TypeGeneratorContext {
   language: LanguageConfig
@@ -177,6 +178,7 @@ function generateFieldConfig(
   return fieldConfig
 }
 
+const cache: any = {}
 export function generateSchema(
   languageConfig: LanguageConfig,
   identifier: string,
@@ -184,7 +186,8 @@ export function generateSchema(
   contentModelSchema: ContentModelSchema,
   contentModels: MapType<GraphQLObjectType>,
   isPublic = false,
-  graphQlLanguages: GraphQLEnumType
+  graphQlLanguages: GraphQLEnumType,
+  contentModelConfigs: ContentModel[]
 ) {
   const baseFields: GraphQLFieldConfigMap<unknown, Context, unknown> = {
     id: {type: GraphQLNonNull(GraphQLID)},
@@ -212,29 +215,46 @@ export function generateSchema(
         }, {} as any)
       }
     },
-    shared: {type: GraphQLNonNull(GraphQLBoolean)},
-    richTextReferences: {
-      type: GraphQLJson,
-      resolve: (parent: any, args, context) => {
-        return context.loaders.publicContentI18n.loadMany(
-          Object.values(parent.richTextReferences).map((ref: any) => {
-            return ref.recordId + '_' + context.queryArgs.language
-          })
-        )
-      }
-    }
+    shared: {type: GraphQLNonNull(GraphQLBoolean)}
   }
   contentModels[identifier] = new GraphQLObjectType({
     name: id,
-    fields: () =>
-      Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
-        const fieldConfig = generateFieldConfig(
+    fields: () => {
+      // fields def as function allows circular dependencies
+
+      const typeGeneratorContext: TypeGeneratorContext = {
+        language: languageConfig,
+        isPublic,
+        graphQlLanguages,
+        contentModels
+      }
+
+      const prefix = isPublic ? '_cmRef' : '_cmpRef'
+      const name = prefix + '_' + 'richtext_references'
+      if (!cache[name]) {
+        cache[name] = getReference(
+          name,
           {
-            language: languageConfig,
-            isPublic,
-            graphQlLanguages,
-            contentModels
+            type: ContentModelSchemaTypes.reference,
+            types: contentModelConfigs.reduce((accu, config) => {
+              accu[config.identifier] = {scope: 'local'}
+              return accu
+            }, {} as ContentModelSchemaFieldRefTypeMap)
           },
+          typeGeneratorContext
+        )
+      }
+
+      baseFields.richTextReferences = {
+        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(cache[name]))),
+        resolve: (parent: any) => {
+          return Object.values(parent.richTextReferences)
+        }
+      }
+
+      return Object.entries(contentModelSchema).reduce((accu, [key, val]) => {
+        const fieldConfig = generateFieldConfig(
+          typeGeneratorContext,
           {
             type: ContentModelSchemaTypes.object,
             fields: val
@@ -244,6 +264,7 @@ export function generateSchema(
         accu[key] = fieldConfig
         return accu
       }, baseFields)
+    }
   })
   return contentModels[identifier]
 }
