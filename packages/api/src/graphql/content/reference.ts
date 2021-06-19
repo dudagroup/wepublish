@@ -64,6 +64,8 @@ export function getReference(
         let graphQLUnionCase: GraphQLType = GraphQLUnknown
         if (context.contentModels?.[contentType]) {
           graphQLUnionCase = context.contentModels[contentType]
+        } else {
+          console.error(`Was not able to resolve a reference of type ${contentType}`)
         }
 
         refRecordTypeCache[unionCaseObjectName] = new GraphQLObjectType({

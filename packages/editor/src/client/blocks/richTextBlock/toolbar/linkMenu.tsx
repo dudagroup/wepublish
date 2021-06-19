@@ -86,10 +86,10 @@ export function LinkMenu() {
 
   return (
     <>
-      <Form fluid>
+      <Form fluid style={{width: '500px'}}>
         <FormGroup>
           <ControlLabel>{t('blocks.richText.link')}</ControlLabel>
-          <InputGroup>
+          <InputGroup style={{width: '100%'}}>
             <select
               style={{backgroundColor: 'white', border: 'none', boxShadow: 'none'}}
               value={prefix}
@@ -139,6 +139,9 @@ export function LinkMenu() {
 
 async function validateURL(url: string) {
   if (url) {
+    if (url.startsWith('/')) {
+      return true
+    }
     const pattern = new RegExp(
       '^(https?:\\/\\/)?' + // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name

@@ -86,7 +86,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       model.schema,
       contentModelsPublic,
       true,
-      graphQlLanguages
+      graphQlLanguages,
+      contextOptions.contentModels || []
     )
     const typePrivate = generateSchema(
       contextOptions.languageConfig,
@@ -95,7 +96,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       model.schema,
       contentModelsPrivate,
       false,
-      graphQlLanguages
+      graphQlLanguages,
+      contextOptions.contentModels || []
     )
     const {create: inputTypeCreate, update: inputTypeUpdate} = generateInputSchema(
       contextOptions.languageConfig,
@@ -168,7 +170,6 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     language
                   )(result)
                   result.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
-                  console.log('result.richTextReferences', result.richTextReferences)
                   return result
                 }
                 return null
