@@ -46,7 +46,11 @@ import {MemberContext} from './memberContext'
 import {Client, Issuer} from 'openid-client'
 import {LanguageConfig} from './interfaces/languageConfig'
 import {OptionalContent} from './db/content'
-import {BusinessLogic, flattenI18nLeafFieldsMap} from './business/contentModelBusiness'
+import {
+  BusinessLogic,
+  FlattenI18nLeafFieldsContext,
+  flattenI18nLeafFieldsMap
+} from './business/contentModelBusiness'
 import {ContentModelSchema} from './interfaces/contentModelSchema'
 
 export interface ContentModel {
@@ -259,12 +263,22 @@ export async function contextFromRequest(
     result.forEach((record, i) => {
       const model = contentModels?.find(m => m.identifier === record?.contentType)
       if (model) {
-        return flattenI18nLeafFieldsMap(
-          {defaultLanguageTag: '', languageTag: '', richTextReferences: {}},
+        const flattenI18nLeafFieldsContext: FlattenI18nLeafFieldsContext = {
+          defaultLanguageTag: '',
+          languageTag: '',
+          richTextReferences: {}
+        }
+
+        flattenI18nLeafFieldsMap(
+          flattenI18nLeafFieldsContext,
           languageConfig,
           model.schema,
           splitIdsLangs[i][1]
         )(record)
+        if (record) {
+          record.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
+        }
+        return record
       }
       return null
     })
