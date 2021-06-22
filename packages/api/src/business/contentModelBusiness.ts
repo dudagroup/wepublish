@@ -254,12 +254,14 @@ function flattenI18nLeafFields(
 }
 
 function richTextReferences(validatorContext: FlattenI18nLeafFieldsContext, data: any[]) {
-  for (const node of data) {
-    if (node.children) {
-      richTextReferences(validatorContext, node.children)
-    }
-    if (node.type === 'reference' && node.reference) {
-      validatorContext.richTextReferences[node.reference.recordId] = node.reference
+  if (data && Array.isArray(data)) {
+    for (const node of data) {
+      if (node.children) {
+        richTextReferences(validatorContext, node.children)
+      }
+      if (node.type === 'reference' && node.reference) {
+        validatorContext.richTextReferences[node.reference.recordId] = node.reference
+      }
     }
   }
 }
