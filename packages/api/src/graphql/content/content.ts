@@ -21,8 +21,7 @@ import {
   getGraphQLLanguagesEnum,
   getGraphQLPeerCustomContent,
   GraphQLContentFilter,
-  GraphQLContentSort,
-  GraphQLPublicContentSort
+  GraphQLContentSort
 } from './contentGraphQLTypes'
 import {GraphQLPageInfo, GraphQLSortOrder} from '../common'
 import {
@@ -57,6 +56,7 @@ import {
 import {getFilter} from './contentGraphQLFilter'
 import {getI18nOutputType} from '../i18nPrimitives'
 import {generateInputSchema} from './contentGraphQlGenericInputTypes'
+import {getSort} from './contentGraphQlSort'
 
 export interface PeerContent {
   peerID: string
@@ -107,6 +107,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       graphQlLanguages
     )
     const filter = getFilter(contextOptions.languageConfig, model.identifier, model.schema, false)
+    const sort = getSort(contextOptions.languageConfig, model.identifier, model.schema, false)
 
     // ************************************************************************************************************************
     // Public Query
@@ -198,8 +199,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 skip: {type: GraphQLInt},
                 filter: {type: filter},
                 sort: {
-                  type: GraphQLPublicContentSort,
-                  defaultValue: ContentSort.PublishedAt
+                  type: sort,
+                  defaultValue: ContentSort.PublicationDate
                 },
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
@@ -404,7 +405,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 last: {type: GraphQLInt},
                 skip: {type: GraphQLInt},
                 filter: {type: filter},
-                sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
+                sort: {type: sort, defaultValue: ContentSort.ModifiedAt},
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
                 language: {type: graphQlLanguages}
               },
@@ -688,7 +689,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     )
                     break
 
-                  case ContentSort.PublishAt:
+                  case ContentSort.PublicationDate:
                     peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishAt).getTime() -
@@ -696,19 +697,11 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     )
                     break
 
-                  case ContentSort.PublishedAt:
+                  case ContentSort.DePublicationDate:
                     peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishedAt).getTime() -
                         new Date(a.content.latest.publishedAt).getTime()
-                    )
-                    break
-
-                  case ContentSort.UpdatedAt:
-                    peerContents.sort(
-                      (a, b) =>
-                        new Date(b.content.latest.updatedAt).getTime() -
-                        new Date(a.content.latest.updatedAt).getTime()
                     )
                     break
                 }
