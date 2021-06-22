@@ -9,6 +9,9 @@ export function slugify(str: string) {
   return str
     .toLowerCase()
     .trim()
+    .replace(/[Ä]/gi, 'ae')
+    .replace(/[Ö]/gi, 'oe')
+    .replace(/[Ü]/gi, 'ue')
     .replace(/[ÀÁÂÃÄÅÆĀĂĄẠẢẤẦẨẪẬẮẰẲẴẶ]/gi, 'a')
     .replace(/[ÇĆĈČ]/gi, 'c')
     .replace(/[ÐĎĐÞ]/gi, 'd')
