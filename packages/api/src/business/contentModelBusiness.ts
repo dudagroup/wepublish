@@ -44,11 +44,15 @@ export class BusinessLogic {
     const validatorContext: ValidatorContext = {
       context: this.context,
       searchTermsI18n: {},
-      searchTerms: ''
+      searchTerms: '',
+      errors: []
     }
-    await validateInput(validatorContext, schema.schema.content, input.content)
-    await validateInput(validatorContext, schema.schema.meta, input.meta)
+    await validateInput(validatorContext, ['content'], schema.schema.content, input.content)
+    await validateInput(validatorContext, ['meta'], schema.schema.meta, input.meta)
 
+    if (validatorContext.errors.length > 0) {
+      throw new Error(validatorContext.errors.join(', '))
+    }
     return this.context.dbAdapter.content.createContent({
       input: {
         ...input,
@@ -77,15 +81,26 @@ export class BusinessLogic {
     const validatorContext: ValidatorContext = {
       context: this.context,
       searchTermsI18n: {},
-      searchTerms: ''
+      searchTerms: '',
+      errors: []
     }
     await validateInput(
       validatorContext,
+      ['content'],
       schema.schema.content,
       input.content,
       persistentData?.content
     )
-    await validateInput(validatorContext, schema.schema.meta, input.meta, persistentData?.meta)
+    await validateInput(
+      validatorContext,
+      ['meta'],
+      schema.schema.meta,
+      input.meta,
+      persistentData?.meta
+    )
+    if (validatorContext.errors.length > 0) {
+      throw new Error(validatorContext.errors.join(', '))
+    }
 
     return this.context.dbAdapter.content.updateContent({
       input: {
