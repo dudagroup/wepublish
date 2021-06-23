@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {Context} from '../context'
 import {Content} from '../db/content'
 import nanoid from 'nanoid/generate'
@@ -19,6 +20,7 @@ import {destructUnionCase} from '../utility'
 import {LanguageConfig} from '../interfaces/languageConfig'
 import {validateInput, ValidatorContext} from './contentModelBusinessInputValidation'
 import {generateEmptyContent} from './contentUtil'
+import {Reference} from '../interfaces/referenceType'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -130,16 +132,70 @@ export class BusinessLogic {
   }
 }
 
-interface flattenI18nLeafFieldsContext {
+export interface FlattenI18nLeafFieldsContext {
   languageTag: string
   defaultLanguageTag: string
+  richTextReferences: MapType<Reference>
 }
 
 function flattenI18nLeafFields(
-  validatorContext: flattenI18nLeafFieldsContext,
+  validatorContext: FlattenI18nLeafFieldsContext,
   schema: ContentModelSchemas,
   data: any
 ) {
+  function andleDefaultValue() {
+    const schemaLeaf = schema as ContentModelSchemaFieldString
+    if (schemaLeaf.i18n) {
+      if (data && validatorContext.languageTag in data) {
+        if (
+          (schemaLeaf.optional && !schemaLeaf.i18nFallbackToDefaultLanguage) ||
+          (data[validatorContext.languageTag] !== null &&
+            data[validatorContext.languageTag] !== undefined)
+        ) {
+          return data[validatorContext.languageTag]
+        }
+      }
+
+      if (
+        schemaLeaf.i18nFallbackToDefaultLanguage &&
+        data &&
+        validatorContext.defaultLanguageTag in data
+      ) {
+        if (
+          schemaLeaf.optional ||
+          (data[validatorContext.defaultLanguageTag] !== null &&
+            data[validatorContext.defaultLanguageTag] !== undefined)
+        ) {
+          return data[validatorContext.defaultLanguageTag]
+        }
+      }
+
+      const emptyData: any = generateEmptyContent(schemaLeaf, {
+        defaultLanguageTag: validatorContext.languageTag,
+        languages: [
+          {
+            tag: validatorContext.languageTag,
+            description: ''
+          }
+        ]
+      })
+      return emptyData[validatorContext.languageTag]
+    }
+
+    if (schemaLeaf.optional || (data !== null && data !== undefined)) {
+      return data
+    }
+    const emptyData: any = generateEmptyContent(schemaLeaf, {
+      defaultLanguageTag: validatorContext.languageTag,
+      languages: [
+        {
+          tag: validatorContext.languageTag,
+          description: ''
+        }
+      ]
+    })
+    return emptyData
+  }
   switch (schema.type) {
     case ContentModelSchemaTypes.object: {
       if (!(data && typeof data === 'object')) {
@@ -188,63 +244,30 @@ function flattenI18nLeafFields(
     }
 
     default: {
-      const schemaLeaf = schema as ContentModelSchemaFieldString
-      if (schemaLeaf.i18n) {
-        if (data && validatorContext.languageTag in data) {
-          if (
-            (schemaLeaf.optional && !schemaLeaf.i18nFallbackToDefaultLanguage) ||
-            (data[validatorContext.languageTag] !== null &&
-              data[validatorContext.languageTag] !== undefined)
-          ) {
-            return data[validatorContext.languageTag]
-          }
-        }
-
-        if (
-          schemaLeaf.i18nFallbackToDefaultLanguage &&
-          data &&
-          validatorContext.defaultLanguageTag in data
-        ) {
-          if (
-            schemaLeaf.optional ||
-            (data[validatorContext.defaultLanguageTag] !== null &&
-              data[validatorContext.defaultLanguageTag] !== undefined)
-          ) {
-            return data[validatorContext.defaultLanguageTag]
-          }
-        }
-
-        const emptyData: any = generateEmptyContent(schemaLeaf, {
-          defaultLanguageTag: validatorContext.languageTag,
-          languages: [
-            {
-              tag: validatorContext.languageTag,
-              description: ''
-            }
-          ]
-        })
-        return emptyData[validatorContext.languageTag]
+      const r = andleDefaultValue()
+      if (schema.type === ContentModelSchemaTypes.richText) {
+        richTextReferences(validatorContext, r)
       }
+      return r
+    }
+  }
+}
 
-      if (schemaLeaf.optional || (data !== null && data !== undefined)) {
-        return data
+function richTextReferences(validatorContext: FlattenI18nLeafFieldsContext, data: any[]) {
+  if (data && Array.isArray(data)) {
+    for (const node of data) {
+      if (node.children) {
+        richTextReferences(validatorContext, node.children)
       }
-      const emptyData: any = generateEmptyContent(schemaLeaf, {
-        defaultLanguageTag: validatorContext.languageTag,
-        languages: [
-          {
-            tag: validatorContext.languageTag,
-            description: ''
-          }
-        ]
-      })
-      return emptyData
+      if (node.type === 'reference' && node.reference) {
+        validatorContext.richTextReferences[node.reference.recordId] = node.reference
+      }
     }
   }
 }
 
 function flattenI18nLeafFieldsOnRecord(
-  validatorContext: flattenI18nLeafFieldsContext,
+  validatorContext: FlattenI18nLeafFieldsContext,
   modelSchema: ContentModelSchema,
   record: any
 ) {
@@ -269,6 +292,7 @@ function flattenI18nLeafFieldsOnRecord(
 }
 
 export function flattenI18nLeafFieldsMap(
+  validatorContext: FlattenI18nLeafFieldsContext,
   languageConfig: LanguageConfig,
   modelSchema: ContentModelSchema,
   language?: string
@@ -280,11 +304,9 @@ export function flattenI18nLeafFieldsMap(
   } else {
     languageTag = languageConfig.defaultLanguageTag
   }
+  validatorContext.languageTag = languageTag
+  validatorContext.defaultLanguageTag = languageConfig.defaultLanguageTag
   return (record: any) => {
-    return flattenI18nLeafFieldsOnRecord(
-      {languageTag, defaultLanguageTag: languageConfig.defaultLanguageTag},
-      modelSchema,
-      record
-    )
+    return flattenI18nLeafFieldsOnRecord(validatorContext, modelSchema, record)
   }
 }

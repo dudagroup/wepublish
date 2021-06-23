@@ -119,7 +119,15 @@ export class MongoDBContentAdapter implements DBContentAdapter {
         ? '$lt'
         : '$gt'
 
-    const sortField = contentSortFieldForSort(sort)
+    let sortField = ContentSort.CreatedAt.toString()
+    if (sort && sort.length > 0) {
+      const path = sort.split(PATH_DELIMITER)
+      if (path[0] === 'i18n') {
+        path.shift()
+        path.push(language || languageConfig.defaultLanguageTag)
+      }
+      sortField = path.join('.')
+    }
     const cursorFilter = cursorData
       ? {
           $or: [
@@ -257,25 +265,6 @@ export class MongoDBContentAdapter implements DBContentAdapter {
 
       totalCount
     }
-  }
-}
-
-function contentSortFieldForSort(sort: ContentSort) {
-  switch (sort) {
-    case ContentSort.CreatedAt:
-      return 'createdAt'
-
-    case ContentSort.ModifiedAt:
-      return 'modifiedAt'
-
-    case ContentSort.PublishedAt:
-      return 'published.publishedAt'
-
-    case ContentSort.UpdatedAt:
-      return 'published.updatedAt'
-
-    case ContentSort.PublishAt:
-      return 'pending.publishAt'
   }
 }
 

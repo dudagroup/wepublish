@@ -7,13 +7,14 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLString
+  GraphQLString,
+  valueFromASTUntyped
 } from 'graphql'
 import {LanguageConfigItem} from '../../interfaces/languageConfig'
-import {ContentSort} from './contentInterfaces'
 import {Context} from '../../context'
 import {GraphQLPageInfo} from '../common'
 import {GraphQLPeer} from '../peer'
+import {ContentSort} from './contentInterfaces'
 
 export const GraphQLContentFilter = new GraphQLInputObjectType({
   name: 'ContentFilter',
@@ -25,19 +26,25 @@ export const GraphQLContentFilter = new GraphQLInputObjectType({
 export const GraphQLContentSort = new GraphQLEnumType({
   name: 'ContentSort',
   values: {
-    CREATED_AT: {value: ContentSort.CreatedAt},
-    MODIFIED_AT: {value: ContentSort.ModifiedAt},
-    PUBLISH_AT: {value: ContentSort.PublishAt},
-    PUBLISHED_AT: {value: ContentSort.PublishedAt},
-    UPDATED_AT: {value: ContentSort.UpdatedAt}
+    [ContentSort.CreatedAt]: {value: ContentSort.CreatedAt},
+    [ContentSort.ModifiedAt]: {value: ContentSort.ModifiedAt},
+    [ContentSort.PublicationDate]: {value: ContentSort.PublicationDate},
+    [ContentSort.DePublicationDate]: {value: ContentSort.DePublicationDate}
   }
 })
 
-export const GraphQLPublicContentSort = new GraphQLEnumType({
-  name: 'ContentSort',
-  values: {
-    PUBLISHED_AT: {value: ContentSort.PublishedAt},
-    UPDATED_AT: {value: ContentSort.UpdatedAt}
+export const GraphQLJson = new GraphQLScalarType({
+  name: 'Json',
+  serialize(value) {
+    return value
+  },
+
+  parseValue(value) {
+    return value
+  },
+
+  parseLiteral(literal) {
+    return valueFromASTUntyped(literal)
   }
 })
 

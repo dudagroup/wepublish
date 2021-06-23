@@ -50,7 +50,7 @@ function mapColumFieldToGraphQLField(columnField: string): ContentSort | null {
     case 'modifiedAt':
       return ContentSort.ModifiedAt
     case 'publishAt':
-      return ContentSort.PublishAt
+      return ContentSort.PublicationDate
     default:
       return null
   }

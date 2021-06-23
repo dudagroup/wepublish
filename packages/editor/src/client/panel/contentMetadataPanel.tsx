@@ -24,6 +24,7 @@ export interface DefaultMetadata {
   readonly title: string
   readonly shared: boolean
   readonly slugI18n: MapType<string>
+  readonly isActiveI18n: MapType<boolean>
 }
 
 export interface ContentMetadataPanelProps {
@@ -43,14 +44,14 @@ export function ContentMetadataPanel({
   config,
   meta
 }: ContentMetadataPanelProps) {
-  const {title, slugI18n, shared} = defaultMetadata
+  const {title, slugI18n, isActiveI18n, shared} = defaultMetadata
   const {t} = useTranslation()
 
   const [componentLane1, componentLane2] = langLanes.map((lang, index) => {
     const slug = slugI18n?.[lang] || ''
 
     let deriveButton = null
-    if (config.deriveSlug) {
+    if (config.deriveSlug && index === 0) {
       deriveButton = (
         <Whisper
           placement="top"
@@ -116,10 +117,27 @@ export function ContentMetadataPanel({
           <ControlLabel>{t('articleEditor.panels.slug')}</ControlLabel>
           <I18nWrapper lane1={componentLane1} lane2={componentLane2} />
         </FormGroup>
-      </Form>
-      <Form fluid layout="horizontal" style={{marginTop: '20px'}}>
         <FormGroup>
-          <span style={{marginRight: 10}}>{t('articleEditor.panels.allowPeerPublishing')}</span>
+          <ControlLabel>{`is content for language ${langLanes[0]} active`}</ControlLabel>
+          <I18nWrapper
+            lane1={
+              <Toggle
+                checkedChildren={t('global.buttons.yes')}
+                unCheckedChildren={t('global.buttons.no')}
+                checked={isActiveI18n[langLanes[0]]}
+                onChange={val =>
+                  onChangeDefaultMetadata?.({
+                    ...defaultMetadata,
+                    isActiveI18n: {...isActiveI18n, [langLanes[0]]: Boolean(val)}
+                  })
+                }
+              />
+            }
+            lane2={<Toggle checked={isActiveI18n[langLanes[1]]} disabled={true} />}
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>{t('articleEditor.panels.allowPeerPublishing')}</ControlLabel>
           <Toggle
             checkedChildren={t('global.buttons.yes')}
             unCheckedChildren={t('global.buttons.no')}

@@ -42,11 +42,9 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
           size="xs"
           onClick={() => {
             dispatch({
-              type: ContentEditActionEnum.splice,
+              type: ContentEditActionEnum.swap,
               path: childSchemaPath,
-              start: index - 1,
-              delete: 2,
-              insert: [item, array[index - 1]]
+              index: index - 1
             })
           }}
         />
@@ -61,11 +59,9 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
           size="xs"
           onClick={() => {
             dispatch({
-              type: ContentEditActionEnum.splice,
+              type: ContentEditActionEnum.swap,
               path: childSchemaPath,
-              start: index,
-              delete: 2,
-              insert: [array[index + 1], item]
+              index: index
             })
           }}
         />

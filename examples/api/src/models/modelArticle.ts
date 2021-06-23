@@ -245,9 +245,6 @@ const teaserGrid: ContentModelSchemaFieldObject = {
             types: {
               article: {
                 scope: 'all'
-              },
-              page: {
-                scope: 'local'
               }
             }
           }

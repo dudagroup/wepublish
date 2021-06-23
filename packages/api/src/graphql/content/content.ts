@@ -21,8 +21,7 @@ import {
   getGraphQLLanguagesEnum,
   getGraphQLPeerCustomContent,
   GraphQLContentFilter,
-  GraphQLContentSort,
-  GraphQLPublicContentSort
+  GraphQLContentSort
 } from './contentGraphQLTypes'
 import {GraphQLPageInfo, GraphQLSortOrder} from '../common'
 import {
@@ -49,10 +48,15 @@ import {
   ContentModelPrefixPrivateInput
 } from './contentUtils'
 import {MapType} from '../../interfaces/utilTypes'
-import {generateInputSchema, generateSchema} from './contentGraphQlGenericTypes'
-import {flattenI18nLeafFieldsMap} from '../../business/contentModelBusiness'
+import {generateSchema} from './contentGraphQlGenericTypes'
+import {
+  FlattenI18nLeafFieldsContext,
+  flattenI18nLeafFieldsMap
+} from '../../business/contentModelBusiness'
 import {getFilter} from './contentGraphQLFilter'
 import {getI18nOutputType} from '../i18nPrimitives'
+import {generateInputSchema} from './contentGraphQlGenericInputTypes'
+import {getSort} from './contentGraphQlSort'
 
 export interface PeerContent {
   peerID: string
@@ -82,7 +86,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       model.schema,
       contentModelsPublic,
       true,
-      graphQlLanguages
+      graphQlLanguages,
+      contextOptions.contentModels || []
     )
     const typePrivate = generateSchema(
       contextOptions.languageConfig,
@@ -91,7 +96,8 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       model.schema,
       contentModelsPrivate,
       false,
-      graphQlLanguages
+      graphQlLanguages,
+      contextOptions.contentModels || []
     )
     const {create: inputTypeCreate, update: inputTypeUpdate} = generateInputSchema(
       contextOptions.languageConfig,
@@ -101,6 +107,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       graphQlLanguages
     )
     const filter = getFilter(contextOptions.languageConfig, model.identifier, model.schema, false)
+    const sort = getSort(contextOptions.languageConfig, model.identifier, model.schema, false)
 
     // ************************************************************************************************************************
     // Public Query
@@ -117,14 +124,18 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 language: {type: graphQlLanguages},
                 previewToken: {type: GraphQLString}
               },
-              async resolve(
-                source,
-                {id, slug, language, previewToken},
-                {loaders, dbAdapter, verifyJWT}
-              ) {
+              async resolve(source, {id, slug, language, previewToken}, context) {
+                const flattenI18nLeafFieldsContext: FlattenI18nLeafFieldsContext = {
+                  defaultLanguageTag: '',
+                  languageTag: '',
+                  richTextReferences: {}
+                }
+
+                const {loaders, dbAdapter, verifyJWT} = context
                 if (previewToken) {
                   verifyJWT(previewToken)
                 }
+                context.queryArgs.language = language || context.languageConfig.defaultLanguageTag
                 if (id) {
                   let result
                   if (previewToken) {
@@ -135,11 +146,14 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   if (result?.contentType !== model.identifier) {
                     return null
                   }
+
                   flattenI18nLeafFieldsMap(
+                    flattenI18nLeafFieldsContext,
                     contextOptions.languageConfig,
                     model.schema,
                     language
                   )(result)
+                  result.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
                   return result
                 } else if (slug && language) {
                   const result = await dbAdapter.content.getContentBySlug(
@@ -151,10 +165,12 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     return null
                   }
                   flattenI18nLeafFieldsMap(
+                    flattenI18nLeafFieldsContext,
                     contextOptions.languageConfig,
                     model.schema,
                     language
                   )(result)
+                  result.richTextReferences = flattenI18nLeafFieldsContext.richTextReferences
                   return result
                 }
                 return null
@@ -183,17 +199,17 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 skip: {type: GraphQLInt},
                 filter: {type: filter},
                 sort: {
-                  type: GraphQLPublicContentSort,
-                  defaultValue: ContentSort.PublishedAt
+                  type: sort,
+                  defaultValue: ContentSort.PublicationDate
                 },
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
               },
               resolve: async (
                 source,
                 {filter, sort, order, after, before, first, skip, last, language},
-                {dbAdapter}
+                context
               ) => {
-                const result = await dbAdapter.content.getContents(
+                const result = await context.dbAdapter.content.getContents(
                   {
                     types: [model.identifier],
                     filter,
@@ -207,7 +223,12 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                   true
                 )
                 result.nodes.forEach(
-                  flattenI18nLeafFieldsMap(contextOptions.languageConfig, model.schema, language)
+                  flattenI18nLeafFieldsMap(
+                    {defaultLanguageTag: '', languageTag: '', richTextReferences: {}},
+                    contextOptions.languageConfig,
+                    model.schema,
+                    language
+                  )
                 )
                 return result
               }
@@ -384,7 +405,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                 last: {type: GraphQLInt},
                 skip: {type: GraphQLInt},
                 filter: {type: filter},
-                sort: {type: GraphQLContentSort, defaultValue: ContentSort.ModifiedAt},
+                sort: {type: sort, defaultValue: ContentSort.ModifiedAt},
                 order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
                 language: {type: graphQlLanguages}
               },
@@ -448,6 +469,9 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
       title: {type: GraphQLNonNull(GraphQLString)},
       slugI18n: {
         type: GraphQLNonNull(getI18nOutputType(GraphQLString, contextOptions.languageConfig))
+      },
+      isActiveI18n: {
+        type: GraphQLNonNull(getI18nOutputType(GraphQLBoolean, contextOptions.languageConfig))
       },
       shared: {type: GraphQLNonNull(GraphQLBoolean)},
       contentType: {type: GraphQLNonNull(GraphQLContentTypeEnum)},
@@ -665,7 +689,7 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     )
                     break
 
-                  case ContentSort.PublishAt:
+                  case ContentSort.PublicationDate:
                     peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishAt).getTime() -
@@ -673,19 +697,11 @@ export function getGraphQLContent(contextOptions: ContextOptions) {
                     )
                     break
 
-                  case ContentSort.PublishedAt:
+                  case ContentSort.DePublicationDate:
                     peerContents.sort(
                       (a, b) =>
                         new Date(b.content.latest.publishedAt).getTime() -
                         new Date(a.content.latest.publishedAt).getTime()
-                    )
-                    break
-
-                  case ContentSort.UpdatedAt:
-                    peerContents.sort(
-                      (a, b) =>
-                        new Date(b.content.latest.updatedAt).getTime() -
-                        new Date(a.content.latest.updatedAt).getTime()
                     )
                     break
                 }

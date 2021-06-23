@@ -96,18 +96,22 @@ async function validateRecursive(
   async function validateRichTextRecursive(
     lang: string,
     isI18n: boolean,
+    searchable: boolean | undefined,
     richTextNode: RichTextNode | RichTextAbstractNode
   ) {
     const richTextAbstractNode = richTextNode as RichTextAbstractNode
     if (richTextAbstractNode.children?.length > 0) {
       const richTextReferenceNode = richTextNode as RichTextAbstractNode
       for (const child of richTextReferenceNode.children) {
-        await validateRichTextRecursive(lang, isI18n, child)
+        await validateRichTextRecursive(lang, isI18n, searchable, child)
       }
     }
 
-    if ((richTextNode as RichTextTextNode).text) {
+    if ((richTextNode as RichTextTextNode).text && searchable) {
       if (isI18n) {
+        if (!validatorContext.searchTermsI18n[lang]) {
+          validatorContext.searchTermsI18n[lang] = ''
+        }
         validatorContext.searchTermsI18n[lang] += (richTextNode as RichTextTextNode).text + ' '
       } else {
         validatorContext.searchTerms += (richTextNode as RichTextTextNode).text + ' '
@@ -118,7 +122,7 @@ async function validateRecursive(
       const richTextReferenceNode = richTextNode as RichTextReferenceNode
       const contentModelSchemaFieldRichText = schema as ContentModelSchemaFieldRichText
       if (contentModelSchemaFieldRichText?.config?.ref) {
-        handleRef(richTextReferenceNode.reference, contentModelSchemaFieldRichText.config.ref)
+        await handleRef(richTextReferenceNode.reference, contentModelSchemaFieldRichText.config.ref)
       }
     }
   }
@@ -127,8 +131,8 @@ async function validateRecursive(
     case ContentModelSchemaTypes.object: {
       const obj = data as MapType<any>
       if (obj) {
-        for (const [key, val] of Object.entries(obj)) {
-          await validateRecursive(validatorContext, schema.fields[key], val, persistentData?.[key])
+        for (const [key, fieldSchema] of Object.entries(schema.fields)) {
+          await validateRecursive(validatorContext, fieldSchema, obj[key], persistentData?.[key])
         }
       }
       break
@@ -149,7 +153,7 @@ async function validateRecursive(
     case ContentModelSchemaTypes.union: {
       const union = data as MapType<any>
       const {unionCase, val} = destructUnionCase(union)
-      if (unionCase) {
+      if (unionCase && unionCase in schema.cases) {
         await validateRecursive(
           validatorContext,
           schema.cases[unionCase],
@@ -190,12 +194,15 @@ async function validateRecursive(
       if (schema.i18n) {
         if (data) {
           for (const [lang, val] of Object.entries(data)) {
-            if (val) {
+            if (val && schema.searchable) {
+              if (!validatorContext.searchTermsI18n[lang]) {
+                validatorContext.searchTermsI18n[lang] = ''
+              }
               validatorContext.searchTermsI18n[lang] += val + ' '
             }
           }
         }
-      } else if (data) {
+      } else if (data && schema.searchable) {
         validatorContext.searchTerms += data + ' '
       }
       break
@@ -205,7 +212,7 @@ async function validateRecursive(
       if (schema.i18n) {
         for (const [lang, val] of Object.entries(data)) {
           const richTextNodes = val as RichTextNode[]
-          await validateRichTextRecursive(lang, true, {children: richTextNodes})
+          await validateRichTextRecursive(lang, true, schema.searchable, {children: richTextNodes})
         }
         break
       }
@@ -213,6 +220,7 @@ async function validateRecursive(
       await validateRichTextRecursive(
         validatorContext.context.languageConfig.defaultLanguageTag,
         false,
+        schema.searchable,
         {
           children: richTextNodes
         }
@@ -233,14 +241,6 @@ export async function validateInput(
   persistentData?: MapType<any>
 ) {
   if (!(data && schema)) return
-
-  validatorContext.searchTermsI18n = validatorContext.context.languageConfig.languages.reduce(
-    (accu, item) => {
-      accu[item.tag] = ''
-      return accu
-    },
-    {} as MapType<string>
-  )
 
   for (const [key, val] of Object.entries(schema)) {
     await validateRecursive(validatorContext, val, data[key], persistentData?.[key])

@@ -1573,11 +1573,10 @@ export type ContentModelSummary = {
 };
 
 export enum ContentSort {
-  CreatedAt = 'CREATED_AT',
-  ModifiedAt = 'MODIFIED_AT',
-  PublishAt = 'PUBLISH_AT',
-  PublishedAt = 'PUBLISHED_AT',
-  UpdatedAt = 'UPDATED_AT'
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
 }
 
 export enum ContentTypeEnum {

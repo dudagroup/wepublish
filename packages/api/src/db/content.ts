@@ -1,4 +1,5 @@
 import {LanguageConfig} from '../interfaces/languageConfig'
+import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
 import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
 
@@ -15,10 +16,11 @@ export interface Content<T = any> {
   shared: boolean
   title: string
   slugI18n?: MapType<string>
+  isActiveI18n?: MapType<boolean>
 
   searchIndexI18n?: MapType<string>
   searchIndex?: string
-
+  richTextReferences?: MapType<Reference>
   content: T
   meta: T
 }
