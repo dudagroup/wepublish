@@ -21,11 +21,13 @@ export interface ValidatorContext {
   context: Omit<Context, 'business'>
   searchTermsI18n: MapType<string>
   searchTerms: string
+  errors: string[]
 }
 
 async function validateRecursive(
   validatorContext: ValidatorContext,
   schema: ContentModelSchemas,
+  path: (string | number)[],
   data: any,
   persistentData?: any
 ) {
@@ -45,7 +47,10 @@ async function validateRecursive(
         }
       } catch (error) {}
       if (!record) {
-        throw new Error(`Reference of type ${ref.contentType} and id ${ref.recordId} not valid`)
+        const humanReadablePath = path.join('/')
+        validatorContext.errors.push(
+          `Reference of type ${ref.contentType} and id ${ref.recordId} in path /${humanReadablePath} not valid`
+        )
       }
 
       delete ref.record
@@ -132,7 +137,13 @@ async function validateRecursive(
       const obj = data as MapType<any>
       if (obj) {
         for (const [key, fieldSchema] of Object.entries(schema.fields)) {
-          await validateRecursive(validatorContext, fieldSchema, obj[key], persistentData?.[key])
+          await validateRecursive(
+            validatorContext,
+            fieldSchema,
+            [...path, key],
+            obj[key],
+            persistentData?.[key]
+          )
         }
       }
       break
@@ -143,7 +154,13 @@ async function validateRecursive(
       if (list) {
         let i = 0
         for (const item of list) {
-          await validateRecursive(validatorContext, schema.contentType, item, persistentData?.[i])
+          await validateRecursive(
+            validatorContext,
+            schema.contentType,
+            [...path, i],
+            item,
+            persistentData?.[i]
+          )
           i++
         }
       }
@@ -157,6 +174,7 @@ async function validateRecursive(
         await validateRecursive(
           validatorContext,
           schema.cases[unionCase],
+          [...path, unionCase],
           val,
           persistentData?.[unionCase]
         )
@@ -236,13 +254,20 @@ async function validateRecursive(
 
 export async function validateInput(
   validatorContext: ValidatorContext,
+  path: (string | number)[],
   schema?: MapType<ContentModelSchemas>,
   data?: MapType<any>,
   persistentData?: MapType<any>
 ) {
   if (!(data && schema)) return
 
-  for (const [key, val] of Object.entries(schema)) {
-    await validateRecursive(validatorContext, val, data[key], persistentData?.[key])
+  for (const [key, model] of Object.entries(schema)) {
+    await validateRecursive(
+      validatorContext,
+      model,
+      [...path, key],
+      data[key],
+      persistentData?.[key]
+    )
   }
 }

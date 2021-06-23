@@ -195,8 +195,13 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   useEffect(() => {
     if (createError || updateError || publishError) {
       Notification.error({
-        title: updateError?.message ?? createError?.message ?? publishError!.message,
-        duration: 5000
+        title: 'Operation was not successful',
+        duration: 0,
+        description: (
+          <p style={{width: 320}}>
+            {updateError?.message ?? createError?.message ?? publishError!.message}
+          </p>
+        )
       })
     }
   }, [createError, updateError, publishError])
@@ -311,8 +316,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   useEffect(() => {
     if (isNotFound) {
       Notification.error({
-        title: t('articleEditor.overview.notFound'),
-        duration: 5000
+        title: t('articleEditor.overview.notFound')
       })
     }
   }, [isNotFound])
