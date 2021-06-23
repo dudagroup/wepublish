@@ -1,4 +1,4 @@
-import React, {memo, useMemo, useState, useEffect} from 'react'
+import React, {memo, useMemo, useState, useEffect, useRef} from 'react'
 import {useTranslation} from 'react-i18next'
 import {createEditor, Location, Node as SlateNode, Transforms} from 'slate'
 import {withHistory} from 'slate-history'
@@ -43,6 +43,7 @@ export interface RichTextBlockProps extends BlockProps<RichTextBlockValue> {
   displayOnly?: boolean
   showCharCount?: boolean
   displayOneLine?: boolean
+  language?: string
   config?: RichTextConfig
 }
 
@@ -51,6 +52,7 @@ export const RichTextBlock = memo(function RichTextBlock({
   autofocus,
   disabled,
   onChange,
+  language,
   displayOnly = false,
   showCharCount = false,
   displayOneLine = false,
@@ -79,6 +81,20 @@ export const RichTextBlock = memo(function RichTextBlock({
     () => withNormalizeNode(withTable(withRichText(withHistory(withReact(createEditor()))))),
     []
   )
+
+  // Temporary Fix
+  // language switch causes error "Cannot find a descendant at path [0,1] in node..." if a link or ref node is selected.
+  // TODO Search for cleaner solution in order to solve this issue
+  const prevLang = useRef<any>()
+  useEffect(() => {
+    prevLang.current = language
+  })
+
+  if (language !== prevLang.current) {
+    Transforms.deselect(editor)
+  }
+  // Temporary Fix
+
   const [hasFocus, setFocus] = useState(false)
   const [location, setLocation] = useState<Location | null>(null)
 

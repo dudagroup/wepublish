@@ -73,6 +73,7 @@ function BlockObjectItem({
             dispatch={dispatch}
             model={model}
             languageContext={languageContext}
+            currentLang={langLane1}
             value={v[langLane1]}></BlockAbstract>
         </>
       )
@@ -90,6 +91,7 @@ function BlockObjectItem({
             dispatch={dispatch}
             model={model}
             languageContext={languageContext}
+            currentLang={langLane2}
             value={v[langLane2]}></BlockAbstract>
         </>
       )

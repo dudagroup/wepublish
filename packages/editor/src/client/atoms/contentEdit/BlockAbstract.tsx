@@ -24,6 +24,7 @@ export interface BlockAbstractProps<M = any, V = any> {
   readonly languageContext: LanguageContext
   readonly configs: Configs
   readonly disabled?: boolean
+  readonly currentLang?: string
 }
 
 function BlockAbstract(props: BlockAbstractProps) {

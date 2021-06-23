@@ -13,7 +13,8 @@ function BlockRichText({
   schemaPath,
   model,
   value,
-  disabled
+  disabled,
+  currentLang
 }: BlockAbstractProps<ContentModelSchemaFieldRichText, RichTextBlockValue>) {
   const empty = [
     {
@@ -54,6 +55,7 @@ function BlockRichText({
       {toggle}
       <RichTextBlock
         value={v}
+        language={currentLang}
         displayOnly={disabled}
         disabled={(!isActive && model.optional) || disabled}
         onChange={richText => {
