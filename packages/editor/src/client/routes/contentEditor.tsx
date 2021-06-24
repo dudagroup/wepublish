@@ -198,8 +198,8 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         title: 'Operation was not successful',
         duration: 0,
         description: (
-          <p style={{width: 320}}>
-            {updateError?.message ?? createError?.message ?? publishError!.message}
+          <p style={{width: 320, lineBreak: 'loose', whiteSpace: 'pre-line'}}>
+            {updateError?.message ?? createError?.message ?? publishError?.message}
           </p>
         )
       })
