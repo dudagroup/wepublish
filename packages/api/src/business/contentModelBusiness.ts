@@ -51,7 +51,7 @@ export class BusinessLogic {
     await validateInput(validatorContext, ['meta'], schema.schema.meta, input.meta)
 
     if (validatorContext.errors.length > 0) {
-      throw new Error(validatorContext.errors.join(', '))
+      throw new Error(validatorContext.errors.join('\n\n'))
     }
     return this.context.dbAdapter.content.createContent({
       input: {
@@ -99,7 +99,7 @@ export class BusinessLogic {
       persistentData?.meta
     )
     if (validatorContext.errors.length > 0) {
-      throw new Error(validatorContext.errors.join(', '))
+      throw new Error(validatorContext.errors.join('\n\n'))
     }
 
     return this.context.dbAdapter.content.updateContent({
