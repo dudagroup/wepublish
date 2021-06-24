@@ -24,7 +24,7 @@ export interface WepublishServerOpts extends ContextOptions {
 }
 
 export class WepublishServer {
-  private readonly app: Application
+  readonly app: Application
   private readonly opts: WepublishServerOpts
 
   constructor(opts: WepublishServerOpts) {
