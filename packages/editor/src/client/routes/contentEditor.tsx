@@ -437,17 +437,17 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
               {t('articleEditor.overview.back')}
             </IconButtonLink>
             <>
-              {customMetadataView && (
-                <IconButton
-                  icon={<Icon icon="file-text-o" />}
-                  appearance="subtle"
-                  size={'lg'}
-                  disabled={isDisabled}
-                  onClick={() => setMetaVisible(true)}>
-                  {t('articleEditor.overview.metadata')}
-                </IconButton>
-              )}
               <div className="wep-navi-publishcontrols">
+                {customMetadataView && (
+                  <IconButton
+                    icon={<Icon icon="file-text-o" />}
+                    appearance="subtle"
+                    size={'lg'}
+                    disabled={isDisabled}
+                    onClick={() => setMetaVisible(true)}>
+                    {t('articleEditor.overview.metadata')}
+                  </IconButton>
+                )}
                 {isNew == null ? (
                   <IconButton
                     style={{
