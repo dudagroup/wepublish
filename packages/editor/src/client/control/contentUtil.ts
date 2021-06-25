@@ -9,6 +9,7 @@ import {
   ContentModelSchemaFieldInt,
   ContentModelSchemaFieldLeaf,
   ContentModelSchemaFieldObject,
+  ContentModelSchemaFieldRichText,
   ContentModelSchemaFieldString,
   ContentModelSchemaFieldUnion,
   ContentModelSchemaTypes
@@ -48,13 +49,23 @@ export function generateEmptyContent(
   }
   if (field.type === ContentModelSchemaTypes.id) {
     const schema = field as ContentModelSchemaFieldId
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || '')
   }
   if (field.type === ContentModelSchemaTypes.string) {
     const schema = field as ContentModelSchemaFieldString
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || '')
   }
   if (field.type === ContentModelSchemaTypes.richText) {
+    const schema = field as ContentModelSchemaFieldRichText
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal([
       {
         type: 'paragraph',
@@ -68,22 +79,37 @@ export function generateEmptyContent(
   }
   if (field.type === ContentModelSchemaTypes.enum) {
     const schema = field as ContentModelSchemaFieldEnum
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || schema.values[0].value)
   }
   if (field.type === ContentModelSchemaTypes.int) {
     const schema = field as ContentModelSchemaFieldInt
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || 0)
   }
   if (field.type === ContentModelSchemaTypes.float) {
     const schema = field as ContentModelSchemaFieldFloat
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || 0)
   }
   if (field.type === ContentModelSchemaTypes.boolean) {
     const schema = field as ContentModelSchemaFieldBoolean
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || false)
   }
   if (field.type === ContentModelSchemaTypes.dateTime) {
     const schema = field as ContentModelSchemaFieldDate
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     return defaultVal(schema.defaultValue || new Date().toISOString())
   }
   if (field.type === ContentModelSchemaTypes.list) {
@@ -97,6 +123,9 @@ export function generateEmptyContent(
   }
   if (field.type === ContentModelSchemaTypes.union) {
     const schema = field as ContentModelSchemaFieldUnion
+    if (schema.optional) {
+      return defaultVal(null)
+    }
     const [key, val] = Object.entries(schema.cases)[0]
     return {[key]: generateEmptyContent(val, languagesConfig)}
   }

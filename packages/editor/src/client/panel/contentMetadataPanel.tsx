@@ -102,7 +102,7 @@ export function ContentMetadataPanel({
   })
 
   return (
-    <Panel>
+    <Panel collapsible defaultExpanded header="Internal title, URL & Peering">
       <Form fluid>
         <FormGroup>
           <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
@@ -118,7 +118,7 @@ export function ContentMetadataPanel({
           <I18nWrapper lane1={componentLane1} lane2={componentLane2} />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{`is content for language ${langLanes[0]} active`}</ControlLabel>
+          <ControlLabel>{`Is content for language "${langLanes[0]}" active`}</ControlLabel>
           <I18nWrapper
             lane1={
               <Toggle

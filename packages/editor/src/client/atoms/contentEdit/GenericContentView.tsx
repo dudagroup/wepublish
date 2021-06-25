@@ -48,7 +48,7 @@ export function GenericContent({
   return (
     <Grid>
       {header}
-      <Panel bordered>
+      <Panel bordered collapsible defaultExpanded header="Content">
         <BlockObject
           configs={configs}
           dispatch={dispatch}

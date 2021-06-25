@@ -101,9 +101,10 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
             /> */}
 
             <IconButton
-              icon={<Icon icon="minus-circle" />}
+              icon={<Icon icon="minus-square" />}
               size="md"
               appearance="subtle"
+              color="red"
               onClick={() => {
                 dispatch({
                   type: ContentEditActionEnum.splice,

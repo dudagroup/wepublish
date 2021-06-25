@@ -47,7 +47,8 @@ async function validateRecursive(
         }
       } catch (error) {}
       if (!record) {
-        const humanReadablePath = path.join('/')
+        const SOFT_HYPEN = '\u00AD'
+        const humanReadablePath = path.join(`/${SOFT_HYPEN}`)
         validatorContext.errors.push(
           `Reference of type ${ref.contentType} and id ${ref.recordId} in path /${humanReadablePath} not valid`
         )
@@ -157,7 +158,7 @@ async function validateRecursive(
           await validateRecursive(
             validatorContext,
             schema.contentType,
-            [...path, i],
+            [...path, i + 1],
             item,
             persistentData?.[i]
           )
