@@ -22,18 +22,24 @@ export function BlockTags({
   const [getRecords, {loading, data}] = useContentListLazyQuery()
   const [cache, setCache] = useState<MapType<ContentModelSummary>>({})
 
-  const items: {id: string; title: string}[] = value.map(item => {
-    if (data) {
-      const r = data.content._all.list.nodes.find(i => i.content.id === item.recordId)
-      if (r) {
-        return r.content
-      }
-    }
-    return {
+  let items: {[key: string]: {id: string; title: string}} = {}
+  items = value.reduce((accu, item) => {
+    accu[item.recordId] = {
       id: item.recordId,
       title: 'unresolved ref: ' + item.recordId
     }
-  })
+
+    return accu
+  }, items)
+
+  if (data) {
+    items = data.content._all.list.nodes.reduce((accu, item) => {
+      accu[item.content.id] = item.content
+      return accu
+    }, items)
+  }
+
+  const itemArray = Object.values(items)
 
   useEffect(() => {
     if (!data) {
@@ -43,7 +49,7 @@ export function BlockTags({
       })
     } else {
       setCache(
-        items.reduce((accu, item) => {
+        itemArray.reduce((accu, item) => {
           accu[item.id] = item
           return accu
         }, Object.assign({}, cache) as MapType<any>)
@@ -77,7 +83,7 @@ export function BlockTags({
 
   return (
     <TagPicker
-      data={items}
+      data={itemArray}
       cacheData={Object.values(cache)}
       value={value.map(r => {
         return r.recordId
