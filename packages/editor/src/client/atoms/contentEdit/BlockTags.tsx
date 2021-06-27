@@ -22,11 +22,18 @@ export function BlockTags({
   const [getRecords, {loading, data}] = useContentListLazyQuery()
   const [cache, setCache] = useState<MapType<ContentModelSummary>>({})
 
-  const items = data
-    ? data.content._all.list.nodes.map(item => {
-        return item.content
-      })
-    : []
+  const items: {id: string; title: string}[] = value.map(item => {
+    if (data) {
+      const r = data.content._all.list.nodes.find(i => i.content.id === item.recordId)
+      if (r) {
+        return r.content
+      }
+    }
+    return {
+      id: item.recordId,
+      title: 'unresolved ref: ' + item.recordId
+    }
+  })
 
   useEffect(() => {
     if (!data) {

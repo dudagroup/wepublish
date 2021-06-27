@@ -10,8 +10,10 @@ export const WepublishEditor = {
 
   isFormatActive(editor: Editor, format: Format) {
     if (TextFormats.includes(format)) {
-      const marks = this.marks(editor)
-      return marks ? marks[format] === true : false
+      try {
+        const marks = this.marks(editor)
+        return marks ? marks[format] === true : false
+      } catch (error) {}
     }
 
     if (BlockFormats.includes(format) || InlineFormats.includes(format)) {
