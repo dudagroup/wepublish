@@ -248,7 +248,11 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   async function handleSave() {
     const input = createInput()
     if (contentdId) {
-      await updateContent({variables: {input}})
+      try {
+        await updateContent({variables: {input}})
+      } catch (error) {
+        return
+      }
 
       setChanged(false)
       Notification.success({
@@ -256,8 +260,14 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
         duration: 2000
       })
     } else {
-      const {data} = await createContent({variables: {input}})
+      let result
+      try {
+        result = await createContent({variables: {input}})
+      } catch (error) {
+        return
+      }
 
+      const {data} = result
       if (data) {
         if (onApply) {
           onApply({
@@ -295,7 +305,6 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
   async function handlePublish(publicationDate: Date, dePublicationDate?: Date) {
     if (contentdId) {
       if (data) {
-        console.log(dePublicationDate ? dePublicationDate.toISOString() : undefined)
         await publishContent({
           variables: {
             id: contentdId,
