@@ -9,22 +9,21 @@ export const WepublishEditor = {
   ...Editor,
 
   isFormatActive(editor: Editor, format: Format) {
-    if (TextFormats.includes(format)) {
-      try {
+    try {
+      if (TextFormats.includes(format)) {
         const marks = this.marks(editor)
         return marks ? marks[format] === true : false
-      } catch (error) {}
-    }
+      }
 
-    if (BlockFormats.includes(format) || InlineFormats.includes(format)) {
-      const [match] = this.nodes(editor, {
-        match: node => node.type === format,
-        mode: 'all'
-      })
+      if (BlockFormats.includes(format) || InlineFormats.includes(format)) {
+        const [match] = this.nodes(editor, {
+          match: node => node.type === format,
+          mode: 'all'
+        })
 
-      return !!match
-    }
-
+        return !!match
+      }
+    } catch (error) {}
     return false
   },
 
