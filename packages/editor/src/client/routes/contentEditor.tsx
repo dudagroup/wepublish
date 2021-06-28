@@ -211,27 +211,41 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       return
     }
 
-    const content = validateRecursive(
-      {},
-      {
-        type: ContentModelSchemaTypes.object,
-        fields: contentConfig.schema.content
-      },
-      stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
-    )
-
+    let content
     let meta
-    if (customMetadata) {
-      const {__typename: waste, ...rest} = customMetadata
 
-      meta = validateRecursive(
+    try {
+      content = validateRecursive(
         {},
         {
           type: ContentModelSchemaTypes.object,
-          fields: contentConfig.schema.meta
+          fields: contentConfig.schema.content
         },
-        stripKeysRecursive(rest, ['__typename', '__ephemeralReactStateMeta'])
+        stripKeysRecursive(contentData, ['__typename', '__ephemeralReactStateMeta'])
       )
+
+      if (customMetadata) {
+        const {__typename: waste, ...rest} = customMetadata
+
+        meta = validateRecursive(
+          {},
+          {
+            type: ContentModelSchemaTypes.object,
+            fields: contentConfig.schema.meta
+          },
+          stripKeysRecursive(rest, ['__typename', '__ephemeralReactStateMeta'])
+        )
+      }
+    } catch (error) {
+      console.error(error)
+      Notification.error({
+        title: 'Operation was not successful',
+        duration: 0,
+        description: (
+          <p style={{width: 320, lineBreak: 'loose', whiteSpace: 'pre-line'}}>{error.message}</p>
+        )
+      })
+      return
     }
 
     return {
@@ -247,6 +261,9 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
 
   async function handleSave() {
     const input = createInput()
+    if (!input) {
+      return
+    }
     if (contentdId) {
       try {
         await updateContent({variables: {input}})

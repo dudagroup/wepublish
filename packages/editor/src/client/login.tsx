@@ -111,7 +111,13 @@ export function Login() {
   async function login(e: FormEvent) {
     e.preventDefault()
 
-    const response = await authenticate({variables: {email, password}})
+    let response
+
+    try {
+      response = await authenticate({variables: {email, password}})
+    } catch (error) {
+      return
+    }
 
     if (!response.data?.createSession) return
 
