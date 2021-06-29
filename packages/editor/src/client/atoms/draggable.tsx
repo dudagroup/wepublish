@@ -97,12 +97,12 @@ export function Draggable({children, point, disabled, onChange}: DraggableProps)
     }
 
     function handleMouseUp() {
-      const clampedPoint = clampPoint(realPoint)
-
-      lastMousePosition = null
-
-      if (onChange) {
-        onChange({x: clampedPoint.x / containerWidth, y: clampedPoint.y / containerHeight})
+      if (lastMousePosition) {
+        const clampedPoint = clampPoint(realPoint)
+        lastMousePosition = null
+        if (onChange) {
+          onChange({x: clampedPoint.x / containerWidth, y: clampedPoint.y / containerHeight})
+        }
       }
     }
 

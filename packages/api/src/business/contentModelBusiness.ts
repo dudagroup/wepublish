@@ -21,6 +21,7 @@ import {LanguageConfig} from '../interfaces/languageConfig'
 import {validateInput, ValidatorContext} from './contentModelBusinessInputValidation'
 import {generateEmptyContent} from './contentUtil'
 import {Reference} from '../interfaces/referenceType'
+import {isObject} from '@karma.run/utility'
 
 export function generateID() {
   return nanoid('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)
@@ -161,7 +162,7 @@ function flattenI18nLeafFields(
   function andleDefaultValue() {
     const schemaLeaf = schema as ContentModelSchemaFieldString
     if (schemaLeaf.i18n) {
-      if (data && validatorContext.languageTag in data) {
+      if (isObject(data) && validatorContext.languageTag in data) {
         if (
           (schemaLeaf.optional && !schemaLeaf.i18nFallbackToDefaultLanguage) ||
           (data[validatorContext.languageTag] !== null &&
@@ -173,7 +174,7 @@ function flattenI18nLeafFields(
 
       if (
         schemaLeaf.i18nFallbackToDefaultLanguage &&
-        data &&
+        isObject(data) &&
         validatorContext.defaultLanguageTag in data
       ) {
         if (
