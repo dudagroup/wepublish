@@ -345,6 +345,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
                   await unpublishArticle({
                     variables: {id: currentContent.id}
                   })
+                  await refetch()
                   break
               }
 
