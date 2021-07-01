@@ -6,6 +6,7 @@ import {
   GraphQLType,
   GraphQLUnionType
 } from 'graphql'
+import {PublicI18nLoaderIdDelimiter} from '../..'
 import {Context} from '../../context'
 import {ContentModelSchemaFieldRef} from '../../interfaces/contentModelSchema'
 import {Reference} from '../../interfaces/referenceType'
@@ -102,7 +103,7 @@ export function getReference(
           : {},
         resolve: createProxyingResolver(async ({contentType, recordId}, {language}, {loaders}) => {
           if (context.isPublic) {
-            return loaders.publicContentI18n.load(recordId + '_' + language)
+            return loaders.publicContentI18n.load(recordId + PublicI18nLoaderIdDelimiter + language)
           }
           return loaders.content.load(recordId)
         })

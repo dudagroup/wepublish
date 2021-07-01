@@ -53,6 +53,7 @@ import {
 } from './business/contentModelBusiness'
 import {ContentModelSchema} from './interfaces/contentModelSchema'
 
+export const PublicI18nLoaderIdDelimiter = '__|__'
 export interface ContentModel {
   identifier: string
   nameSingular: string
@@ -255,7 +256,7 @@ export async function contextFromRequest(
   }
 
   async function loadPublicI18n(ids: readonly string[]) {
-    const splitIdsLangs = ids.map(id => id.split('_'))
+    const splitIdsLangs = ids.map(id => id.split(PublicI18nLoaderIdDelimiter))
     const result = await dbAdapter.content.getContentsByID(
       splitIdsLangs.map(([id]) => id),
       true
