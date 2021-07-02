@@ -34,6 +34,7 @@ import {GraphQLMedia} from './media'
 import {nameJoin} from './contentUtils'
 import {generateEmptyContent} from '../../business/contentUtil'
 import {ContentModel} from '../..'
+import {isObject} from '@karma.run/utility'
 
 export interface TypeGeneratorContext {
   language: LanguageConfig
@@ -248,7 +249,10 @@ export function generateSchema(
       baseFields.richTextReferences = {
         type: GraphQLNonNull(GraphQLList(GraphQLNonNull(cache[name]))),
         resolve: (parent: any) => {
-          return Object.values(parent.richTextReferences)
+          if (isObject(parent.richTextReferences)) {
+            return Object.values(parent.richTextReferences)
+          }
+          return []
         }
       }
 
