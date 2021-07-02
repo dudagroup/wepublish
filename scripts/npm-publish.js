@@ -20,9 +20,7 @@ async function main() {
   const version = getVersion()
   await copyNpmrc()
   rewritePackageJsons(version)
-  try {
-    await npmInstallAndBuild()
-  } catch (error) {}
+  await npmInstallAndBuild()
   await npmPublish()
   await cleanup()
 }
@@ -70,7 +68,7 @@ function rewritePackageJsons(version) {
 
 async function npmInstallAndBuild() {
   await spawnProcess('yarn install --frozen-lockfile')
-  await spawnProcess('yarn install build')
+  await spawnProcess('yarn build')
 }
 
 async function npmPublish() {
