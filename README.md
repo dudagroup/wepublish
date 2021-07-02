@@ -10,10 +10,6 @@
 *** github_username, repo_name, twitter_handle, email
 -->
 
-
-
-
-
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
@@ -22,15 +18,13 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+
 [![CI][cicd-shield]][cicd-url]
 [![GitHub tag (latest by date)][tag-shield]][tag-url]
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-
-
-
 
 <!-- PROJECT LOGO -->
 <br />
@@ -49,34 +43,32 @@
     <br />
     <a href="#demo">View Demo</a>
     ·
-    <a href="https://github.com/wepublish/wepublish/issues">Report Bug</a>
+    <a href="https://github.com/dudagroup/wepublish/issues">Report Bug</a>
     ·
-    <a href="https://github.com/wepublish/wepublish/issues">Request Feature</a>
+    <a href="https://github.com/dudagroup/wepublish/issues">Request Feature</a>
   </p>
 </p>
 
-
-
 <!-- TABLE OF CONTENTS -->
+
 ## Table of Contents
 
-* [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Demo](#demo)
-* [Packages](#packages)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Troubleshooting](#troubleshooting)
-* [Contributing](#contributing)
-* [Code of Conduct](#code-of-conduct)
-* [License](#license)
-* [Contact](#contact)
-
-
+- [About the Project](#about-the-project)
+  - [Built With](#built-with)
+- [Demo](#demo)
+- [Packages](#packages)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+- [Contact](#contact)
 
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 <!--[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
@@ -85,14 +77,14 @@ TBD
 
 ### Built With
 
-* [Node.js](https://nodejs.org/)
-* [GraphQL](https://graphql.org/)
-* [React](https://reactjs.org/)
-* [TypeScript](https://www.typescriptlang.org/)
-* :green_heart:
-
+- [Node.js](https://nodejs.org/)
+- [GraphQL](https://graphql.org/)
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- :green_heart:
 
 ## Demo
+
 - [Editor](https://editor.demo.wepublish.media)
   - username: `dev@wepublish.ch`
   - password: `123`
@@ -101,44 +93,52 @@ TBD
 
 ## Packages
 
-- [@wepublish/api](./packages/api)
+- [@dudagroup/api](./packages/api)
   - DB Adapter:
-    - [@wepublish/api-db-mongodb](./packages/api-db-mongodb)
+    - [@dudagroup/api-db-mongodb](./packages/api-db-mongodb)
   - Media Adapter:
-    - [@wepublish/api-media-karma](./packages/api-media-karma)
-- [@wepublish/editor](./packages/editor)
-- [@wepublish/oauth2](./packages/oauth2)
+    - [@dudagroup/api-media-karma](./packages/api-media-karma)
+- [@dudagroup/editor](./packages/editor)
+- [@dudagroup/oauth2](./packages/oauth2)
 
 <!-- GETTING STARTED -->
+
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-
-* [Node v12.x.x][node-download-url]
-* [Yarn v1.17.x][yarn-download-url]
-* [Docker v19.x.x][docker-download-url]
+- [Node v12.x.x][node-download-url]
+- [Yarn v1.17.x][yarn-download-url]
+- [Docker v19.x.x][docker-download-url]
 
 ### Installation
 
 1. Clone the repo
+
 ```sh
-git clone https://github.com/wepublish/wepublish.git
+git clone https://github.com/dudagroup/wepublish.git
 ```
+
 2. Install NPM packages
+
 ```sh
 yarn install
 ```
+
 3. Setup and build project. The setup command will create the necessary `.env` files.
+
 ```sh
 yarn setup && yarn build
 ```
+
 4. Run the project (starts a mongoDB with Docker)
+
 ```sh
 yarn dev
 ```
+
 If you rather wish to run docker-compose separately you can just watch the packages via:
 
 ```
@@ -152,6 +152,7 @@ yarn run-p watch:api watch:api-example watch:editor
 ```
 
 <!-- USAGE EXAMPLES -->
+
 ## Usage
 
 - **API:** [http://localhost:4000](http://localhost:4000)
@@ -160,12 +161,12 @@ yarn run-p watch:api watch:api-example watch:editor
 - **Webpack Dev Server:** [http://localhost:3001](http://localhost:3001)
 - **MongoDB:** [http://localhost:27017](http://localhost:27017)
 
-
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-A good place to start is with an issue that has the label [good first issue](https://github.com/wepublish/wepublish/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+A good place to start is with an issue that has the label [good first issue](https://github.com/dudagroup/wepublish/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b f/AmazingFeature`)
@@ -173,56 +174,53 @@ A good place to start is with an issue that has the label [good first issue](htt
 4. Push to the Branch (`git push origin f/AmazingFeature`)
 5. Open a Pull Request
 
-
 ## Code of Conduct
-We.publish is dedicated to building a welcoming, diverse, safe community. 
-We expect everyone participating in the we.publish community to abide by our [Code of Conduct][code-of-conduct-url]. 
-Please read it. Please follow it. 
+
+We.publish is dedicated to building a welcoming, diverse, safe community.
+We expect everyone participating in the we.publish community to abide by our [Code of Conduct][code-of-conduct-url].
+Please read it. Please follow it.
 
 <!-- FAQ -->
+
 ## Troubleshooting
 
-If you encounter problems you can check our [FAQ][faq-md-url] or write us [dev@wepublish.ch](mailto:dev@wepublish.ch).
-
+If you encounter problems you can check our [FAQ][faq-md-url] or write us [dev@dudagroup.com](mailto:dev@dudagroup.com).
 
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-
-
 <!-- CONTACT -->
+
 ## Contact
 
-We.Publish - [@WePublish_media](https://twitter.com/WePublish_media) - [dev@wepublish.ch](mailto:dev@wepublish.ch)
+We.Publish - [dev@dudagroup.com](mailto:dev@dudagroup.com)
 
-Website: [https://www.wepublish.ch/](https://www.wepublish.ch/)
-
-
+Website: [https://www.dudagroup.com/](https://www.dudagroup.com/)
 
 <!-- ACKNOWLEDGEMENTS -->
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[cicd-shield]: https://github.com/wepublish/wepublish/workflows/CI%2FCD/badge.svg
-[cicd-url]: https://github.com/wepublish/wepublish/actions?query=workflow%3ACI%2FCD
-[tag-shield]: https://img.shields.io/github/v/tag/wepublish/wepublish?style=flat
-[tag-url]: https://github.com/wepublish/wepublish/tags
-[contributors-shield]: https://img.shields.io/github/contributors/wepublish/wepublish.svg?style=flat
-[contributors-url]: https://github.com/wepublish/wepublish/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/wepublish/wepublish.svg?style=flat
-[forks-url]: https://github.com/wepublish/wepublish/network/members
-[stars-shield]: https://img.shields.io/github/stars/wepublish/wepublish.svg?style=flat
-[stars-url]: https://github.com/wepublish/wepublish/stargazers
-[issues-shield]: https://img.shields.io/github/issues/wepublish/wepublish.svg?style=flat
-[issues-url]: https://github.com/github_username/repo/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo.svg?style=flat
-[license-url]: https://github.com/wepublish/wepublish/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/company/we-publish
+
+<!-- [cicd-shield]: https://github.com/dudagroup/wepublish/workflows/CI%2FCD/badge.svg -->
+[cicd-url]: https://github.com/dudagroup/wepublish/actions?query=workflow%3ACI%2FCD
+[tag-shield]: https://img.shields.io/github/v/tag/dudagroup/wepublish?style=flat
+[tag-url]: https://github.com/dudagroup/wepublish/tags
+[contributors-shield]: https://img.shields.io/github/contributors/dudagroup/wepublish.svg?style=flat
+[contributors-url]: https://github.com/dudagroup/wepublish/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/dudagroup/wepublish.svg?style=flat
+[forks-url]: https://github.com/dudagroup/wepublish/network/members
+[stars-shield]: https://img.shields.io/github/stars/dudagroup/wepublish.svg?style=flat
+[stars-url]: https://github.com/dudagroup/wepublish/stargazers
+[issues-shield]: https://img.shields.io/github/issues/dudagroup/wepublish.svg?style=flat
+[issues-url]: https://github.com/dudagroup/wepublish/issues
+[license-shield]: https://img.shields.io/github/license/dudagroup/wepublish.svg?style=flat
+[license-url]: https://github.com/dudagroup/wepublish/blob/master/LICENSE
+<!-- [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/company/we-publish -->
 [product-screenshot]: images/screenshot.png
 [node-download-url]: https://nodejs.org/en/download/current/
 [yarn-download-url]: https://yarnpkg.com/en/docs/install
