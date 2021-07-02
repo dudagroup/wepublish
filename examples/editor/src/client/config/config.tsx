@@ -5,7 +5,7 @@ import {ContentAEditView} from './contentA'
 import {BlockType} from './article/articleInterfaces'
 import {getContentView} from './article/articleContentView'
 import {ContentMetadataPanel} from './contentAMetadata'
-import {EditorConfig} from '@wepublish/editor'
+import {EditorConfig} from '@dudagroup/editor'
 
 export const MODEL_MEDIA_LIBRARY = 'mediaLibrary'
 

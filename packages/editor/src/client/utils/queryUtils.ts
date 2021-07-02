@@ -3,7 +3,7 @@ import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
   ContentModelSchemas
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import gql from 'graphql-tag'
 import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
 import {Configs} from '../interfaces/extensionConfig'

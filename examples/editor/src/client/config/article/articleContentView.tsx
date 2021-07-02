@@ -1,5 +1,5 @@
-import {Configs, ContentModelConfigMerged, getContentViewFunction} from '@wepublish/editor'
-import {ContentEditAction} from '@wepublish/editor/lib/client/control/contentReducer'
+import {Configs, ContentModelConfigMerged, getContentViewFunction} from '@dudagroup/editor'
+import {ContentEditAction} from '@dudagroup/editor/lib/client/control/contentReducer'
 import React from 'react'
 import {BlockList} from './atoms/blockList'
 

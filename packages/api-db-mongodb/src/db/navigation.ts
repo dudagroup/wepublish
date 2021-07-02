@@ -5,7 +5,7 @@ import {
   DeleteNavigationArgs,
   Navigation,
   CreateNavigationArgs
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import {Collection, Db, MongoError} from 'mongodb'
 
 import {CollectionName, DBNavigation} from './schema'

@@ -1,4 +1,4 @@
-import {ContentModel, ContentModelSchemaTypes} from '@wepublish/api'
+import {ContentModel, ContentModelSchemaTypes} from '@dudagroup/api'
 
 export const MODEL_A = 'modelA'
 

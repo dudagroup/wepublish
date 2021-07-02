@@ -2,7 +2,7 @@ import nanoid from 'nanoid'
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {DocumentNode, OperationDefinitionNode} from 'graphql'
 import {PaymentPeriodicity, SortOrder} from './api'
-import {MapType} from '@wepublish/editor/lib/client/interfaces/utilTypes'
+import {MapType} from '@dudagroup/editor/lib/client/interfaces/utilTypes'
 
 export enum LocalStorageKey {
   SessionToken = 'sessionToken'

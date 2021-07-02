@@ -1,4 +1,4 @@
-import {MongoDBAdapter} from '@wepublish/api-db-mongodb'
+import {MongoDBAdapter} from '@dudagroup/api-db-mongodb'
 import {ApolloServerTestClient} from 'apollo-server-testing'
 import {createGraphQLTestClientWithMongoDB} from '../utility'
 import {CreateSession, Me, CreateSessionWithJwt} from '../api/private'
@@ -32,12 +32,12 @@ describe('Sessions', () => {
       const res = await mutate({
         mutation: CreateSession,
         variables: {
-          email: 'dev@wepublish.ch',
+          email: 'dev@dudagroup.ch',
           password: '123'
         }
       })
       const session = res.data?.createSession
-      expect(session.user.email).toBe('dev@wepublish.ch')
+      expect(session.user.email).toBe('dev@dudagroup.ch')
       expect(session.token).toBeDefined()
     })
 
@@ -71,7 +71,7 @@ describe('Sessions', () => {
       })
 
       const session = res.data?.createSessionWithJWT
-      expect(session.user.email).toBe('dev@wepublish.ch')
+      expect(session.user.email).toBe('dev@dudagroup.ch')
       expect(session.token).toBeDefined()
     })
 
@@ -85,12 +85,12 @@ describe('Sessions', () => {
       const res = await mutate({
         mutation: CreateSessionPublic,
         variables: {
-          email: 'dev@wepublish.ch',
+          email: 'dev@dudagroup.ch',
           password: '123'
         }
       })
       const session = res.data?.createSession
-      expect(session.user.email).toBe('dev@wepublish.ch')
+      expect(session.user.email).toBe('dev@dudagroup.ch')
       expect(session.token).toBeDefined()
     })
 
@@ -125,7 +125,7 @@ describe('Sessions', () => {
       })
 
       const session = res.data?.createSessionWithJWT
-      expect(session.user.email).toBe('dev@wepublish.ch')
+      expect(session.user.email).toBe('dev@dudagroup.ch')
       expect(session.token).toBeDefined()
     })
 

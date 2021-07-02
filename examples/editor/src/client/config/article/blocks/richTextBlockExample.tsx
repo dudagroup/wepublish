@@ -2,7 +2,7 @@ import React from 'react'
 
 import {BlockProps} from '../atoms/blockList'
 import {RichTextBlockExampleValue} from './types'
-import {RichTextBlock} from '@wepublish/editor'
+import {RichTextBlock} from '@dudagroup/editor'
 
 export type RichTextBlockProps = BlockProps<RichTextBlockExampleValue>
 

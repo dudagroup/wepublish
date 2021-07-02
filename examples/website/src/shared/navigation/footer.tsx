@@ -160,7 +160,7 @@ export function Footer({text, navigation, onNewsletter}: FooterProps) {
             Teststrasse 26 <br />
             8000 Zürich <br />
             <br />
-            <Link href="mailto:info@wepublish.ch">info@wepublish.ch</Link>
+            <Link href="mailto:info@dudagroup.ch">info@dudagroup.ch</Link>
           </p>
         </div>
         <p className={css(FooterTextStyle)}>{text}</p>
@@ -171,7 +171,7 @@ export function Footer({text, navigation, onNewsletter}: FooterProps) {
           <Link target="_blank" rel="noopener" href="https://twitter.com/wepublish">
             <RoundIconButton icon={IconType.Twitter}></RoundIconButton>
           </Link>
-          <Link href="mailto:info@wepublish.ch">
+          <Link href="mailto:info@dudagroup.ch">
             <RoundIconButton icon={IconType.Mail}></RoundIconButton>
           </Link>
         </div>

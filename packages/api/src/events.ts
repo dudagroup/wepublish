@@ -195,14 +195,14 @@ invoiceModelEvents.on('update', async (context, model) => {
           message: `Welcome Member. Click the link below to login: \n\n${link}`,
           recipient: user.email,
           subject: 'Welcome Member',
-          replyToAddress: 'dev@wepublish.ch'
+          replyToAddress: 'dev@dudagroup.ch'
         })
       } else {
         await context.sendMailFromProvider({
           message: `Subscription has been renewed`,
           recipient: user.email,
           subject: 'Subscription is renewed',
-          replyToAddress: 'dev@wepublish.ch'
+          replyToAddress: 'dev@dudagroup.ch'
         })
       }
     }

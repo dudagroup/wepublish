@@ -17,7 +17,7 @@ import {
   ImageSelectPanel,
   RichTextBlock,
   RichTextBlockValue
-} from '@wepublish/editor'
+} from '@dudagroup/editor'
 
 export function ListicleBlock({value, onChange, disabled}: BlockProps<ListicleBlockValue>) {
   return (

@@ -16,7 +16,7 @@ import {
   OptionalPublicArticle,
   GetPublishedArticlesArgs,
   PublicArticle
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 

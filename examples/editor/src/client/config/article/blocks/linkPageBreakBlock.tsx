@@ -7,7 +7,7 @@ import {LinkPageBreakBlockValue} from './types'
 import {useTranslation} from 'react-i18next'
 import {LinkPageBreakEditPanel} from '../panel/linkPageBreakEditPanel'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {createDefaultValue, ImagedEditPanel, RichTextBlock} from '@wepublish/editor'
+import {createDefaultValue, ImagedEditPanel, RichTextBlock} from '@dudagroup/editor'
 import {ImageRefFragment, useImageQuery} from '../api'
 import {isFunctionalUpdate} from '@karma.run/react'
 export type LinkPageBreakBlockProps = BlockProps<LinkPageBreakBlockValue>

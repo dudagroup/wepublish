@@ -7,7 +7,7 @@ import {
   ImageOutput,
   ImageRotation,
   ImageTransformation
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import {FileUpload} from 'graphql-upload'
 import fetch from 'node-fetch'
 import FormData = require('form-data')

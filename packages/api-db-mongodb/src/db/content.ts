@@ -10,11 +10,11 @@ import {
   InputCursorType,
   SortOrder,
   ContentSort
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 import {CollectionName, DBContent} from './schema'
 import {Cursor} from './cursor'
-import {LanguageConfig} from '@wepublish/api/lib/interfaces/languageConfig'
+import {LanguageConfig} from '@dudagroup/api/lib/interfaces/languageConfig'
 
 const PATH_DELIMITER = '__'
 

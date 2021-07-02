@@ -20,7 +20,7 @@ import {TeaserStyle} from '../api'
 
 import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {ImagedEditPanel, ImageSelectPanel} from '@wepublish/editor'
+import {ImagedEditPanel, ImageSelectPanel} from '@dudagroup/editor'
 
 export interface TeaserEditPanelProps {
   initialTeaser: Teaser

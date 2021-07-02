@@ -2,8 +2,8 @@ import React from 'react'
 import {ControlLabel, Form, FormControl, FormGroup, Toggle, HelpBlock, Panel} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {ContentAEditView, ContentAEditViewValue} from './contentA'
-import {ContentEditAction} from '@wepublish/editor/lib/client/control/contentReducer'
-import {Configs} from '@wepublish/editor'
+import {ContentEditAction} from '@dudagroup/editor/lib/client/control/contentReducer'
+import {Configs} from '@dudagroup/editor'
 
 export interface DefaultMetadata {
   readonly title: string

@@ -8,15 +8,15 @@ import {SVGIcon} from 'rsuite/lib/@types/common'
 import {
   ContentEditAction,
   ContentEditActionEnum
-} from '@wepublish/editor/lib/client/control/contentReducer'
+} from '@dudagroup/editor/lib/client/control/contentReducer'
 import {
   BlockValue,
   Configs,
   ContentModelConfigMerged,
   generateEmptyContent
-} from '@wepublish/editor'
+} from '@dudagroup/editor'
 import {BlockMap} from '../blocks/blockMap'
-import {SchemaPath} from '@wepublish/editor/lib/client/interfaces/utilTypes'
+import {SchemaPath} from '@dudagroup/editor/lib/client/interfaces/utilTypes'
 import nanoid from 'nanoid'
 import {destructUnionCase} from '../utility'
 

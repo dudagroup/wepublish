@@ -21,7 +21,7 @@ import {
   gridBlockFrontDataGQLfragment
 } from './route/gqlFragments'
 
-// TODO: Don't use slate Node type, export client side friendly types from @wepublish/api/types package.
+// TODO: Don't use slate Node type, export client side friendly types from @dudagroup/api/types package.
 // TODO: Remove slate from dependencies.
 import {Node} from 'slate'
 

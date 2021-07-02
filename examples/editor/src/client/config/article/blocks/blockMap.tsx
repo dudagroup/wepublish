@@ -12,7 +12,7 @@ import {EmbedBlock} from './embedBlock'
 import {TeaserGridBlock} from './teaserGridBlock'
 import {ImageGalleryBlock} from './imageGalleryBlock'
 import {ListicleBlock} from './listicleBlock'
-import {createDefaultValue} from '@wepublish/editor'
+import {createDefaultValue} from '@dudagroup/editor'
 import {RichTextBlockExampleBlock} from './richTextBlockExample'
 
 export const BlockMap: BlockMapForValue<BlockValue> = {

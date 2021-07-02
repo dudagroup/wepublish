@@ -1,5 +1,5 @@
 {
-  "name": "@wepublish/api-db-mongodb",
+  "name": "@dudagroup/api-db-mongodb",
   "version": "2.0.0",
   "description": "We.publish Database adapter for mongoDB",
   "keywords": [
@@ -14,11 +14,11 @@
   "homepage": "https://github.com/wepublish/wepublish",
   "bugs": {
     "url": "https://github.com/wepublish/wepublish/issues",
-    "email": "development@wepublish.ch"
+    "email": "development@dudagroup.ch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wepublish/wepublish.git",
+    "url": "https://github.com/dudagroup/wepublish.git",
     "directory": "packages/api-db-mongodb"
   },
   "main": "./lib/",
@@ -47,6 +47,9 @@
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
-    "@wepublish/api": "*"
+    "@dudagroup/api": "*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

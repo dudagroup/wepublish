@@ -25,7 +25,7 @@ import {
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
-import {Content} from '@wepublish/api'
+import {Content} from '@dudagroup/api'
 import {RecordPreview} from '../atoms/recordPreview'
 import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'

@@ -6,7 +6,7 @@ import querystring from 'querystring'
 import {inspect} from 'util'
 
 import * as assert from 'assert'
-import {MongoDBAdapter} from '@wepublish/api-db-mongodb/lib'
+import {MongoDBAdapter} from '@dudagroup/api-db-mongodb/lib'
 
 const body = urlencoded({extended: false})
 

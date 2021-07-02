@@ -17,7 +17,7 @@ import {TeaserEditPanel} from '../panel/teaserEditPanel'
 import {ImageRefFragment, TeaserStyle} from '../api'
 
 import {useTranslation} from 'react-i18next'
-import {PeerWithProfileFragment} from '@wepublish/editor/lib/client/api'
+import {PeerWithProfileFragment} from '@dudagroup/editor/lib/client/api'
 
 const GridItem = SortableElement((props: TeaserBlockProps) => {
   return <TeaserBlock {...props} />

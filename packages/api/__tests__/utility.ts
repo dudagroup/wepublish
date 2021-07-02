@@ -1,4 +1,4 @@
-import {MongoDBAdapter} from '@wepublish/api-db-mongodb'
+import {MongoDBAdapter} from '@dudagroup/api-db-mongodb'
 import {URL} from 'url'
 import {
   Author,
@@ -13,7 +13,7 @@ import {
 import {ApolloServer} from 'apollo-server'
 import {createTestClient} from 'apollo-server-testing'
 import {ApolloServerTestClient} from 'apollo-server-testing/dist/createTestClient'
-import {KarmaMediaAdapter} from '@wepublish/api-media-karma/src'
+import {KarmaMediaAdapter} from '@dudagroup/api-media-karma/src'
 
 export interface TestClient {
   dbAdapter: MongoDBAdapter
@@ -54,7 +54,7 @@ export async function createGraphQLTestClientWithMongoDB(): Promise<TestClient> 
 
       adminUser = await adapter.user.createUser({
         input: {
-          email: 'dev@wepublish.ch',
+          email: 'dev@dudagroup.ch',
           name: 'Dev User',
           roleIDs: [adminUserRoleId],
           active: true,

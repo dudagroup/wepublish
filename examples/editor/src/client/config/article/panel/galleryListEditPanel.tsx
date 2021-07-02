@@ -5,7 +5,7 @@ import {ListInput, ListValue, FieldProps} from '../atoms/listInput'
 import {GalleryImageEdge} from '../blocks/types'
 import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
-import {Configs, ContentEditor, RefSelectDrawer, useRecordHook} from '@wepublish/editor'
+import {Configs, ContentEditor, RefSelectDrawer, useRecordHook} from '@dudagroup/editor'
 import {ImageRecord} from '../interfaces/interfaces'
 import {MODEL_MEDIA_LIBRARY} from '../../config'
 

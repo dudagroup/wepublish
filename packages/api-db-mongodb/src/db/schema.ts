@@ -18,7 +18,7 @@ import {
   MailLogState,
   PaymentState,
   UserAddress
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
 export enum CollectionName {
   Migrations = 'migrations',

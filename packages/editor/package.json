@@ -1,5 +1,5 @@
 {
-  "name": "@wepublish/editor",
+  "name": "@dudagroup/editor",
   "version": "2.0.0",
   "description": "We.publish CMS Editor",
   "keywords": [
@@ -15,11 +15,11 @@
   "homepage": "https://github.com/wepublish/wepublish",
   "bugs": {
     "url": "https://github.com/wepublish/wepublish/issues",
-    "email": "development@wepublish.ch"
+    "email": "development@dudagroup.ch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wepublish/wepublish.git",
+    "url": "https://github.com/dudagroup/wepublish.git",
     "directory": "packages/editor"
   },
   "files": [
@@ -145,7 +145,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "peerDependencies": {
-    "@wepublish/api": "*"
+    "@dudagroup/api": "*"
   },
   "eslintConfig": {
     "plugins": [
@@ -215,5 +215,8 @@
     "ignorePatterns": [
       "src/client/api/index.ts"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

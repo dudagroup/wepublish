@@ -10,7 +10,7 @@ import {ImageGalleryBlockValue} from './types'
 import {GalleryListEditPanel} from '../panel/galleryListEditPanel'
 
 import {useTranslation} from 'react-i18next'
-import {ContentEditor, RefSelectDrawer, useRecordHook} from '@wepublish/editor'
+import {ContentEditor, RefSelectDrawer, useRecordHook} from '@dudagroup/editor'
 import {ImageRecord} from '../interfaces/interfaces'
 import {MODEL_MEDIA_LIBRARY} from '../../config'
 

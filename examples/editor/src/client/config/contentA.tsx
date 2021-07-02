@@ -7,13 +7,13 @@ import {
   RefSelectDrawer,
   ReferenceButton,
   Configs
-} from '@wepublish/editor'
+} from '@dudagroup/editor'
 import {ContentContextEnum} from './article/api'
 import {I18nWrapper} from './i18nWrapper'
 import {
   ContentEditAction,
   ContentEditActionEnum
-} from '@wepublish/editor/lib/client/control/contentReducer'
+} from '@dudagroup/editor/lib/client/control/contentReducer'
 import {isFunctionalUpdate} from '@karma.run/react'
 import {MODEL_MEDIA_LIBRARY} from './config'
 

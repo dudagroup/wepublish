@@ -13,10 +13,10 @@ import {
   WepublishServer,
   JobType,
   Context
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
-import {KarmaMediaAdapter} from '@wepublish/api-media-karma'
-import {MongoDBAdapter} from '@wepublish/api-db-mongodb'
+import {KarmaMediaAdapter} from '@dudagroup/api-media-karma'
+import {MongoDBAdapter} from '@dudagroup/api-db-mongodb'
 
 import {URL} from 'url'
 import {SlackMailProvider} from './SlackMailProvider'
@@ -100,7 +100,7 @@ async function asyncMain() {
 
       await adapter.user.createUser({
         input: {
-          email: 'dev@wepublish.ch',
+          email: 'dev@dudagroup.ch',
           name: 'Dev User',
           active: true,
           properties: [],
@@ -111,7 +111,7 @@ async function asyncMain() {
 
       await adapter.user.createUser({
         input: {
-          email: 'editor@wepublish.ch',
+          email: 'editor@dudagroup.ch',
           name: 'Editor User',
           active: true,
           properties: [],
@@ -170,7 +170,7 @@ async function asyncMain() {
     mailProvider = new MailgunMailProvider({
       id: 'mailgun',
       name: 'Mailgun',
-      fromAddress: 'dev@wepublish.ch',
+      fromAddress: 'dev@dudagroup.ch',
       webhookEndpointSecret: process.env.MAILGUN_WEBHOOK_SECRET,
       baseDomain: process.env.MAILGUN_BASE_DOMAIN,
       mailDomain: process.env.MAILGUN_MAIL_DOMAIN,
@@ -183,7 +183,7 @@ async function asyncMain() {
     mailProvider = new MailchimpMailProvider({
       id: 'mailchimp',
       name: 'Mailchimp',
-      fromAddress: 'dev@wepublish.ch',
+      fromAddress: 'dev@dudagroup.ch',
       webhookEndpointSecret: process.env.MAILCHIMP_WEBHOOK_SECRET,
       apiKey: process.env.MAILCHIMP_API_KEY,
       baseURL: '',
@@ -195,7 +195,7 @@ async function asyncMain() {
     mailProvider = new SlackMailProvider({
       id: 'slackMail',
       name: 'Slack Mail',
-      fromAddress: 'fakeMail@wepublish.media',
+      fromAddress: 'fakeMail@dudagroup.media',
       webhookURL: process.env.SLACK_DEV_MAIL_WEBHOOK_URL
     })
   }
@@ -384,7 +384,7 @@ async function asyncMain() {
       yargs => {
         yargs.positional('recipient', {
           type: 'string',
-          default: 'dev@wepublish.ch',
+          default: 'dev@dudagroup.ch',
           describe: 'recipient of the test mail'
         })
       },
@@ -393,7 +393,7 @@ async function asyncMain() {
           subject: 'This is a test mail from a we.publish instance',
           recipient: argv.recipient,
           message: 'Hello from the other side',
-          replyToAddress: 'dev@wepublish.ch'
+          replyToAddress: 'dev@dudagroup.ch'
         })
         process.exit(0)
       }

@@ -15,7 +15,7 @@ import {
   SortOrder,
   PublicComment,
   OptionalPublicComment
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 import {Cursor} from './cursor'

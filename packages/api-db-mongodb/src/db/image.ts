@@ -11,7 +11,7 @@ import {
   LimitType,
   SortOrder,
   ImageSort
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 

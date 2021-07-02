@@ -1,10 +1,10 @@
 {
   "watch": [
-    "../../node_modules/@wepublish/api/lib/**/*.js",
-    "../../node_modules/@wepublish/api-db-mongodb/lib/**/*.js",
-    "../../node_modules/@wepublish/api-db-memory/lib/**/*.js",
-    "../../node_modules/@wepublish/api-db-karma/lib/**/*.js",
-    "../../node_modules/@wepublish/api-media-karma/lib/**/*.js",
+    "../../node_modules/@dudagroup/api/lib/**/*.js",
+    "../../node_modules/@dudagroup/api-db-mongodb/lib/**/*.js",
+    "../../node_modules/@dudagroup/api-db-memory/lib/**/*.js",
+    "../../node_modules/@dudagroup/api-db-karma/lib/**/*.js",
+    "../../node_modules/@dudagroup/api-media-karma/lib/**/*.js",
     "./dist/**/*.js"
   ],
   "delay": 250,

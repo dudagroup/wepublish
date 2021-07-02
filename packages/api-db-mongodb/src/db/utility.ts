@@ -1,4 +1,4 @@
-import {DateFilterComparison} from '@wepublish/api'
+import {DateFilterComparison} from '@dudagroup/api'
 
 export function mapDateFilterComparisonToMongoQueryOperatior(
   operator: DateFilterComparison

@@ -11,7 +11,7 @@ import {
   OptionalMemberPlan,
   SortOrder,
   UpdateMemberPlanArgs
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import {Collection, Db, FilterQuery, MongoCountPreferences} from 'mongodb'
 import {CollectionName, DBMemberPlan} from './schema'
 import {MaxResultsPerPage} from './defaults'

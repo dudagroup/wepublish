@@ -1,7 +1,5 @@
 {
-  "watch": [
-    "../../node_modules/@wepublish/editor/lib/*.js"
-  ],
+  "watch": ["../../node_modules/@dudagroup/editor/lib/*.js"],
   "delay": 250,
   "ignoreRoot": [".git"]
 }

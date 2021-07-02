@@ -21,7 +21,7 @@ import {
   UpdateUserSubscriptionArgs,
   User,
   UserSort
-} from '@wepublish/api'
+} from '@dudagroup/api'
 
 import {Collection, Db, FilterQuery, MongoCountPreferences, MongoError} from 'mongodb'
 

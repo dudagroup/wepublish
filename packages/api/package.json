@@ -1,5 +1,5 @@
 {
-  "name": "@wepublish/api",
+  "name": "@dudagroup/api",
   "version": "2.0.0",
   "description": "API core for we.publish.",
   "keywords": [
@@ -14,11 +14,11 @@
   "homepage": "https://github.com/wepublish/wepublish",
   "bugs": {
     "url": "https://github.com/wepublish/wepublish/issues",
-    "email": "development@wepublish.ch"
+    "email": "development@dudagroup.ch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wepublish/wepublish.git",
+    "url": "https://github.com/dudagroup/wepublish.git",
     "directory": "packages/api"
   },
   "typings": "./lib/index.d.ts",
@@ -89,5 +89,8 @@
     "typed-emitter": "^1.3.1",
     "typescript": "^3.8.3",
     "weak-napi": "^2.0.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

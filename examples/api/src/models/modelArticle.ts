@@ -3,7 +3,7 @@ import {
   ContentModelSchemaFieldEnum,
   ContentModelSchemaFieldObject,
   ContentModelSchemaTypes
-} from '@wepublish/api'
+} from '@dudagroup/api'
 import {typeMediaLibrary} from './modelMediaLibrary'
 
 const title: ContentModelSchemaFieldObject = {

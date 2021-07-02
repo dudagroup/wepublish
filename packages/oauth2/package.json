@@ -1,5 +1,5 @@
 {
-  "name": "@wepublish/oauth2",
+  "name": "@dudagroup/oauth2",
   "version": "0.8.4",
   "description": "We.publish OAuth2 Provider",
   "keywords": [
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/wepublish/wepublish",
   "bugs": {
     "url": "https://github.com/wepublish/wepublish/issues",
-    "email": "development@wepublish.ch"
+    "email": "development@dudagroup.ch"
   },
   "repository": {
     "type": "git",

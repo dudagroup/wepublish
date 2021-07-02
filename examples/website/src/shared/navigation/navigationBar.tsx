@@ -306,7 +306,7 @@ export function NavigationBar({itemsCategory, itemsIntern}: NavigationBarProps) 
           <Link target="_blank" rel="noopener" href="https://twitter.com/wepublish">
             <RoundIconButton icon={IconType.Twitter}></RoundIconButton>
           </Link>
-          <Link href="mailto:info@wepublish.ch">
+          <Link href="mailto:info@dudagroup.ch">
             <RoundIconButton icon={IconType.Mail}></RoundIconButton>
           </Link>
         </div>
@@ -321,7 +321,7 @@ export function NavigationBar({itemsCategory, itemsIntern}: NavigationBarProps) 
             </Link>
             <div>Teststrasse 26</div>
             <div>8000 Zürich</div>
-            <Link href="mailto:info@wepublish.ch">info@wepublish.ch</Link>
+            <Link href="mailto:info@dudagroup.ch">info@dudagroup.ch</Link>
           </div>
         </div>
       </div>

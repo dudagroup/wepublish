@@ -1,12 +1,12 @@
 import {BlockListValue} from '../atoms/blockList'
 import {ListValue} from '../atoms/listInput'
 import {ImageRefFragment, TeaserStyle} from '../api'
-import {Reference, RichTextBlockValue} from '@wepublish/editor'
+import {Reference, RichTextBlockValue} from '@dudagroup/editor'
 import {
   ArticleRefFragment,
   PageRefFragment,
   PeerRefFragment
-} from '@wepublish/editor/lib/client/api'
+} from '@dudagroup/editor/lib/client/api'
 
 export enum BlockType {
   RichText = 'richText',

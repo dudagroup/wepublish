@@ -1,5 +1,5 @@
 {
-  "name": "@wepublish/api-media-karma",
+  "name": "@dudagroup/api-media-karma",
   "version": "2.0.0",
   "description": "We.publish media service",
   "keywords": [
@@ -14,11 +14,11 @@
   "homepage": "https://github.com/wepublish/wepublish",
   "bugs": {
     "url": "https://github.com/wepublish/wepublish/issues",
-    "email": "development@wepublish.ch"
+    "email": "development@dudagroup.ch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wepublish/wepublish.git",
+    "url": "https://github.com/dudagroup/wepublish.git",
     "directory": "packages/api-media-karma"
   },
   "main": "./lib/",
@@ -48,6 +48,9 @@
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
-    "@wepublish/api": "*"
+    "@dudagroup/api": "*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

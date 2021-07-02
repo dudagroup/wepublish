@@ -1,5 +1,5 @@
-import {ContentModelSchemas} from '@wepublish/api'
-import {MapType} from '@wepublish/api/lib/interfaces/utilTypes'
+import {ContentModelSchemas} from '@dudagroup/api'
+import {MapType} from '@dudagroup/api/lib/interfaces/utilTypes'
 import React, {memo, useState} from 'react'
 import {Grid, Panel} from 'rsuite'
 import {LanguagesConfig} from '../../api'
