@@ -48,17 +48,15 @@ fragment ContentListRef on ContentModelSummary {
 
 mutation PublishContent(
   $id: ID!
-  $publishAt: DateTime!
-  $publishedAt: DateTime!
-  $updatedAt: DateTime!
+  $publicationDate: DateTime!
+  $dePublicationDate: DateTime!
 ) {
   content {
     _all {
       publish(
         id: $id
-        publishAt: $publishAt
-        publishedAt: $publishedAt
-        updatedAt: $updatedAt
+        publicationDate: $publicationDate
+        dePublicationDate: $dePublicationDate
       ) {
         id
       }

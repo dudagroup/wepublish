@@ -16,16 +16,16 @@ export type Scalars = {
   RichText: Node[];
   /** A hexidecimal color value. */
   Color: string;
-  Unknown: any;
   ContentModelSchema: any;
   Slug: string;
+  Unknown: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: File;
 };
 
 export type _Cmp_Article = {
   __typename?: '_cmp_article';
-  read: _Cmp_Article_Record;
+  read?: Maybe<_Cmp_Article_Record>;
   list: _Cmp_ArticleConnection;
 };
 
@@ -41,8 +41,9 @@ export type _Cmp_ArticleListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_Article>;
-  sort?: Maybe<ContentSort>;
+  sort?: Maybe<Sort_Article>;
   order?: Maybe<SortOrder>;
   language?: Maybe<Languages>;
 };
@@ -51,14 +52,15 @@ export type _Cmp_Article_Record = {
   __typename?: '_cmp_article_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
   dePublicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
   content: _Cmp_Article_Record_Content;
   meta: _Cmp_Article_Record_Meta;
 };
@@ -92,7 +94,7 @@ export type _Cmp_Article_Record_Content_Blocks_Image = {
 
 export type _Cmp_Article_Record_Content_Blocks_Image_Content = {
   __typename?: '_cmp_article_record_content_blocks_image_content';
-  image?: Maybe<Ref_MediaLibrary>;
+  image?: Maybe<Ref__CmpRef_MediaLibrary>;
   caption: Scalars['String'];
 };
 
@@ -103,12 +105,12 @@ export type _Cmp_Article_Record_Content_Blocks_ImageGallery = {
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Content = {
   __typename?: '_cmp_article_record_content_blocks_imageGallery_content';
-  images: Array<Maybe<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>>;
+  images: Array<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>;
 };
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Images = {
   __typename?: '_cmp_article_record_content_blocks_imageGallery_images';
-  image?: Maybe<Ref_MediaLibrary>;
+  image?: Maybe<Ref__CmpRef_MediaLibrary>;
   caption: Scalars['String'];
 };
 
@@ -128,7 +130,7 @@ export type _Cmp_Article_Record_Content_Blocks_LinkPageBreak_Content = {
   styleOption?: Maybe<Scalars['String']>;
   layoutOption?: Maybe<Scalars['String']>;
   templateOption?: Maybe<Scalars['String']>;
-  image?: Maybe<Ref_MediaLibrary>;
+  image?: Maybe<Ref__CmpRef_MediaLibrary>;
 };
 
 export type _Cmp_Article_Record_Content_Blocks_Listicle = {
@@ -151,7 +153,7 @@ export type _Cmp_Article_Record_Content_Blocks_Listicle_Items_Value = {
   __typename?: '_cmp_article_record_content_blocks_listicle_items_value';
   title: Scalars['String'];
   richText: Scalars['RichText'];
-  image?: Maybe<Ref_MediaLibrary>;
+  image?: Maybe<Ref__CmpRef_MediaLibrary>;
 };
 
 export type _Cmp_Article_Record_Content_Blocks_Quote = {
@@ -199,23 +201,11 @@ export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Content = {
 export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers = {
   __typename?: '_cmp_article_record_content_blocks_teaserGrid_teasers';
   style: _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_Style;
-  imageID?: Maybe<Ref_MediaLibrary>;
+  imageID?: Maybe<Ref__CmpRef_MediaLibrary>;
   preTitle: Scalars['String'];
   title: Scalars['String'];
   lead: Scalars['String'];
-  contentRef?: Maybe<Ref_Article_Page>;
-};
-
-export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef = _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef_Article | _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef_Page;
-
-export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef_Article = {
-  __typename?: '_cmp_article_record_content_blocks_teaserGrid_teasers_contentRef_article';
-  article?: Maybe<_Cmp_Article_Record>;
-};
-
-export type _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef_Page = {
-  __typename?: '_cmp_article_record_content_blocks_teaserGrid_teasers_contentRef_page';
-  page?: Maybe<Scalars['Unknown']>;
+  contentRef?: Maybe<Ref__CmpRef_Article>;
 };
 
 export enum _Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_Style {
@@ -265,7 +255,7 @@ export type _Cmp_Article_Record_Meta = {
   lead: Scalars['String'];
   seoTitle: Scalars['String'];
   slug: Scalars['String'];
-  authors: Array<Maybe<Ref_Author>>;
+  authors: Array<Maybe<Ref__CmpRef_Author>>;
   hideAuthors: Scalars['Boolean'];
   breaking: Scalars['Boolean'];
   peering: Scalars['Boolean'];
@@ -280,7 +270,7 @@ export type _Cmp_ArticleConnection = {
 
 export type _Cmp_Author = {
   __typename?: '_cmp_author';
-  read: _Cmp_Author_Record;
+  read?: Maybe<_Cmp_Author_Record>;
   list: _Cmp_AuthorConnection;
 };
 
@@ -296,8 +286,9 @@ export type _Cmp_AuthorListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_Author>;
-  sort?: Maybe<ContentSort>;
+  sort?: Maybe<Sort_Author>;
   order?: Maybe<SortOrder>;
   language?: Maybe<Languages>;
 };
@@ -306,14 +297,15 @@ export type _Cmp_Author_Record = {
   __typename?: '_cmp_author_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
   dePublicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
   content: _Cmp_Author_Record_Content;
 };
 
@@ -340,7 +332,7 @@ export type _Cmp_AuthorConnection = {
 
 export type _Cmp_MediaLibrary = {
   __typename?: '_cmp_mediaLibrary';
-  read: _Cmp_MediaLibrary_Record;
+  read?: Maybe<_Cmp_MediaLibrary_Record>;
   list: _Cmp_MediaLibraryConnection;
 };
 
@@ -356,8 +348,9 @@ export type _Cmp_MediaLibraryListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_MediaLibrary>;
-  sort?: Maybe<ContentSort>;
+  sort?: Maybe<Sort_MediaLibrary>;
   order?: Maybe<SortOrder>;
   language?: Maybe<Languages>;
 };
@@ -366,14 +359,15 @@ export type _Cmp_MediaLibrary_Record = {
   __typename?: '_cmp_mediaLibrary_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
   dePublicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
   content: _Cmp_MediaLibrary_Record_Content;
 };
 
@@ -385,7 +379,7 @@ export type _Cmp_MediaLibrary_Record_Content = {
   description: I18n_String;
   source: Scalars['String'];
   license: Scalars['String'];
-  authors: Array<Maybe<Ref_Author>>;
+  authors: Array<Maybe<Ref__CmpRef_Author>>;
 };
 
 export type _Cmp_MediaLibraryConnection = {
@@ -397,7 +391,7 @@ export type _Cmp_MediaLibraryConnection = {
 
 export type _Cmp_ModelA = {
   __typename?: '_cmp_modelA';
-  read: _Cmp_ModelA_Record;
+  read?: Maybe<_Cmp_ModelA_Record>;
   list: _Cmp_ModelAConnection;
 };
 
@@ -413,8 +407,9 @@ export type _Cmp_ModelAListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_ModelA>;
-  sort?: Maybe<ContentSort>;
+  sort?: Maybe<Sort_ModelA>;
   order?: Maybe<SortOrder>;
   language?: Maybe<Languages>;
 };
@@ -423,14 +418,15 @@ export type _Cmp_ModelA_Record = {
   __typename?: '_cmp_modelA_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
   dePublicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
   content: _Cmp_ModelA_Record_Content;
   meta: _Cmp_ModelA_Record_Meta;
 };
@@ -445,22 +441,10 @@ export type _Cmp_ModelA_Record_Content = {
   myStringI18n: I18n_String;
   myRichText: Scalars['RichText'];
   myRichTextI18n: I18n_RichText;
-  myRef?: Maybe<Ref_ModelA_ModelB>;
-  myRefI18n?: Maybe<I18n_Ref_ModelA_ModelB>;
-  myRefList: Array<Maybe<Ref_ModelB>>;
+  myRef?: Maybe<Ref__CmpRef_ModelA_ModelB>;
 };
 
-export type _Cmp_ModelA_Record_Content_MyRef = _Cmp_ModelA_Record_Content_MyRef_ModelA | _Cmp_ModelA_Record_Content_MyRef_ModelB;
-
-export type _Cmp_ModelA_Record_Content_MyRef_ModelA = {
-  __typename?: '_cmp_modelA_record_content_myRef_modelA';
-  modelA?: Maybe<_Cmp_ModelA_Record>;
-};
-
-export type _Cmp_ModelA_Record_Content_MyRef_ModelB = {
-  __typename?: '_cmp_modelA_record_content_myRef_modelB';
-  modelB?: Maybe<_Cmp_ModelB_Record>;
-};
+export type _Cmp_ModelA_Record_Content_MyRef = _CmpRefCase_ModelA | _CmpRefCase_ModelB;
 
 export type _Cmp_ModelA_Record_Meta = {
   __typename?: '_cmp_modelA_record_meta';
@@ -468,7 +452,7 @@ export type _Cmp_ModelA_Record_Meta = {
   myStringI18n: I18n_String;
   myRichText: Scalars['RichText'];
   myRichTextI18n: I18n_RichText;
-  myRef?: Maybe<Ref_ModelA_ModelB>;
+  myRef?: Maybe<Ref__CmpRef_ModelA_ModelB>;
 };
 
 export type _Cmp_ModelAConnection = {
@@ -480,7 +464,7 @@ export type _Cmp_ModelAConnection = {
 
 export type _Cmp_ModelB = {
   __typename?: '_cmp_modelB';
-  read: _Cmp_ModelB_Record;
+  read?: Maybe<_Cmp_ModelB_Record>;
   list: _Cmp_ModelBConnection;
 };
 
@@ -496,8 +480,9 @@ export type _Cmp_ModelBListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<Filter_ModelB>;
-  sort?: Maybe<ContentSort>;
+  sort?: Maybe<Sort_ModelB>;
   order?: Maybe<SortOrder>;
   language?: Maybe<Languages>;
 };
@@ -506,30 +491,76 @@ export type _Cmp_ModelB_Record = {
   __typename?: '_cmp_modelB_record';
   id: Scalars['ID'];
   contentType: Scalars['String'];
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
   dePublicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
   content: _Cmp_ModelB_Record_Content;
 };
 
 export type _Cmp_ModelB_Record_Content = {
   __typename?: '_cmp_modelB_record_content';
+  myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String;
+  myMultilineStringI18n: I18n_String;
+  myOptionalString?: Maybe<Scalars['String']>;
+  myOptionalStringI18n?: Maybe<I18n_String>;
   myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText;
   myInt: Scalars['Int'];
+  myIntI18n: I18n_Int;
   myFloat: Scalars['Float'];
+  myFloatI18n: I18n_Float;
   myBoolean: Scalars['Boolean'];
-  myDateTime?: Maybe<Scalars['DateTime']>;
+  myOptionalBoolean?: Maybe<Scalars['Boolean']>;
+  myBooleanI18n: I18n_Boolean;
+  myDateTime: Scalars['DateTime'];
+  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n: I18n_DateTime;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
+  myEnumI18n: I18n__Cmp_ModelB_Record_Content_MyEnumI18n;
+  myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
+  myListNested: Array<_Cmp_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmp_ModelB_Record_Content_MyUnion;
-  myRef?: Maybe<Ref_ModelA>;
+  myOptionalUnion?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion>;
+  myRef?: Maybe<Ref__CmpRef_ModelA_MediaLibrary>;
+  myRefI18n?: Maybe<I18n_Ref__CmpRef_ModelA_ModelB>;
+  myObject: _Cmp_ModelB_Record_Content_MyObject;
+  myOptionalObject?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalObject>;
+  myTags: Array<Maybe<Ref__CmpRef_ModelA>>;
+  myBlockList: Array<_Cmp_ModelB_Record_Content_MyBlockList>;
+  myMedia?: Maybe<Media>;
+  myMediaI18n?: Maybe<I18n_Media>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList = _Cmp_ModelB_Record_Content_MyBlockList_CaseA | _Cmp_ModelB_Record_Content_MyBlockList_CaseB;
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseA';
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyBlockList_CaseA_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseA_content';
+  fieldA: Scalars['String'];
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseB = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseB';
+  caseB?: Maybe<_Cmp_ModelB_Record_Content_MyBlockList_CaseB_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyBlockList_CaseB_Content = {
+  __typename?: '_cmp_modelB_record_content_myBlockList_caseB_content';
+  fieldB: Scalars['String'];
 };
 
 export enum _Cmp_ModelB_Record_Content_MyEnum {
@@ -538,6 +569,69 @@ export enum _Cmp_ModelB_Record_Content_MyEnum {
   /** Bar */
   Bar = 'bar'
 }
+
+export enum _Cmp_ModelB_Record_Content_MyEnumI18n {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmp_ModelB_Record_Content_MyListNested = {
+  __typename?: '_cmp_modelB_record_content_myListNested';
+  foo: Scalars['String'];
+  bar?: Maybe<I18n_String>;
+  list: Array<_Cmp_ModelB_Record_Content_MyListNested_List>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyListNested_List = {
+  __typename?: '_cmp_modelB_record_content_myListNested_list';
+  nestedFoo: Scalars['String'];
+  nestedBar: I18n_String;
+};
+
+export type _Cmp_ModelB_Record_Content_MyObject = {
+  __typename?: '_cmp_modelB_record_content_myObject';
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
+};
+
+export enum _Cmp_ModelB_Record_Content_MyOptionalEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmp_ModelB_Record_Content_MyOptionalObject = {
+  __typename?: '_cmp_modelB_record_content_myOptionalObject';
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion = _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA | _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB;
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseA';
+  caseA?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseA_Content = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseA_content';
+  foo: I18n_String;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseB';
+  caseB?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB_Content = {
+  __typename?: '_cmp_modelB_record_content_myOptionalUnion_caseB_content';
+  bar: Scalars['Float'];
+};
+
+export type _Cmp_ModelB_Record_Content_MyRef = _CmpRefCase_ModelA | _CmpRefCase_MediaLibrary;
 
 export type _Cmp_ModelB_Record_Content_MyUnion = _Cmp_ModelB_Record_Content_MyUnion_CaseA | _Cmp_ModelB_Record_Content_MyUnion_CaseB;
 
@@ -548,7 +642,7 @@ export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseA_Content = {
   __typename?: '_cmp_modelB_record_content_myUnion_caseA_content';
-  foo: Scalars['Boolean'];
+  foo: I18n_String;
 };
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseB = {
@@ -590,16 +684,13 @@ export type _Cmpi_ArticleUpdateArgs = {
 
 export type _Cmpi_ArticleDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ArticlePublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -641,7 +732,7 @@ export type _Cmpi_Article_Record_Content_Blocks_Image = {
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery = {
-  images: Array<Maybe<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>>;
+  images: Array<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>;
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery_Images = {
@@ -728,6 +819,8 @@ export type _Cmpi_Article_Record_Content_Blocks_Youtube = {
 
 export type _Cmpi_Article_Record_Create = {
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Article_Record_Content;
   meta: _Cmpi_Article_Record_Meta;
@@ -748,6 +841,8 @@ export type _Cmpi_Article_Record_Meta = {
 export type _Cmpi_Article_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Article_Record_Content;
   meta: _Cmpi_Article_Record_Meta;
@@ -775,16 +870,13 @@ export type _Cmpi_AuthorUpdateArgs = {
 
 export type _Cmpi_AuthorDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_AuthorPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -806,6 +898,8 @@ export type _Cmpi_Author_Record_Content_Links = {
 
 export type _Cmpi_Author_Record_Create = {
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Author_Record_Content;
 };
@@ -813,6 +907,8 @@ export type _Cmpi_Author_Record_Create = {
 export type _Cmpi_Author_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_Author_Record_Content;
 };
@@ -839,16 +935,13 @@ export type _Cmpi_MediaLibraryUpdateArgs = {
 
 export type _Cmpi_MediaLibraryDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_MediaLibraryPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -868,6 +961,8 @@ export type _Cmpi_MediaLibrary_Record_Content = {
 
 export type _Cmpi_MediaLibrary_Record_Create = {
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_MediaLibrary_Record_Content;
 };
@@ -875,6 +970,8 @@ export type _Cmpi_MediaLibrary_Record_Create = {
 export type _Cmpi_MediaLibrary_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_MediaLibrary_Record_Content;
 };
@@ -901,16 +998,13 @@ export type _Cmpi_ModelAUpdateArgs = {
 
 export type _Cmpi_ModelADeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ModelAPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -925,12 +1019,12 @@ export type _Cmpi_ModelA_Record_Content = {
   myRichText: Scalars['RichText'];
   myRichTextI18n: I18n_RichText_Input;
   myRef?: Maybe<Ref_Input>;
-  myRefI18n?: Maybe<I18n_Ref_Input_Input>;
-  myRefList: Array<Maybe<Ref_Input>>;
 };
 
 export type _Cmpi_ModelA_Record_Create = {
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelA_Record_Content;
   meta: _Cmpi_ModelA_Record_Meta;
@@ -947,6 +1041,8 @@ export type _Cmpi_ModelA_Record_Meta = {
 export type _Cmpi_ModelA_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelA_Record_Content;
   meta: _Cmpi_ModelA_Record_Meta;
@@ -974,16 +1070,13 @@ export type _Cmpi_ModelBUpdateArgs = {
 
 export type _Cmpi_ModelBDeleteArgs = {
   id: Scalars['ID'];
-  revision?: Maybe<Scalars['Int']>;
 };
 
 
 export type _Cmpi_ModelBPublishArgs = {
   id: Scalars['ID'];
-  revision: Scalars['Int'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -992,17 +1085,53 @@ export type _Cmpi_ModelBUnpublishArgs = {
 };
 
 export type _Cmpi_ModelB_Record_Content = {
+  myId: Scalars['ID'];
   myString: Scalars['String'];
+  myUrlString: Scalars['String'];
   myStringI18n: I18n_String_Input;
+  myMultilineStringI18n: I18n_String_Input;
+  myOptionalString?: Maybe<Scalars['String']>;
+  myOptionalStringI18n?: Maybe<I18n_String_Input>;
   myRichText: Scalars['RichText'];
+  myRichTextI18n: I18n_RichText_Input;
   myInt: Scalars['Int'];
+  myIntI18n: I18n_Int_Input;
   myFloat: Scalars['Float'];
+  myFloatI18n: I18n_Float_Input;
   myBoolean: Scalars['Boolean'];
-  myDateTime?: Maybe<Scalars['DateTime']>;
+  myOptionalBoolean?: Maybe<Scalars['Boolean']>;
+  myBooleanI18n: I18n_Boolean_Input;
+  myDateTime: Scalars['DateTime'];
+  myOptionalDateTime?: Maybe<Scalars['DateTime']>;
+  myDateTimeI18n: I18n_DateTime_Input;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
+  myEnumI18n: I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input;
+  myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
+  myListNested: Array<_Cmpi_ModelB_Record_Content_MyListNested>;
   myUnion: _Cmpi_ModelB_Record_Content_MyUnion;
+  myOptionalUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_Input>;
+  myRefI18n?: Maybe<I18n_Ref_Input_Input>;
+  myObject: _Cmpi_ModelB_Record_Content_MyObject;
+  myOptionalObject?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalObject>;
+  myTags: Array<Maybe<Ref_Input>>;
+  myBlockList: Array<_Cmpi_ModelB_Record_Content_MyBlockList>;
+  myMedia?: Maybe<Media_Input>;
+  myMediaI18n?: Maybe<I18n_Media_Input_Input>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyBlockList = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyBlockList_CaseA>;
+  caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyBlockList_CaseB>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyBlockList_CaseA = {
+  fieldA: Scalars['String'];
+};
+
+export type _Cmpi_ModelB_Record_Content_MyBlockList_CaseB = {
+  fieldB: Scalars['String'];
 };
 
 export enum _Cmpi_ModelB_Record_Content_MyEnum {
@@ -1012,13 +1141,61 @@ export enum _Cmpi_ModelB_Record_Content_MyEnum {
   Bar = 'bar'
 }
 
+export enum _Cmpi_ModelB_Record_Content_MyEnumI18n {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmpi_ModelB_Record_Content_MyListNested = {
+  foo: Scalars['String'];
+  bar?: Maybe<I18n_String_Input>;
+  list: Array<_Cmpi_ModelB_Record_Content_MyListNested_List>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyListNested_List = {
+  nestedFoo: Scalars['String'];
+  nestedBar: I18n_String_Input;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyObject = {
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String_Input;
+};
+
+export enum _Cmpi_ModelB_Record_Content_MyOptionalEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalObject = {
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String_Input;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion = {
+  caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseA>;
+  caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB>;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseA = {
+  foo: I18n_String_Input;
+};
+
+export type _Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB = {
+  bar: Scalars['Float'];
+};
+
 export type _Cmpi_ModelB_Record_Content_MyUnion = {
   caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseA>;
   caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseB>;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
-  foo: Scalars['Boolean'];
+  foo: I18n_String_Input;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
@@ -1027,6 +1204,8 @@ export type _Cmpi_ModelB_Record_Content_MyUnion_CaseB = {
 
 export type _Cmpi_ModelB_Record_Create = {
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelB_Record_Content;
 };
@@ -1034,14 +1213,44 @@ export type _Cmpi_ModelB_Record_Create = {
 export type _Cmpi_ModelB_Record_Update = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
   shared: Scalars['Boolean'];
   content: _Cmpi_ModelB_Record_Content;
+};
+
+export type _CmpRef_Richtext_References = _CmpRefCase_ModelA | _CmpRefCase_ModelB | _CmpRefCase_MediaLibrary | _CmpRefCase_Author | _CmpRefCase_Article;
+
+export type _CmpRefCase_Article = {
+  __typename?: '_cmpRefCase_article';
+  article?: Maybe<_Cmp_Article_Record>;
+};
+
+export type _CmpRefCase_Author = {
+  __typename?: '_cmpRefCase_author';
+  author?: Maybe<_Cmp_Author_Record>;
+};
+
+export type _CmpRefCase_MediaLibrary = {
+  __typename?: '_cmpRefCase_mediaLibrary';
+  mediaLibrary?: Maybe<_Cmp_MediaLibrary_Record>;
+};
+
+export type _CmpRefCase_ModelA = {
+  __typename?: '_cmpRefCase_modelA';
+  modelA?: Maybe<_Cmp_ModelA_Record>;
+};
+
+export type _CmpRefCase_ModelB = {
+  __typename?: '_cmpRefCase_modelB';
+  modelB?: Maybe<_Cmp_ModelB_Record>;
 };
 
 export type All = {
   __typename?: 'All';
   list: ListByTypeConnection;
   read: ContentModelSummary;
+  previewToken: Scalars['String'];
 };
 
 
@@ -1053,6 +1262,7 @@ export type AllListArgs = {
   before?: Maybe<Scalars['ID']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<ContentFilter>;
   sort?: Maybe<ContentSort>;
   order?: Maybe<SortOrder>;
@@ -1079,9 +1289,8 @@ export type AllMutationsDeleteArgs = {
 
 export type AllMutationsPublishArgs = {
   id: Scalars['ID'];
-  publishAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -1397,11 +1606,6 @@ export enum ContentContextEnum {
 
 export type ContentFilter = {
   title?: Maybe<Scalars['String']>;
-  draft?: Maybe<Scalars['Boolean']>;
-  published?: Maybe<Scalars['Boolean']>;
-  pending?: Maybe<Scalars['Boolean']>;
-  authors?: Maybe<Array<Scalars['ID']>>;
-  tags?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -1409,10 +1613,10 @@ export type ContentModelSummary = {
   __typename?: 'ContentModelSummary';
   id: Scalars['ID'];
   title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
   contentType: ContentTypeEnum;
-  revision: Scalars['Int'];
-  state: ContentStateEnum;
   createdAt: Scalars['DateTime'];
   modifiedAt: Scalars['DateTime'];
   publicationDate?: Maybe<Scalars['DateTime']>;
@@ -1420,18 +1624,10 @@ export type ContentModelSummary = {
 };
 
 export enum ContentSort {
-  CreatedAt = 'CREATED_AT',
-  ModifiedAt = 'MODIFIED_AT',
-  PublishAt = 'PUBLISH_AT',
-  PublishedAt = 'PUBLISHED_AT',
-  UpdatedAt = 'UPDATED_AT'
-}
-
-export enum ContentStateEnum {
-  Draft = 'Draft',
-  Review = 'Review',
-  Release = 'Release',
-  Archive = 'Archive'
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
 }
 
 export enum ContentTypeEnum {
@@ -1534,30 +1730,42 @@ export type FacebookVideoBlockInput = {
 
 export type Filter_Article = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_Author = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_MediaLibrary = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_ModelA = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Filter_ModelB = {
   title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
   content__myString?: Maybe<FilterText>;
   i18n__content__myStringI18n?: Maybe<FilterText>;
+  i18n__content__myMultilineStringI18n?: Maybe<FilterText>;
   content__myInt?: Maybe<FilterInt>;
+  i18n__content__myIntI18n?: Maybe<FilterInt>;
   content__myFloat?: Maybe<FilterFloat>;
-  content__myBoolean?: Maybe<FilterBoolean>;
+  i18n__content__myFloatI18n?: Maybe<FilterFloat>;
   content__myDateTime?: Maybe<FilterDate>;
+  content__myOptionalDateTime?: Maybe<FilterDate>;
+  i18n__content__myDateTimeI18n?: Maybe<FilterDate>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
+  i18n__content__myEnumI18n?: Maybe<Filter_ModelB_Content_MyEnumI18n>;
+  content__myOptionalEnum?: Maybe<Filter_ModelB_Content_MyOptionalEnum>;
   content__myRef__recordId?: Maybe<FilterReference>;
+  content__myTags__recordId?: Maybe<FilterReference>;
 };
 
 export type Filter_ModelB_Content_MyEnum = {
@@ -1574,10 +1782,33 @@ export enum Filter_ModelB_Content_MyEnum_Enum {
   Bar = 'bar'
 }
 
-export type FilterBoolean = {
+export type Filter_ModelB_Content_MyEnumI18n = {
   /** equal to */
-  eq?: Maybe<Scalars['Boolean']>;
+  eq?: Maybe<Filter_ModelB_Content_MyEnumI18n_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyEnumI18n_Enum>;
 };
+
+export enum Filter_ModelB_Content_MyEnumI18n_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type Filter_ModelB_Content_MyOptionalEnum = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyOptionalEnum_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
 
 export type FilterDate = {
   /** greater than */
@@ -1631,6 +1862,71 @@ export type GalleryImageEdgeInput = {
   imageID?: Maybe<Scalars['ID']>;
 };
 
+export type I18n__Cmp_ModelB_Record_Content_MyEnumI18n = {
+  __typename?: 'i18n__cmp_modelB_record_content_myEnumI18n';
+  en?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+  de?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+  fr?: Maybe<_Cmp_ModelB_Record_Content_MyEnumI18n>;
+};
+
+export type I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input = {
+  en?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+  de?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+  fr?: Maybe<_Cmpi_ModelB_Record_Content_MyEnumI18n>;
+};
+
+export type I18n_Boolean = {
+  __typename?: 'i18n_Boolean';
+  en?: Maybe<Scalars['Boolean']>;
+  de?: Maybe<Scalars['Boolean']>;
+  fr?: Maybe<Scalars['Boolean']>;
+};
+
+export type I18n_Boolean_Input = {
+  en?: Maybe<Scalars['Boolean']>;
+  de?: Maybe<Scalars['Boolean']>;
+  fr?: Maybe<Scalars['Boolean']>;
+};
+
+export type I18n_DateTime = {
+  __typename?: 'i18n_DateTime';
+  en?: Maybe<Scalars['DateTime']>;
+  de?: Maybe<Scalars['DateTime']>;
+  fr?: Maybe<Scalars['DateTime']>;
+};
+
+export type I18n_DateTime_Input = {
+  en?: Maybe<Scalars['DateTime']>;
+  de?: Maybe<Scalars['DateTime']>;
+  fr?: Maybe<Scalars['DateTime']>;
+};
+
+export type I18n_Float = {
+  __typename?: 'i18n_Float';
+  en?: Maybe<Scalars['Float']>;
+  de?: Maybe<Scalars['Float']>;
+  fr?: Maybe<Scalars['Float']>;
+};
+
+export type I18n_Float_Input = {
+  en?: Maybe<Scalars['Float']>;
+  de?: Maybe<Scalars['Float']>;
+  fr?: Maybe<Scalars['Float']>;
+};
+
+export type I18n_Int = {
+  __typename?: 'i18n_Int';
+  en?: Maybe<Scalars['Int']>;
+  de?: Maybe<Scalars['Int']>;
+  fr?: Maybe<Scalars['Int']>;
+};
+
+export type I18n_Int_Input = {
+  en?: Maybe<Scalars['Int']>;
+  de?: Maybe<Scalars['Int']>;
+  fr?: Maybe<Scalars['Int']>;
+};
+
 export type I18n_Media = {
   __typename?: 'i18n_media';
   en?: Maybe<Media>;
@@ -1644,17 +1940,17 @@ export type I18n_Media_Input_Input = {
   fr?: Maybe<Media_Input>;
 };
 
+export type I18n_Ref__CmpRef_ModelA_ModelB = {
+  __typename?: 'i18n_ref__cmpRef_modelA_modelB';
+  en?: Maybe<Ref__CmpRef_ModelA_ModelB>;
+  de?: Maybe<Ref__CmpRef_ModelA_ModelB>;
+  fr?: Maybe<Ref__CmpRef_ModelA_ModelB>;
+};
+
 export type I18n_Ref_Input_Input = {
   en?: Maybe<Ref_Input>;
   de?: Maybe<Ref_Input>;
   fr?: Maybe<Ref_Input>;
-};
-
-export type I18n_Ref_ModelA_ModelB = {
-  __typename?: 'i18n_ref_modelA_modelB';
-  en?: Maybe<Ref_ModelA_ModelB>;
-  de?: Maybe<Ref_ModelA_ModelB>;
-  fr?: Maybe<Ref_ModelA_ModelB>;
 };
 
 export type I18n_RichText = {
@@ -2909,21 +3205,66 @@ export type QuoteBlockInput = {
   author?: Maybe<Scalars['String']>;
 };
 
-export type Ref_Article_Page = {
-  __typename?: 'ref_article_page';
+export type Ref__CmpRef_Article = {
+  __typename?: 'ref__cmpRef_article';
   recordId: Scalars['ID'];
   contentType: Scalars['ID'];
   peerId?: Maybe<Scalars['ID']>;
-  record?: Maybe<_Cmp_Article_Record_Content_Blocks_TeaserGrid_Teasers_ContentRef>;
+  record?: Maybe<_Cmp_Article_Record>;
   peer?: Maybe<Peer>;
 };
 
-export type Ref_Author = {
-  __typename?: 'ref_author';
+export type Ref__CmpRef_Author = {
+  __typename?: 'ref__cmpRef_author';
   recordId: Scalars['ID'];
   contentType: Scalars['ID'];
   peerId?: Maybe<Scalars['ID']>;
   record?: Maybe<_Cmp_Author_Record>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref__CmpRef_MediaLibrary = {
+  __typename?: 'ref__cmpRef_mediaLibrary';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_Cmp_MediaLibrary_Record>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref__CmpRef_ModelA = {
+  __typename?: 'ref__cmpRef_modelA';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_Cmp_ModelA_Record>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref__CmpRef_ModelA_MediaLibrary = {
+  __typename?: 'ref__cmpRef_modelA_mediaLibrary';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_Cmp_ModelB_Record_Content_MyRef>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref__CmpRef_ModelA_ModelB = {
+  __typename?: 'ref__cmpRef_modelA_modelB';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_Cmp_ModelA_Record_Content_MyRef>;
+  peer?: Maybe<Peer>;
+};
+
+export type Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article = {
+  __typename?: 'ref__cmpRef_modelA_modelB_mediaLibrary_author_article';
+  recordId: Scalars['ID'];
+  contentType: Scalars['ID'];
+  peerId?: Maybe<Scalars['ID']>;
+  record?: Maybe<_CmpRef_Richtext_References>;
   peer?: Maybe<Peer>;
 };
 
@@ -2933,42 +3274,6 @@ export type Ref_Input = {
   peerId?: Maybe<Scalars['ID']>;
   record?: Maybe<Scalars['Unknown']>;
   peer?: Maybe<Scalars['Unknown']>;
-};
-
-export type Ref_MediaLibrary = {
-  __typename?: 'ref_mediaLibrary';
-  recordId: Scalars['ID'];
-  contentType: Scalars['ID'];
-  peerId?: Maybe<Scalars['ID']>;
-  record?: Maybe<_Cmp_MediaLibrary_Record>;
-  peer?: Maybe<Peer>;
-};
-
-export type Ref_ModelA = {
-  __typename?: 'ref_modelA';
-  recordId: Scalars['ID'];
-  contentType: Scalars['ID'];
-  peerId?: Maybe<Scalars['ID']>;
-  record?: Maybe<_Cmp_ModelA_Record>;
-  peer?: Maybe<Peer>;
-};
-
-export type Ref_ModelA_ModelB = {
-  __typename?: 'ref_modelA_modelB';
-  recordId: Scalars['ID'];
-  contentType: Scalars['ID'];
-  peerId?: Maybe<Scalars['ID']>;
-  record?: Maybe<_Cmp_ModelA_Record_Content_MyRef>;
-  peer?: Maybe<Peer>;
-};
-
-export type Ref_ModelB = {
-  __typename?: 'ref_modelB';
-  recordId: Scalars['ID'];
-  contentType: Scalars['ID'];
-  peerId?: Maybe<Scalars['ID']>;
-  record?: Maybe<_Cmp_ModelB_Record>;
-  peer?: Maybe<Peer>;
 };
 
 
@@ -2998,6 +3303,54 @@ export type SessionWithToken = {
   expiresAt: Scalars['DateTime'];
 };
 
+
+export enum Sort_Article {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
+}
+
+export enum Sort_Author {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
+}
+
+export enum Sort_MediaLibrary {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
+}
+
+export enum Sort_ModelA {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate'
+}
+
+export enum Sort_ModelB {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate',
+  ContentMyString = 'content__myString',
+  I18nContentMyStringI18n = 'i18n__content__myStringI18n',
+  I18nContentMyMultilineStringI18n = 'i18n__content__myMultilineStringI18n',
+  ContentMyInt = 'content__myInt',
+  I18nContentMyIntI18n = 'i18n__content__myIntI18n',
+  ContentMyFloat = 'content__myFloat',
+  I18nContentMyFloatI18n = 'i18n__content__myFloatI18n',
+  ContentMyDateTime = 'content__myDateTime',
+  ContentMyOptionalDateTime = 'content__myOptionalDateTime',
+  I18nContentMyDateTimeI18n = 'i18n__content__myDateTimeI18n',
+  ContentMyEnum = 'content__myEnum',
+  I18nContentMyEnumI18n = 'i18n__content__myEnumI18n',
+  ContentMyOptionalEnum = 'content__myOptionalEnum'
+}
 
 export enum SortOrder {
   Ascending = 'ASCENDING',
@@ -3296,9 +3649,8 @@ export type ContentListRefFragment = (
 
 export type PublishContentMutationVariables = Exact<{
   id: Scalars['ID'];
-  publishAt: Scalars['DateTime'];
-  publishedAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  publicationDate: Scalars['DateTime'];
+  dePublicationDate: Scalars['DateTime'];
 }>;
 
 
@@ -3347,29 +3699,6 @@ export type DeleteContentMutation = (
     & { _all: (
       { __typename?: 'AllMutations' }
       & Pick<AllMutations, 'delete'>
-    ) }
-  ) }
-);
-
-export type ModelAQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type ModelAQuery = (
-  { __typename?: 'Query' }
-  & { content: (
-    { __typename?: 'content' }
-    & { modelA: (
-      { __typename?: '_cmp_modelA' }
-      & { read: (
-        { __typename?: '_cmp_modelA_record' }
-        & Pick<_Cmp_ModelA_Record, 'id' | 'contentType' | 'title'>
-        & { content: (
-          { __typename?: '_cmp_modelA_record_content' }
-          & Pick<_Cmp_ModelA_Record_Content, 'myString' | 'myRichText'>
-        ) }
-      ) }
     ) }
   ) }
 );
@@ -3584,10 +3913,10 @@ export type ContentListQueryHookResult = ReturnType<typeof useContentListQuery>;
 export type ContentListLazyQueryHookResult = ReturnType<typeof useContentListLazyQuery>;
 export type ContentListQueryResult = Apollo.QueryResult<ContentListQuery, ContentListQueryVariables>;
 export const PublishContentDocument = gql`
-    mutation PublishContent($id: ID!, $publishAt: DateTime!, $publishedAt: DateTime!, $updatedAt: DateTime!) {
+    mutation PublishContent($id: ID!, $publicationDate: DateTime!, $dePublicationDate: DateTime!) {
   content {
     _all {
-      publish(id: $id, publishAt: $publishAt, publishedAt: $publishedAt, updatedAt: $updatedAt) {
+      publish(id: $id, publicationDate: $publicationDate, dePublicationDate: $dePublicationDate) {
         id
       }
     }
@@ -3610,9 +3939,8 @@ export type PublishContentMutationFn = Apollo.MutationFunction<PublishContentMut
  * const [publishContentMutation, { data, loading, error }] = usePublishContentMutation({
  *   variables: {
  *      id: // value for 'id'
- *      publishAt: // value for 'publishAt'
- *      publishedAt: // value for 'publishedAt'
- *      updatedAt: // value for 'updatedAt'
+ *      publicationDate: // value for 'publicationDate'
+ *      dePublicationDate: // value for 'dePublicationDate'
  *   },
  * });
  */
@@ -3692,49 +4020,6 @@ export function useDeleteContentMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteContentMutationHookResult = ReturnType<typeof useDeleteContentMutation>;
 export type DeleteContentMutationResult = Apollo.MutationResult<DeleteContentMutation>;
 export type DeleteContentMutationOptions = Apollo.BaseMutationOptions<DeleteContentMutation, DeleteContentMutationVariables>;
-export const ModelADocument = gql`
-    query ModelA($id: ID!) {
-  content {
-    modelA {
-      read(id: $id) {
-        id
-        contentType
-        title
-        content {
-          myString
-          myRichText
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useModelAQuery__
- *
- * To run a query within a React component, call `useModelAQuery` and pass it any options that fit your needs.
- * When your component renders, `useModelAQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useModelAQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useModelAQuery(baseOptions?: Apollo.QueryHookOptions<ModelAQuery, ModelAQueryVariables>) {
-        return Apollo.useQuery<ModelAQuery, ModelAQueryVariables>(ModelADocument, baseOptions);
-      }
-export function useModelALazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ModelAQuery, ModelAQueryVariables>) {
-          return Apollo.useLazyQuery<ModelAQuery, ModelAQueryVariables>(ModelADocument, baseOptions);
-        }
-export type ModelAQueryHookResult = ReturnType<typeof useModelAQuery>;
-export type ModelALazyQueryHookResult = ReturnType<typeof useModelALazyQuery>;
-export type ModelAQueryResult = Apollo.QueryResult<ModelAQuery, ModelAQueryVariables>;
 export const ImageListDocument = gql`
     query ImageList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int) {
   images(filter: {title: $filter}, after: $after, before: $before, first: $first, last: $last) {

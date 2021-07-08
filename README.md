@@ -94,7 +94,7 @@ TBD
 
 ## Demo
 - [Editor](https://editor.demo.wepublish.media)
-  - username: `dev@wepublish.ch`
+  - username: `dev@dudagroup.com`
   - password: `123`
 - [Website](https://demo.wepublish.media)
 - [API](https://api.demo.wepublish.media)
@@ -182,7 +182,7 @@ Please read it. Please follow it.
 <!-- FAQ -->
 ## Troubleshooting
 
-If you encounter problems you can check our [FAQ][faq-md-url] or write us [dev@wepublish.ch](mailto:dev@wepublish.ch).
+If you encounter problems you can check our [FAQ][faq-md-url] or write us [dev@dudagroup.com](mailto:dev@dudagroup.com).
 
 
 <!-- LICENSE -->
@@ -195,7 +195,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-We.Publish - [@WePublish_media](https://twitter.com/WePublish_media) - [dev@wepublish.ch](mailto:dev@wepublish.ch)
+We.Publish - [@WePublish_media](https://twitter.com/WePublish_media) - [dev@dudagroup.com](mailto:dev@dudagroup.com)
 
 Website: [https://www.wepublish.ch/](https://www.wepublish.ch/)
 

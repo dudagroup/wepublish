@@ -11,7 +11,7 @@ mutation login($email: String!, $password: String!) {
 ```
 Insert into the `query variables`-view the following variable-definition: 
 ```
-{"email": "dev@wepublish.ch", "password": "123"}
+{"email": "dev@dudagroup.com", "password": "123"}
 ``` 
 Hit the execute-button (that looks like a play-button). You should now see in the right part of the Playground an output that resembles the following: 
 ```
