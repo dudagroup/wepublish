@@ -79,7 +79,7 @@ Object {
           "roles": Array [],
         },
         Object {
-          "email": "dev@dudagroup.ch",
+          "email": "dev@dudagroup.com",
           "id": Any<String>,
           "name": "Dev User",
           "roles": Array [

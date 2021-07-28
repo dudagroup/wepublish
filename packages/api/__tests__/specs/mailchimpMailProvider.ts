@@ -21,7 +21,7 @@ describe('Mailchimp Mail Provider', () => {
       baseURL: 'https://mailchimp.com',
       apiKey: 'fakeAPIkey',
       webhookEndpointSecret: 'fakeSecret',
-      fromAddress: 'dev@dudagroup.ch',
+      fromAddress: 'dev@dudagroup.com',
       id: 'mailchimp',
       name: 'Mailchimp'
     })
@@ -44,7 +44,7 @@ describe('Mailchimp Mail Provider', () => {
         html: `<p>hello Test</p>`,
         text: 'hello Test',
         subject: 'test subject',
-        from_email: 'dev@dudagroup.ch',
+        from_email: 'dev@dudagroup.com',
         to: [
           {
             email: 'test@test.com',

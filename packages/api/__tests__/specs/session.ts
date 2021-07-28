@@ -32,12 +32,12 @@ describe('Sessions', () => {
       const res = await mutate({
         mutation: CreateSession,
         variables: {
-          email: 'dev@dudagroup.ch',
+          email: 'dev@dudagroup.com',
           password: '123'
         }
       })
       const session = res.data?.createSession
-      expect(session.user.email).toBe('dev@dudagroup.ch')
+      expect(session.user.email).toBe('dev@dudagroup.com')
       expect(session.token).toBeDefined()
     })
 
@@ -71,7 +71,7 @@ describe('Sessions', () => {
       })
 
       const session = res.data?.createSessionWithJWT
-      expect(session.user.email).toBe('dev@dudagroup.ch')
+      expect(session.user.email).toBe('dev@dudagroup.com')
       expect(session.token).toBeDefined()
     })
 
@@ -85,12 +85,12 @@ describe('Sessions', () => {
       const res = await mutate({
         mutation: CreateSessionPublic,
         variables: {
-          email: 'dev@dudagroup.ch',
+          email: 'dev@dudagroup.com',
           password: '123'
         }
       })
       const session = res.data?.createSession
-      expect(session.user.email).toBe('dev@dudagroup.ch')
+      expect(session.user.email).toBe('dev@dudagroup.com')
       expect(session.token).toBeDefined()
     })
 
@@ -125,7 +125,7 @@ describe('Sessions', () => {
       })
 
       const session = res.data?.createSessionWithJWT
-      expect(session.user.email).toBe('dev@dudagroup.ch')
+      expect(session.user.email).toBe('dev@dudagroup.com')
       expect(session.token).toBeDefined()
     })
 

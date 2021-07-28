@@ -351,7 +351,7 @@ export function getGraphQLPrivateMutation<TSource, TContext, TArgs>(
             message: `Click the link to login:\n\n${link}`,
             recipient: email,
             subject: 'Login Link',
-            replyToAddress: 'dev@dudagroup.ch'
+            replyToAddress: 'dev@dudagroup.com'
           })
           return email
         }
@@ -445,7 +445,7 @@ export function getGraphQLPrivateMutation<TSource, TContext, TArgs>(
               recipient: user.email,
               subject: 'Your password has been reset',
               message: `Hello ${user.name}\n\nYour password has been reset. You can login with your new password.`,
-              replyToAddress: 'dev@dudagroup.ch'
+              replyToAddress: 'dev@dudagroup.com'
             })
           }
           return user

@@ -300,7 +300,7 @@ export function getGraphQLPublicMutation<TSource, TContext, TArgs>(
             message: `Click the link to login:\n\n${link}`,
             recipient: email,
             subject: 'Login Link',
-            replyToAddress: 'dev@dudagroup.ch'
+            replyToAddress: 'dev@dudagroup.com'
           })
 
           return email
