@@ -173,11 +173,14 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           </ButtonLink>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={24} style={{marginTop: '20px'}}>
-          <InputGroup>
+          <InputGroup inside>
             <InputGroup.Addon>
               <Icon icon="search" />
             </InputGroup.Addon>
             <Input value={filter} onChange={value => setFilter(value)} />
+            <InputGroup.Button>
+              <Icon icon="close" />
+            </InputGroup.Button>
           </InputGroup>
         </FlexboxGrid.Item>
       </FlexboxGrid>
