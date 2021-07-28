@@ -22,7 +22,9 @@ import {
   Whisper,
   Divider,
   Drawer,
-  Checkbox
+  Checkbox,
+  ButtonGroup,
+  ButtonToolbar
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
@@ -202,9 +204,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         }}>
         <Column width={40} align="left">
           <HeaderCell></HeaderCell>
-          <Cell>
-            <Checkbox></Checkbox>
-          </Cell>
+          <Cell>{<Checkbox style={{padding: 0}}></Checkbox>}</Cell>
         </Column>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
@@ -276,13 +276,21 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           </Cell>
         </Column>
       </Table>
-      <FlexboxGrid>
-        <FlexboxGrid.Item colspan={2}>
-          <Button stlye={{padding: '20px 0'}} appearance="link">
-            Multi select
-          </Button>
+      <FlexboxGrid justify="space-between">
+        <FlexboxGrid.Item colspan={12}>
+          <ButtonToolbar style={{padding: '10px 0'}}>
+            <ButtonGroup>
+              <Button appearance="link">Unselect</Button>
+              <Button appearance="link" color="orange">
+                Unpublish
+              </Button>
+              <Button appearance="link" color="red">
+                Delete
+              </Button>
+            </ButtonGroup>
+          </ButtonToolbar>
         </FlexboxGrid.Item>
-        <FlexboxGrid.Item colspan={22}>
+        <FlexboxGrid.Item colspan={12}>
           <Pagination
             size="xs"
             lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
