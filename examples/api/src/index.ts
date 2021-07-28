@@ -100,7 +100,7 @@ async function asyncMain() {
 
       await adapter.user.createUser({
         input: {
-          email: 'dev@dudagroup.ch',
+          email: 'dev@dudagroup.com',
           name: 'Dev User',
           active: true,
           properties: [],
@@ -111,7 +111,7 @@ async function asyncMain() {
 
       await adapter.user.createUser({
         input: {
-          email: 'editor@dudagroup.ch',
+          email: 'editor@dudagroup.com',
           name: 'Editor User',
           active: true,
           properties: [],
@@ -170,7 +170,7 @@ async function asyncMain() {
     mailProvider = new MailgunMailProvider({
       id: 'mailgun',
       name: 'Mailgun',
-      fromAddress: 'dev@dudagroup.ch',
+      fromAddress: 'dev@dudagroup.com',
       webhookEndpointSecret: process.env.MAILGUN_WEBHOOK_SECRET,
       baseDomain: process.env.MAILGUN_BASE_DOMAIN,
       mailDomain: process.env.MAILGUN_MAIL_DOMAIN,
@@ -183,7 +183,7 @@ async function asyncMain() {
     mailProvider = new MailchimpMailProvider({
       id: 'mailchimp',
       name: 'Mailchimp',
-      fromAddress: 'dev@dudagroup.ch',
+      fromAddress: 'dev@dudagroup.com',
       webhookEndpointSecret: process.env.MAILCHIMP_WEBHOOK_SECRET,
       apiKey: process.env.MAILCHIMP_API_KEY,
       baseURL: '',
@@ -384,7 +384,7 @@ async function asyncMain() {
       yargs => {
         yargs.positional('recipient', {
           type: 'string',
-          default: 'dev@dudagroup.ch',
+          default: 'dev@dudagroup.com',
           describe: 'recipient of the test mail'
         })
       },
@@ -393,7 +393,7 @@ async function asyncMain() {
           subject: 'This is a test mail from a we.publish instance',
           recipient: argv.recipient,
           message: 'Hello from the other side',
-          replyToAddress: 'dev@dudagroup.ch'
+          replyToAddress: 'dev@dudagroup.com'
         })
         process.exit(0)
       }

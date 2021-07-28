@@ -23,14 +23,14 @@ describe('Mailgun Mail Provider', () => {
       baseDomain: 'https://mailgun.com',
       mailDomain: 'https://mailgun.com',
       webhookEndpointSecret: 'fakeSecret',
-      fromAddress: 'dev@dudagroup.ch'
+      fromAddress: 'dev@dudagroup.com'
     })
     expect(mailgunMailProvider).toBeDefined()
   })
 
   test('can call send', async () => {
     const mailInfo = {
-      replyToAddress: 'dev@dudagroup.ch',
+      replyToAddress: 'dev@dudagroup.com',
       recipient: 'test@recipient.adr',
       subject: 'Mocked Send',
       message: 'mocking send',

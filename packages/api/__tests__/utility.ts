@@ -54,7 +54,7 @@ export async function createGraphQLTestClientWithMongoDB(): Promise<TestClient> 
 
       adminUser = await adapter.user.createUser({
         input: {
-          email: 'dev@dudagroup.ch',
+          email: 'dev@dudagroup.com',
           name: 'Dev User',
           roleIDs: [adminUserRoleId],
           active: true,
