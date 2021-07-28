@@ -21,7 +21,8 @@ import {
   Popover,
   Whisper,
   Divider,
-  Drawer
+  Drawer,
+  Checkbox
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
@@ -199,6 +200,12 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           setSortField('modifiedAt')
           setSortOrder('asc')
         }}>
+        <Column width={40} align="left">
+          <HeaderCell></HeaderCell>
+          <Cell>
+            <Checkbox></Checkbox>
+          </Cell>
+        </Column>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -245,20 +252,6 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
             }}
           </Cell>
         </Column>
-        {/* <Column flexGrow={2} align="left">
-          <HeaderCell>{t('content.overview.states')}</HeaderCell>
-          <Cell>
-            {(rowData: PageRefFragment) => {
-              const states = []
-
-              if (rowData.draft) states.push(t('content.overview.draft'))
-              if (rowData.pending) states.push(t('content.overview.pending'))
-              if (rowData.published) states.push(t('content.overview.published'))
-
-              return <div>{states.join(' / ')}</div>
-            }}
-          </Cell>
-        </Column> */}
         <Column flexGrow={2} minWidth={170} align="right">
           <HeaderCell style={{paddingRight: 20}}>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 10px 6px 0'}}>
@@ -283,16 +276,24 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
           </Cell>
         </Column>
       </Table>
-
-      <Pagination
-        size="xs"
-        lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
-        activePage={page}
-        displayLength={limit}
-        total={data?.content._all.list.totalCount}
-        onChangePage={page => setPage(page)}
-        onChangeLength={limit => setLimit(limit)}
-      />
+      <FlexboxGrid>
+        <FlexboxGrid.Item colspan={2}>
+          <Button stlye={{padding: '20px 0'}} appearance="link">
+            Multi select
+          </Button>
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={22}>
+          <Pagination
+            size="xs"
+            lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+            activePage={page}
+            displayLength={limit}
+            total={data?.content._all.list.totalCount}
+            onChangePage={page => setPage(page)}
+            onChangeLength={limit => setLimit(limit)}
+          />
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
 
       <Modal
         show={isConfirmationDialogOpen}
