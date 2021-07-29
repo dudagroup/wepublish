@@ -204,7 +204,9 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         }}>
         <Column width={40} align="left">
           <HeaderCell></HeaderCell>
-          <Cell>{<Checkbox style={{padding: 0}}></Checkbox>}</Cell>
+          <Cell>
+            <Checkbox className="list-checkbox"></Checkbox>
+          </Cell>
         </Column>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
@@ -277,18 +279,16 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
         </Column>
       </Table>
       <FlexboxGrid justify="space-between">
-        <FlexboxGrid.Item colspan={12}>
-          <ButtonToolbar style={{padding: '10px 0'}}>
-            <ButtonGroup>
-              <Button appearance="link">Unselect</Button>
-              <Button appearance="link" color="orange">
-                Unpublish
-              </Button>
-              <Button appearance="link" color="red">
-                Delete
-              </Button>
-            </ButtonGroup>
-          </ButtonToolbar>
+        <FlexboxGrid.Item colspan={12} style={{padding: '10px 0'}}>
+          <Checkbox style={{paddingLeft: 0, paddingRight: 20, display: 'inline-block'}}>
+            Check all
+          </Checkbox>
+          <Button appearance="link" color="orange">
+            Unpublish
+          </Button>
+          <Button appearance="link" color="red">
+            Delete
+          </Button>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={12}>
           <Pagination
