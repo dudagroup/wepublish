@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
+import {
+  Link,
+  ButtonLink,
+  ContentCreateRoute,
+  ContentEditRoute,
+  ContentListRoute,
+  useRouteDispatch,
+  useRoute
+} from '../route'
 import {
   useUnpublishContentMutation,
   useContentListQuery,
@@ -21,9 +29,7 @@ import {
   Whisper,
   Divider,
   Drawer,
-  Checkbox,
-  ButtonGroup,
-  ButtonToolbar
+  Checkbox
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
@@ -38,11 +44,14 @@ import {
   humanReadableDateTime,
   mapTableSortTypeToGraphQLSortOrder
 } from '../utility'
+import {route, RouteActionType, routePath} from '@karma.run/react'
+import {RecordSimple} from '../interfaces/recordSimple'
 const {Column, HeaderCell, Cell, Pagination} = Table
 
 enum ConfirmAction {
   Delete = 'delete',
-  Unpublish = 'unpublish'
+  Unpublish = 'unpublish',
+  UnpublishAll = 'UnpublishAll'
 }
 
 function mapColumFieldToGraphQLField(columnField: string): ContentSort | null {
@@ -81,17 +90,50 @@ export function ContentList({
   const [limit, setLimit] = useState(10)
   const [sortField, setSortField] = useState('modifiedAt')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [selectionAll, setSelectionAll] = useState(false)
+  const [selection, setSelection] = useState<{[key: number]: boolean}>({})
+  const {current} = useRoute()
+  const dispatch = useRouteDispatch()
+  // const filter = current?.query?.filter || ''
 
   useEffect(() => {
     document.title = `${currentContentConfig.namePlural}`
   })
 
-  const [articles, setArticles] = useState<any[]>([])
+  const [articles, setArticles] = useState<RecordSimple[]>([])
 
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(
     getDeleteMutation(currentContentConfig)
   )
+
+  const listVariables = {
+    type: type as ContentTypeEnum,
+    filter: filter || undefined,
+    first: limit,
+    skip: page - 1,
+    sort: mapColumFieldToGraphQLField(sortField),
+    order: mapTableSortTypeToGraphQLSortOrder(sortOrder)
+  }
+
+  const {data, loading: isLoading, refetch} = useContentListQuery({
+    variables: listVariables,
+    fetchPolicy: 'network-only'
+  })
+
+  useEffect(() => {
+    setSelectionAll(false)
+    setSelection({})
+    refetch(listVariables)
+  }, [filter, page, limit, sortOrder, sortField])
+
+  const {t} = useTranslation()
+
+  useEffect(() => {
+    if (data?.content._all.list.nodes) {
+      setArticles(data?.content._all.list.nodes.map(a => a.content))
+    }
+  }, [data?.content._all.list])
 
   const rowDeleteButton = (rowData: any) => {
     const triggerRef = React.createRef<any>()
@@ -133,32 +175,6 @@ export function ContentList({
     )
   }
 
-  const listVariables = {
-    type: type as ContentTypeEnum,
-    filter: filter || undefined,
-    first: limit,
-    skip: page - 1,
-    sort: mapColumFieldToGraphQLField(sortField),
-    order: mapTableSortTypeToGraphQLSortOrder(sortOrder)
-  }
-
-  const {data, loading: isLoading, refetch} = useContentListQuery({
-    variables: listVariables,
-    fetchPolicy: 'network-only'
-  })
-
-  useEffect(() => {
-    refetch(listVariables)
-  }, [filter, page, limit, sortOrder, sortField])
-
-  const {t} = useTranslation()
-
-  useEffect(() => {
-    if (data?.content._all.list.nodes) {
-      setArticles(data?.content._all.list.nodes.map(a => a.content))
-    }
-  }, [data?.content._all.list])
-
   return (
     <>
       <FlexboxGrid>
@@ -184,8 +200,27 @@ export function ContentList({
             <InputGroup.Addon>
               <Icon icon="search" />
             </InputGroup.Addon>
-            <Input value={filter} onChange={value => setFilter(value)} />
-            <InputGroup.Button>
+            <Input
+              value={filter}
+              onChange={value => {
+                setFilter(value)
+                // dispatch({
+                //   type: RouteActionType.ReplaceRoute,
+                //   route: ContentListRoute.create(
+                //     {type},
+                //     {
+                //       query: {
+                //         filter: value
+                //       }
+                //     }
+                //   )
+                // })
+              }}
+            />
+            <InputGroup.Button
+              onClick={() => {
+                setFilter('')
+              }}>
               <Icon icon="close" />
             </InputGroup.Button>
           </InputGroup>
@@ -209,7 +244,16 @@ export function ContentList({
         <Column width={40} align="left">
           <HeaderCell></HeaderCell>
           <Cell>
-            <Checkbox className="list-checkbox"></Checkbox>
+            {(_: ContentListRefFragment, i: number) => {
+              return (
+                <Checkbox
+                  className="list-checkbox"
+                  checked={!!selection[i]}
+                  onClick={() => {
+                    setSelection({...selection, [i]: !selection[i]})
+                  }}></Checkbox>
+              )
+            }}
           </Cell>
         </Column>
         <Column flexGrow={3} align="left">
@@ -284,15 +328,33 @@ export function ContentList({
       </Table>
       <FlexboxGrid justify="space-between">
         <FlexboxGrid.Item colspan={12} style={{padding: '10px 0'}}>
-          <Checkbox style={{paddingLeft: 0, paddingRight: 20, display: 'inline-block'}}>
+          <Checkbox
+            style={{paddingLeft: 0, paddingRight: 20, display: 'inline-block'}}
+            checked={selectionAll}
+            onClick={() => {
+              const selected = !selectionAll
+              setSelectionAll(selected)
+
+              const s: {[key: number]: boolean} = {}
+              for (let i = 0; i < limit; i++) {
+                s[i] = selected
+              }
+              setSelection(s)
+            }}>
             Check all
           </Checkbox>
-          <Button appearance="link" color="orange">
+          <Button
+            appearance="link"
+            color="orange"
+            onClick={() => {
+              setConfirmAction(ConfirmAction.UnpublishAll)
+              setConfirmationDialogOpen(true)
+            }}>
             Unpublish
           </Button>
-          <Button appearance="link" color="red">
+          {/* <Button appearance="link" color="red">
             Delete
-          </Button>
+          </Button> */}
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={12}>
           <Pagination
@@ -308,7 +370,7 @@ export function ContentList({
       </FlexboxGrid>
 
       <Modal
-        show={isConfirmationDialogOpen}
+        show={isConfirmationDialogOpen && confirmAction !== ConfirmAction.UnpublishAll}
         width={'sm'}
         onHide={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
@@ -328,17 +390,6 @@ export function ContentList({
             <DescriptionListItem label={t('articles.panels.createdAt')}>
               {currentContent?.createdAt && new Date(currentContent.createdAt).toLocaleString()}
             </DescriptionListItem>
-
-            {/* <DescriptionListItem label={t('articles.panels.updatedAt')}>
-              {currentArticle?.updatedAt &&
-                new Date(currentArticle.updatedAt).toLocaleString()}
-            </DescriptionListItem> */}
-
-            {/* {currentArticle?.publishedAt && (
-              <DescriptionListItem label={t('articles.panels.publishedAt')}>
-                {new Date(currentArticle.createdAt).toLocaleString()}
-              </DescriptionListItem>
-            )} */}
           </DescriptionList>
         </Modal.Body>
 
@@ -362,6 +413,50 @@ export function ContentList({
                     variables: {id: currentContent.id}
                   })
                   await refetch()
+                  break
+              }
+
+              setConfirmationDialogOpen(false)
+            }}>
+            {t('articles.panels.confirm')}
+          </Button>
+          <Button onClick={() => setConfirmationDialogOpen(false)} appearance="subtle">
+            {t('articles.panels.cancel')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={isConfirmationDialogOpen && confirmAction === ConfirmAction.UnpublishAll}
+        width={'sm'}
+        onHide={() => setConfirmationDialogOpen(false)}>
+        <Modal.Header>
+          <Modal.Title>{t('articles.panels.unpublishArticle')}</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <DescriptionList></DescriptionList>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            appearance={'primary'}
+            disabled={isUnpublishing || isDeleting}
+            onClick={async () => {
+              switch (confirmAction) {
+                case ConfirmAction.UnpublishAll:
+                  for (const item of Object.entries(selection)) {
+                    const [key, val] = item
+                    if (val) {
+                      await unpublishArticle({
+                        variables: {id: articles[Number(key)].id}
+                      })
+                    }
+                  }
+
+                  await refetch()
+                  setSelectionAll(false)
+                  setSelection([])
                   break
               }
 
