@@ -31,13 +31,20 @@ export function RefSelectPanel({onSelectRef, configs, refConfig}: RefSelectPanel
   })
 
   function currentContent(currentType: {type: string; scope: ReferenceScope}) {
-    return (
-      <ContentList
-        configs={configs}
-        type={currentType.type}
-        scope={currentType.scope}
-        onSelectRef={onSelectRef}></ContentList>
-    )
+    const config = configs.contentModelExtensionMerged.find(config => {
+      return config.identifier === currentType.type
+    })
+    if (config) {
+      return (
+        <ContentList
+          configs={configs}
+          currentContentConfig={config}
+          type={currentType.type}
+          scope={currentType.scope}
+          onSelectRef={onSelectRef}></ContentList>
+      )
+    }
+    return <h1>Content Type {currentType.type} not supported</h1>
   }
 
   return (

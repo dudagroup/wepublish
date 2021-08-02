@@ -124,6 +124,10 @@ export function AuthorList() {
     }
   }, [data?.authors])
 
+  useEffect(() => {
+    document.title = t('authors.overview.authors')
+  })
+
   /* function loadMore() {
     fetchMore({
       variables: {first: 50, after: data?.authors.pageInfo.endCursor},

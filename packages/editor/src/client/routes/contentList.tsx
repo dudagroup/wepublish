@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React, {useEffect, useState} from 'react'
 import {Link, ButtonLink, ContentCreateRoute, ContentEditRoute} from '../route'
 import {
@@ -29,7 +28,7 @@ import {Content} from '@dudagroup/api'
 import {RecordPreview} from '../atoms/recordPreview'
 import {ReferenceScope} from '../interfaces/contentModelSchema'
 import {Reference} from '../interfaces/referenceType'
-import {Configs} from '../interfaces/extensionConfig'
+import {Configs, ContentModelConfigMerged} from '../interfaces/extensionConfig'
 import {ContentEditor} from './contentEditor'
 import {
   DEFAULT_TABLE_PAGE_SIZES,
@@ -60,10 +59,16 @@ export interface ArticleEditorProps {
   readonly type: string
   readonly scope?: ReferenceScope
   readonly configs: Configs
+  readonly currentContentConfig: ContentModelConfigMerged
   onSelectRef?: (ref: Reference) => void
 }
 
-export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
+export function ContentList({
+  type,
+  configs,
+  currentContentConfig,
+  onSelectRef
+}: ArticleEditorProps) {
   const [filter, setFilter] = useState('')
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
@@ -74,17 +79,16 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
   const [sortField, setSortField] = useState('modifiedAt')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
-  const config = configs?.contentModelExtensionMerged.find(config => {
-    return config.identifier === type
+  useEffect(() => {
+    document.title = `${currentContentConfig.namePlural}`
   })
-  if (!config) {
-    throw Error(`Content type ${type} not supported`)
-  }
 
   const [articles, setArticles] = useState<any[]>([])
 
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
-  const [deleteContent, {loading: isDeleting}] = useMutation(getDeleteMutation(config))
+  const [deleteContent, {loading: isDeleting}] = useMutation(
+    getDeleteMutation(currentContentConfig)
+  )
 
   const rowDeleteButton = (rowData: any) => {
     const triggerRef = React.createRef<any>()
@@ -156,7 +160,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
     <>
       <FlexboxGrid>
         <FlexboxGrid.Item colspan={16}>
-          <h2>{config.namePlural}</h2>
+          <h2>{currentContentConfig.namePlural}</h2>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={8} style={{textAlign: 'right'}}>
           <ButtonLink
@@ -169,7 +173,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
               }
             }}
             route={ContentCreateRoute.create({type})}>
-            {`New ${config.nameSingular}`}
+            {`New ${currentContentConfig.nameSingular}`}
           </ButtonLink>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={24} style={{marginTop: '20px'}}>
@@ -183,12 +187,12 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
       </FlexboxGrid>
 
       <Table
-        height={config.previewSize === 'big' ? 800 : 510}
+        height={currentContentConfig.previewSize === 'big' ? 800 : 510}
         autoHeight
         style={{marginTop: '20px', overflowY: 'auto'}}
         loading={isLoading}
         data={articles}
-        rowHeight={config.previewSize === 'big' ? 123 : undefined}
+        rowHeight={currentContentConfig.previewSize === 'big' ? 123 : undefined}
         onSortColumn={(sortColumn, sortType) => {
           // setSortOrder(sortType)
           // setSortField(sortColumn)
@@ -375,6 +379,7 @@ export function ContentList({type, configs, onSelectRef}: ArticleEditorProps) {
               }
             }}
             type={type}
+            contentConfig={currentContentConfig}
             configs={configs}></ContentEditor>
         </Drawer.Body>
       </Drawer>

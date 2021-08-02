@@ -95,6 +95,10 @@ export function ArticleList() {
     }
   }, [data?.articles])
 
+  useEffect(() => {
+    document.title = t('articles.overview.articles')
+  })
+
   return (
     <>
       <FlexboxGrid>

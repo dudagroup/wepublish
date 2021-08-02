@@ -80,6 +80,10 @@ export function TokenList() {
     }
   }, [current])
 
+  useEffect(() => {
+    document.title = t('tokenList.overview.tokens')
+  })
+
   return (
     <>
       <FlexboxGrid>

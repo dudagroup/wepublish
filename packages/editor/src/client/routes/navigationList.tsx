@@ -104,6 +104,10 @@ export function NavigationList() {
     }
   }, [data?.navigations])
 
+  useEffect(() => {
+    document.title = t('navigation.overview.navigations')
+  })
+
   return (
     <>
       <FlexboxGrid>

@@ -28,10 +28,10 @@ import {Extension} from './routes/extension'
 import {ContentEditor} from './routes/contentEditor'
 import {ContentList} from './routes/contentList'
 import {ConfigContext} from './Editorcontext'
-import {Configs, EditorConfig} from './interfaces/extensionConfig'
+import {Configs, CusomExtension, EditorConfig} from './interfaces/extensionConfig'
 import {useConfig} from './control/configHook'
 
-export function contentForRoute(route: Route, configs?: Configs) {
+function contentForRoute(route: Route, configs?: Configs) {
   switch (route.type) {
     case RouteType.Login:
       return <Login />
@@ -50,7 +50,17 @@ export function contentForRoute(route: Route, configs?: Configs) {
       return <ArticleList />
 
     case RouteType.ContentList: {
-      return configs && <ContentList configs={configs} type={route.params.type} />
+      const config = configs?.contentModelExtensionMerged.find(config => {
+        return config.identifier === route.params.type
+      })
+      if (config) {
+        return (
+          configs && (
+            <ContentList configs={configs} currentContentConfig={config} type={route.params.type} />
+          )
+        )
+      }
+      return <h1>Content Type {route.params.type} not supported</h1>
     }
 
     case RouteType.CommentList:
@@ -129,23 +139,37 @@ export function App(editorConfig: EditorConfig) {
       break
 
     case RouteType.ContentCreate:
-    case RouteType.ContentEdit:
-      comp = (
-        <ContentEditor
-          configs={configs}
-          type={current.params.type}
-          id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
-        />
-      )
+    case RouteType.ContentEdit: {
+      const config = configs?.contentModelExtensionMerged.find(config => {
+        return config.identifier === current.params.type
+      })
+      if (config) {
+        comp = (
+          <ContentEditor
+            configs={configs}
+            contentConfig={config}
+            type={current.params.type}
+            id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
+          />
+        )
+      }
       break
+    }
 
-    case RouteType.Extension:
-      comp = configs && (
-        <Base configs={configs}>
-          <Extension configs={configs} />
-        </Base>
-      )
+    case RouteType.Extension: {
+      const cusomContentConfig = configs.editorConfig.cusomExtension?.find(config => {
+        return config.identifier === current.params.type
+      }) as CusomExtension | undefined
+
+      if (cusomContentConfig) {
+        comp = configs && (
+          <Base configs={configs}>
+            <Extension customExtensionConfig={cusomContentConfig} />
+          </Base>
+        )
+      }
       break
+    }
 
     default:
       comp = <Base configs={configs}>{contentForRoute(current, configs)}</Base>

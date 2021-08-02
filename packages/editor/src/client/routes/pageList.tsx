@@ -93,6 +93,10 @@ export function PageList() {
     }
   }, [data?.pages])
 
+  useEffect(() => {
+    document.title = t('pages.overview.pages')
+  })
+
   return (
     <>
       <FlexboxGrid>

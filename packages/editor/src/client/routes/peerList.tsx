@@ -91,6 +91,10 @@ export function PeerList() {
     }
   }, [current])
 
+  useEffect(() => {
+    document.title = t('peerList.overview.peers')
+  })
+
   const peers = peerListData?.peers?.map((peer, index) => {
     const {id, name, profile, hostURL} = peer
 

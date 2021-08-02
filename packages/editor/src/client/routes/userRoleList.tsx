@@ -106,6 +106,10 @@ export function UserRoleList() {
     }
   }, [data?.userRoles])
 
+  useEffect(() => {
+    document.title = t('userRoles.overview.userRoles')
+  })
+
   return (
     <>
       <FlexboxGrid>

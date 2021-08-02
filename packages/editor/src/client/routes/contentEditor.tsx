@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
 import {Modal, Notification, Icon, IconButton, Drawer} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
@@ -23,7 +22,7 @@ import {ContentMetadataPanelModal} from '../panel/contentMetadataPanelModal'
 import {GenericContentView} from '../atoms/contentEdit/GenericContentView'
 import {ContentEditActionEnum, contentReducer} from '../control/contentReducer'
 import {generateEmptyRootContent} from '../control/contentUtil'
-import {Configs} from '../interfaces/extensionConfig'
+import {Configs, ContentModelConfigMerged} from '../interfaces/extensionConfig'
 import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
 import LanguageControl from '../atoms/contentEdit/LanguageControl'
@@ -33,6 +32,7 @@ export interface ArticleEditorProps {
   readonly id?: string
   readonly type: string
   readonly configs: Configs
+  readonly contentConfig: ContentModelConfigMerged
   readonly onBack?: () => void
   readonly onApply?: (ref: Reference) => void
 }
@@ -55,18 +55,18 @@ export interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEditorProps) {
+export function ContentEditor({
+  id,
+  type,
+  configs,
+  contentConfig,
+  onBack,
+  onApply
+}: ArticleEditorProps) {
   const {t} = useTranslation()
   const dispatch = useRouteDispatch()
   const [langLaneL, setLangLaneL] = useState(configs.apiConfig.languages.languages[0]?.tag)
   const [langLaneR, setLangLaneR] = useState(configs.apiConfig.languages.languages[1]?.tag)
-
-  const contentConfig = configs.contentModelExtensionMerged.find(config => {
-    return config.identifier === type
-  })
-  if (!contentConfig) {
-    return <p>Content Type {type} is not a valid content type</p>
-  }
 
   const [createContent, {loading: isCreating, data: createData, error: createError}] = useMutation(
     getCreateMutation(configs, contentConfig)
@@ -189,6 +189,7 @@ export function ContentEditor({id, type, configs, onBack, onApply}: ArticleEdito
       })
       setCustomMetadata(meta)
       setContentData(content)
+      document.title = `Edit ${type} - ${title}`
     }
   }, [recordData])
 

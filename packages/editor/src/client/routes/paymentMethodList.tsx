@@ -107,6 +107,10 @@ export function PaymentMethodList() {
     }
   }, [data?.paymentMethods])
 
+  useEffect(() => {
+    document.title = t('paymentMethodList.title')
+  })
+
   return (
     <>
       <FlexboxGrid>

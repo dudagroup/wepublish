@@ -144,6 +144,10 @@ export function CommentList() {
     }
   }, [data?.comments])
 
+  useEffect(() => {
+    document.title = t('comments.overview.comments')
+  })
+
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentComment, setCurrentComment] = useState<Comment>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()

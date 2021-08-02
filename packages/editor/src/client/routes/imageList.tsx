@@ -87,6 +87,10 @@ export function ImageList() {
     }
   }, [current])
 
+  useEffect(() => {
+    document.title = t('images.overview.imageLibrary')
+  })
+
   /* function loadMore() {
     fetchMore({
       variables: {first: ImagesPerPage, after: data?.images.pageInfo.endCursor},

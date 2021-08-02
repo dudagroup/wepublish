@@ -110,6 +110,10 @@ export function MemberPlanList() {
     }
   }, [data?.memberPlans])
 
+  useEffect(() => {
+    document.title = t('memberPlanList.title')
+  })
+
   /* function loadMore() {
     fetchMore({
       variables: {first: 50, after: data?.memberPlans.pageInfo.endCursor},

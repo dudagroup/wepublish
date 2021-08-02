@@ -95,6 +95,10 @@ export function UserList() {
 
   const {t} = useTranslation()
 
+  useEffect(() => {
+    document.title = t('userList.overview.users')
+  })
+
   const rowDeleteButton = (rowData: any) => {
     const triggerRef = React.createRef<any>()
     const close = () => triggerRef.current.close()

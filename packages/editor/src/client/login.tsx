@@ -108,6 +108,10 @@ export function Login() {
     if (error) Alert.error(error, 0)
   }, [errorLogin, errorOAuth2, errorJWT])
 
+  useEffect(() => {
+    document.title = t('login.login')
+  })
+
   async function login(e: FormEvent) {
     e.preventDefault()
 

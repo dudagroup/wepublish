@@ -180,6 +180,10 @@ export function ArticleEditor({id}: ArticleEditorProps) {
     }
   }, [createError, updateError, publishError])
 
+  useEffect(() => {
+    document.title = t('Edit Article')
+  })
+
   function countRichtextChars(blocksCharLength: number, nodes: any) {
     return nodes.reduce((charLength: number, node: any) => {
       if (!node.text && !node.children) return charLength
@@ -200,8 +204,11 @@ export function ArticleEditor({id}: ArticleEditorProps) {
 
   function countTitle(blocks: BlockValue[]) {
     return blocks.reduce((charLength: number, block: BlockValue) => {
-      if ((block.type === BlockType.Title)) return charLength + (block.value.title as string).length + (block.value.lead as string).length
-      else return charLength;
+      if (block.type === BlockType.Title)
+        return (
+          charLength + (block.value.title as string).length + (block.value.lead as string).length
+        )
+      else return charLength
     }, 0)
   }
 
@@ -326,7 +333,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
 
   useEffect(() => {
     setInfoData({charCount: countRichTextBlocksChars(blocks) + countTitle(blocks)})
-  },[isMetaDrawerOpen])
+  }, [isMetaDrawerOpen])
 
   return (
     <>
@@ -400,10 +407,10 @@ export function ArticleEditor({id}: ArticleEditorProps) {
           {useBlockMap<BlockValue>(() => BlockMap, [])}
         </BlockList>
       </EditorTemplate>
-      <Drawer show={isMetaDrawerOpen} size={'sm'} onHide={() => setMetaDrawerOpen(false)} >
+      <Drawer show={isMetaDrawerOpen} size={'sm'} onHide={() => setMetaDrawerOpen(false)}>
         <ArticleMetadataPanel
           value={metadata}
-          infoData= {infoData}
+          infoData={infoData}
           onClose={() => setMetaDrawerOpen(false)}
           onChange={value => {
             setMetadata(value)

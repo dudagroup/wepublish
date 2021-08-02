@@ -140,6 +140,10 @@ export function PageEditor({id}: PageEditorProps) {
     if (error) Alert.error(error, 0)
   }, [createError, updateError, publishError])
 
+  useEffect(() => {
+    document.title = t('Edit Page')
+  })
+
   function createInput(): PageInput {
     return {
       slug: metadata.slug,
