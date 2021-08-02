@@ -546,10 +546,14 @@ export function ContentEditor({
               width: '100%',
               maxWidth: 1140,
               position: 'sticky',
-              paddingTop: 10,
-              top: 42,
+              borderRadius: 60,
+              paddingTop: 0,
+              paddingLeft: 10,
+              paddingRight: 10,
+              top: 52,
               boxShadow: '0 5px 13px -14px #888',
-              background: '#fff',
+              background: '#f2faff',
+              border: '1px solid rgba(22, 117, 224, 0.3)',
               zIndex: 10
             }}>
             {header}

@@ -42,6 +42,7 @@ export default function LanguageControl({
           </Col>
           <Col xs={1} style={{textAlign: 'center'}}>
             <Button
+              style={{paddingTop: 12}}
               appearance="link"
               onClick={() => {
                 if (langLaneL && langLaneR) {

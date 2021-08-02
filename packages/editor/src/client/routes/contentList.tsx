@@ -20,7 +20,10 @@ import {
   Popover,
   Whisper,
   Divider,
-  Drawer
+  Drawer,
+  Checkbox,
+  ButtonGroup,
+  ButtonToolbar
 } from 'rsuite'
 import {getDeleteMutation} from '../utils/queryUtils'
 import {useMutation} from '@apollo/client'
@@ -177,11 +180,14 @@ export function ContentList({
           </ButtonLink>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item colspan={24} style={{marginTop: '20px'}}>
-          <InputGroup>
+          <InputGroup inside>
             <InputGroup.Addon>
               <Icon icon="search" />
             </InputGroup.Addon>
             <Input value={filter} onChange={value => setFilter(value)} />
+            <InputGroup.Button>
+              <Icon icon="close" />
+            </InputGroup.Button>
           </InputGroup>
         </FlexboxGrid.Item>
       </FlexboxGrid>
@@ -200,6 +206,12 @@ export function ContentList({
           setSortField('modifiedAt')
           setSortOrder('asc')
         }}>
+        <Column width={40} align="left">
+          <HeaderCell></HeaderCell>
+          <Cell>
+            <Checkbox className="list-checkbox"></Checkbox>
+          </Cell>
+        </Column>
         <Column flexGrow={3} align="left">
           <HeaderCell>{t('content.overview.title')}</HeaderCell>
           <Cell>
@@ -246,20 +258,6 @@ export function ContentList({
             }}
           </Cell>
         </Column>
-        {/* <Column flexGrow={2} align="left">
-          <HeaderCell>{t('content.overview.states')}</HeaderCell>
-          <Cell>
-            {(rowData: PageRefFragment) => {
-              const states = []
-
-              if (rowData.draft) states.push(t('content.overview.draft'))
-              if (rowData.pending) states.push(t('content.overview.pending'))
-              if (rowData.published) states.push(t('content.overview.published'))
-
-              return <div>{states.join(' / ')}</div>
-            }}
-          </Cell>
-        </Column> */}
         <Column flexGrow={2} minWidth={170} align="right">
           <HeaderCell style={{paddingRight: 20}}>{t('content.overview.action')}</HeaderCell>
           <Cell style={{padding: '6px 10px 6px 0'}}>
@@ -284,16 +282,30 @@ export function ContentList({
           </Cell>
         </Column>
       </Table>
-
-      <Pagination
-        size="xs"
-        lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
-        activePage={page}
-        displayLength={limit}
-        total={data?.content._all.list.totalCount}
-        onChangePage={page => setPage(page)}
-        onChangeLength={limit => setLimit(limit)}
-      />
+      <FlexboxGrid justify="space-between">
+        <FlexboxGrid.Item colspan={12} style={{padding: '10px 0'}}>
+          <Checkbox style={{paddingLeft: 0, paddingRight: 20, display: 'inline-block'}}>
+            Check all
+          </Checkbox>
+          <Button appearance="link" color="orange">
+            Unpublish
+          </Button>
+          <Button appearance="link" color="red">
+            Delete
+          </Button>
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item colspan={12}>
+          <Pagination
+            size="xs"
+            lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+            activePage={page}
+            displayLength={limit}
+            total={data?.content._all.list.totalCount}
+            onChangePage={page => setPage(page)}
+            onChangeLength={limit => setLimit(limit)}
+          />
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
 
       <Modal
         show={isConfirmationDialogOpen}
