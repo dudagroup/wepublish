@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.7",
-    "@karma.run/react": "^0.1.2",
+    "@karma.run/react": "^0.2.0",
     "@karma.run/utility": "^0.1.0",
     "@karma.run/webpack": "^0.0.3",
     "cross-fetch": "^3.0.4",

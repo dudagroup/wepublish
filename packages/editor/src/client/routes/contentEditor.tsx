@@ -55,7 +55,7 @@ export interface ContentBody {
   __typename: string
 }
 
-export function ContentEditor({
+function ContentEditorView({
   id,
   type,
   configs,
@@ -446,23 +446,28 @@ export function ContentEditor({
               width: 1260,
               justifyContent: 'space-between'
             }}>
-            <IconButtonLink
+            <IconButton
               size={'lg'}
               appearance="subtle"
               style={{
                 marginLeft: '30px'
               }}
               icon={<Icon icon="angle-left" />}
-              route={ContentListRoute.create({type})}
+              // route={ContentListRoute.create({type})}
               onClick={e => {
-                if (!unsavedChangesDialog()) e.preventDefault()
+                e.preventDefault()
+                if (!unsavedChangesDialog()) {
+                  return
+                }
+
                 if (onBack) {
-                  e.preventDefault()
                   onBack()
+                } else {
+                  history.back()
                 }
               }}>
               {t('articleEditor.overview.back')}
-            </IconButtonLink>
+            </IconButton>
             <>
               <div className="wep-navi-publishcontrols">
                 {customMetadataView && (
@@ -620,4 +625,31 @@ export function ContentEditor({
       </Modal>
     </>
   )
+}
+
+export function ContentEditor({
+  id,
+  type,
+  configs,
+  onBack,
+  onApply
+}: Omit<ArticleEditorProps, 'contentConfig'>) {
+  const config = configs?.contentModelExtensionMerged.find(config => {
+    return config.identifier === type
+  })
+
+  if (config) {
+    return (
+      <ContentEditorView
+        configs={configs}
+        contentConfig={config}
+        type={type}
+        id={id}
+        onBack={onBack}
+        onApply={onApply}
+      />
+    )
+  }
+
+  return <h1>Content Type {type} not supported</h1>
 }

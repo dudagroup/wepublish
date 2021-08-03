@@ -44,8 +44,7 @@ import {
   humanReadableDateTime,
   mapTableSortTypeToGraphQLSortOrder
 } from '../utility'
-import {route, RouteActionType, routePath} from '@karma.run/react'
-import {RecordSimple} from '../interfaces/recordSimple'
+import {RouteActionType} from '@karma.run/react'
 const {Column, HeaderCell, Cell, Pagination} = Table
 
 enum ConfirmAction {
@@ -75,18 +74,11 @@ export interface ArticleEditorProps {
   onSelectRef?: (ref: Reference) => void
 }
 
-export function ContentList({
-  type,
-  configs,
-  currentContentConfig,
-  onSelectRef
-}: ArticleEditorProps) {
-  const [filter, setFilter] = useState('')
+function ContentListView({type, configs, currentContentConfig, onSelectRef}: ArticleEditorProps) {
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>()
-  const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [sortField, setSortField] = useState('modifiedAt')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -94,19 +86,14 @@ export function ContentList({
   const [selection, setSelection] = useState<{[key: number]: boolean}>({})
   const {current} = useRoute()
   const dispatch = useRouteDispatch()
-  // const filter = current?.query?.filter || ''
-
-  useEffect(() => {
-    document.title = `${currentContentConfig.namePlural}`
-  })
-
-  const [articles, setArticles] = useState<RecordSimple[]>([])
-
+  const filter = current?.query?.filter || ''
+  const page = Number(current?.query?.page || '1')
+  const [articles, setArticles] = useState<ContentListRefFragment[]>([])
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(
     getDeleteMutation(currentContentConfig)
   )
-
+  const {t} = useTranslation()
   const listVariables = {
     type: type as ContentTypeEnum,
     filter: filter || undefined,
@@ -127,15 +114,17 @@ export function ContentList({
     refetch(listVariables)
   }, [filter, page, limit, sortOrder, sortField])
 
-  const {t} = useTranslation()
-
   useEffect(() => {
     if (data?.content._all.list.nodes) {
       setArticles(data?.content._all.list.nodes.map(a => a.content))
     }
   }, [data?.content._all.list])
 
-  const rowDeleteButton = (rowData: any) => {
+  useEffect(() => {
+    document.title = `${currentContentConfig.namePlural}`
+  })
+
+  const rowDeleteButton = (rowData: Content) => {
     const triggerRef = React.createRef<any>()
     const close = () => triggerRef.current.close()
     const speaker = (
@@ -175,6 +164,22 @@ export function ContentList({
     )
   }
 
+  function setQueryParam(additionalQueryParams: {[key: string]: string}) {
+    const currentQueryParams = current?.query || {}
+    dispatch({
+      type: RouteActionType.ReplaceRoute,
+      route: ContentListRoute.create(
+        {type},
+        {
+          query: {
+            ...currentQueryParams,
+            ...additionalQueryParams
+          }
+        }
+      )
+    })
+  }
+
   return (
     <>
       <FlexboxGrid>
@@ -203,23 +208,18 @@ export function ContentList({
             <Input
               value={filter}
               onChange={value => {
-                setFilter(value)
-                // dispatch({
-                //   type: RouteActionType.ReplaceRoute,
-                //   route: ContentListRoute.create(
-                //     {type},
-                //     {
-                //       query: {
-                //         filter: value
-                //       }
-                //     }
-                //   )
-                // })
+                setQueryParam({
+                  filter: value,
+                  page: '1'
+                })
               }}
             />
             <InputGroup.Button
               onClick={() => {
-                setFilter('')
+                setQueryParam({
+                  filter: '',
+                  page: '1'
+                })
               }}>
               <Icon icon="close" />
             </InputGroup.Button>
@@ -278,14 +278,16 @@ export function ContentList({
             }}
           </Cell>
         </Column>
-        <Column flexGrow={2} minWidth={120} align="left">
-          <HeaderCell>{t('content.overview.preview')}</HeaderCell>
-          <Cell>
-            {(rowData: ContentListRefFragment) => {
-              return <RecordPreview record={rowData}></RecordPreview>
-            }}
-          </Cell>
-        </Column>
+        {currentContentConfig.previewPath && (
+          <Column flexGrow={2} minWidth={120} align="left">
+            <HeaderCell>{t('content.overview.preview')}</HeaderCell>
+            <Cell>
+              {(rowData: ContentListRefFragment) => {
+                return <RecordPreview record={rowData}></RecordPreview>
+              }}
+            </Cell>
+          </Column>
+        )}
         <Column flexGrow={2} minWidth={140} align="left">
           <HeaderCell>{t('content.overview.created')}</HeaderCell>
           <Cell>
@@ -363,7 +365,11 @@ export function ContentList({
             activePage={page}
             displayLength={limit}
             total={data?.content._all.list.totalCount}
-            onChangePage={page => setPage(page)}
+            onChangePage={page => {
+              setQueryParam({
+                page: String(page)
+              })
+            }}
             onChangeLength={limit => setLimit(limit)}
           />
         </FlexboxGrid.Item>
@@ -486,10 +492,31 @@ export function ContentList({
               }
             }}
             type={type}
-            contentConfig={currentContentConfig}
             configs={configs}></ContentEditor>
         </Drawer.Body>
       </Drawer>
     </>
   )
+}
+
+export function ContentList({
+  type,
+  configs,
+  onSelectRef
+}: Omit<ArticleEditorProps, 'currentContentConfig'>) {
+  const config = configs?.contentModelExtensionMerged.find(config => {
+    return config.identifier === type
+  })
+  if (config) {
+    return (
+      <ContentListView
+        configs={configs}
+        currentContentConfig={config}
+        type={type}
+        onSelectRef={onSelectRef}
+      />
+    )
+  }
+
+  return <h1>Content Type {type} not supported</h1>
 }

@@ -31,7 +31,7 @@ import {ConfigContext} from './Editorcontext'
 import {Configs, CusomExtension, EditorConfig} from './interfaces/extensionConfig'
 import {useConfig} from './control/configHook'
 
-function contentForRoute(route: Route, configs?: Configs) {
+function contentForRoute(route: Route, configs: Configs) {
   switch (route.type) {
     case RouteType.Login:
       return <Login />
@@ -50,17 +50,7 @@ function contentForRoute(route: Route, configs?: Configs) {
       return <ArticleList />
 
     case RouteType.ContentList: {
-      const config = configs?.contentModelExtensionMerged.find(config => {
-        return config.identifier === route.params.type
-      })
-      if (config) {
-        return (
-          configs && (
-            <ContentList configs={configs} currentContentConfig={config} type={route.params.type} />
-          )
-        )
-      }
-      return <h1>Content Type {route.params.type} not supported</h1>
+      return <ContentList configs={configs} type={route.params.type} />
     }
 
     case RouteType.CommentList:
@@ -139,22 +129,15 @@ export function App(editorConfig: EditorConfig) {
       break
 
     case RouteType.ContentCreate:
-    case RouteType.ContentEdit: {
-      const config = configs?.contentModelExtensionMerged.find(config => {
-        return config.identifier === current.params.type
-      })
-      if (config) {
-        comp = (
-          <ContentEditor
-            configs={configs}
-            contentConfig={config}
-            type={current.params.type}
-            id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
-          />
-        )
-      }
+    case RouteType.ContentEdit:
+      comp = (
+        <ContentEditor
+          configs={configs}
+          type={current.params.type}
+          id={current.type === RouteType.ContentEdit ? current.params.id : undefined}
+        />
+      )
       break
-    }
 
     case RouteType.Extension: {
       const cusomContentConfig = configs.editorConfig.cusomExtension?.find(config => {
