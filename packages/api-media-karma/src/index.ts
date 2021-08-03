@@ -25,18 +25,28 @@ export class KarmaMediaAdapter implements MediaAdapter {
     this.token = token
   }
 
-  async _uploadImage(form: FormData): Promise<UploadImage> {
+  async _uploadImage(form: FormData, _id?: string): Promise<UploadImage> {
     // The form-data module reports a known length for the stream returned by createReadStream,
     // which is wrong, override it and always set it to false.
     // Related issue: https://github.com/form-data/form-data/issues/394
     form.hasKnownLength = () => false
 
-    const response = await fetch(this.url, {
-      method: 'POST',
-      headers: {authorization: `Bearer ${this.token}`},
-      body: form
-    })
+    let response
 
+    if (_id) {
+      console.log('put', this.url + _id)
+      response = await fetch(this.url + _id, {
+        method: 'PUT',
+        headers: {authorization: `Bearer ${this.token}`},
+        body: form
+      })
+    } else {
+      response = await fetch(this.url, {
+        method: 'POST',
+        headers: {authorization: `Bearer ${this.token}`},
+        body: form
+      })
+    }
     const json = await response.json()
 
     if (response.status !== 200) {
@@ -64,6 +74,15 @@ export class KarmaMediaAdapter implements MediaAdapter {
     form.append('file', createReadStream(), {filename: inputFilename, contentType: mimetype})
 
     return this._uploadImage(form)
+  }
+
+  async uploadImageAndReplace(fileUpload: Promise<FileUpload>, id: string): Promise<UploadImage> {
+    const form = new FormData()
+
+    const {filename: inputFilename, mimetype, createReadStream}: FileUpload = await fileUpload
+    form.append('file', createReadStream(), {filename: inputFilename, contentType: mimetype})
+
+    return this._uploadImage(form, id)
   }
 
   async uploadImageFromArrayBuffer(

@@ -9,6 +9,7 @@ export interface ArrayBufferUpload {
 
 export interface MediaAdapter {
   uploadImage(fileUpload: Promise<FileUpload>): Promise<UploadImage>
+  uploadImageAndReplace(fileUpload: Promise<FileUpload>, id: string): Promise<UploadImage>
   uploadImageFromArrayBuffer(arrayBufferUpload: Promise<ArrayBufferUpload>): Promise<UploadImage>
   deleteImage(id: string): Promise<boolean>
   getImageURL(image: Image, transformation?: ImageTransformation): Promise<string>

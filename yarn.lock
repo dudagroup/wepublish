@@ -2987,15 +2987,15 @@
   dependencies:
     sharp "^0.22.1"
 
-"@karma.run/media-storage-local@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@karma.run/media-storage-local/-/media-storage-local-0.1.4.tgz#e2331840c602c268bffc0180cbed7c227c315c4e"
-  integrity sha512-Ne0EF6gTEnsqM3cPJLXdwLasNo/rDtUDx6S1GbBR8E0ICyLlbBSRAMJVLHJ/XZeoETAOCSYzEZ6MyYylpN/+Tw==
+"@karma.run/media-storage-local@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@karma.run/media-storage-local/-/media-storage-local-0.3.0.tgz#a7ebcec466e7b0e03af033f1d6a2b143d03f4fea"
+  integrity sha512-4na8j9tIsAK0emfORkIL3q0V1x7P4EN1gF/ARH6ApJH1ayxer2hzZKQkS0mwGswp3S1DBNO97Xngzi7k1Vz+CA==
 
-"@karma.run/media@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@karma.run/media/-/media-0.2.1.tgz#d1fb72b748f7d1d88c73895651256794ad5196e7"
-  integrity sha512-QAgcjp7uhOjC8PhnfTS+o8/p9ikJUao+ZgbFusQypVyQGVjS8eHH9HNUo8oHkBnHSjZrBr2xWiXo4/j+D37gIg==
+"@karma.run/media@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@karma.run/media/-/media-0.3.0.tgz#9fb113f789fcc6ccac73ad8b0338aff98cdc16db"
+  integrity sha512-JtfcR+2JpILeUrmLSgJXjFZr6+pL6Jv6RGIvSH8YS5DABnmOqcBatLCiT5AfEATn9NIYBA3dLe8FVNFRES478Q==
   dependencies:
     buffer-peek-stream "^1.0.1"
     fastify "^2.5.0"

@@ -64,7 +64,15 @@ async function validateRecursive(
     const mediaDb = data as MediaPersisted
 
     if (mediaInput?.file) {
-      const image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
+      let image
+      if (persistentData?.id) {
+        image = await validatorContext.context.mediaAdapter.uploadImageAndReplace(
+          mediaInput.file,
+          persistentData?.id
+        )
+      } else {
+        image = await validatorContext.context.mediaAdapter.uploadImage(mediaInput.file)
+      }
       mediaDb.id = image.id
       mediaDb.createdAt = new Date()
       mediaDb.modifiedAt = new Date()
