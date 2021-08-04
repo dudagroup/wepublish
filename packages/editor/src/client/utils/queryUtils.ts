@@ -37,15 +37,18 @@ function getFragmentSchemaRecursive(
   name = ''
 ): string {
   switch (schema.type) {
-    case ContentModelSchemaTypes.object:
+    case ContentModelSchemaTypes.object: {
+      const objectName = schema.name || name
       return `{
-        ${Object.entries(schema.fields)
-          .map(([key, val]) => {
-            const ObjectName = nameJoin(name, key)
-            return `${key} ${getFragmentSchemaRecursive(configs, val, ObjectName)}`
-          })
-          .join('\n')}
-      }`
+          ${Object.entries(schema.fields)
+            .map(([key, val]) => {
+              const ObjectName = nameJoin(objectName, key)
+              return `${key} ${getFragmentSchemaRecursive(configs, val, ObjectName)}`
+            })
+            .join('\n')}
+        }`
+    }
+
     case ContentModelSchemaTypes.list:
       return getFragmentSchemaRecursive(configs, schema.contentType, name)
     case ContentModelSchemaTypes.reference: {
@@ -87,17 +90,19 @@ function getFragmentSchemaRecursive(
       }
       return q
     }
-    case ContentModelSchemaTypes.union:
+    case ContentModelSchemaTypes.union: {
+      const unionName = schema.name || name
       return `{
-        ${Object.entries(schema.cases)
-          .map(([unionCase, val]) => {
-            const unionCaseName = nameJoin(name, unionCase)
-            return `... on ${unionCaseName} {
-              ${unionCase} ${getFragmentSchemaRecursive(configs, val, unionCaseName)}
-            }`
-          })
-          .join('\n')}
-      }`
+          ${Object.entries(schema.cases)
+            .map(([unionCase, val]) => {
+              const unionCaseName = nameJoin(unionName, unionCase)
+              return `... on ${unionCaseName} {
+                ${unionCase} ${getFragmentSchemaRecursive(configs, val, unionCaseName)}
+              }`
+            })
+            .join('\n')}
+        }`
+    }
     default:
       if ((schema as ContentModelSchemaFieldLeaf).i18n) {
         return `{${configs.apiConfig.languages.languages.map(v => v.tag).join('\n')}}`
@@ -223,6 +228,7 @@ export function stripKeysRecursive<T>(input: T, keys: string[]) {
   for (const prop in copy) {
     if (keys.some(v => v === prop)) delete copy[prop]
     else if (copy[prop] === null) {
+      //
     } else if (Array.isArray(copy[prop])) {
       copy[prop] = (copy[prop] as any).map((item: any) => stripKeysRecursive(item, keys))
     } else if (typeof copy[prop] === 'object') {

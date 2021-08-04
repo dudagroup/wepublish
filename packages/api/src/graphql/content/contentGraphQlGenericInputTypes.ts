@@ -21,6 +21,7 @@ import {GraphQLReferenceInput} from './reference'
 import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldObject,
   ContentModelSchemas,
   ContentModelSchemaTypes
 } from '../../interfaces/contentModelSchema'
@@ -38,6 +39,40 @@ function getInputLeaf(
     return getI18nInputType(graphQLType, context.language)
   }
   return graphQLType
+}
+
+const typeCachePublic: {
+  contentModelSchemas: ContentModelSchemas
+  graphQlType: GraphQLInputType
+}[] = []
+const typeCachePrivate: {
+  contentModelSchemas: ContentModelSchemas
+  graphQlType: GraphQLInputType
+}[] = []
+
+function getSchemaFromCache(
+  contentModelSchemas: ContentModelSchemas,
+  context: TypeGeneratorContext
+) {
+  if (context.isPublic) {
+    return typeCachePublic.find(s => Object.is(s.contentModelSchemas, contentModelSchemas))
+  } else {
+    return typeCachePrivate.find(s => Object.is(s.contentModelSchemas, contentModelSchemas))
+  }
+}
+
+function cacheSchema(
+  contentModelSchemas: ContentModelSchemas,
+  graphQlType: GraphQLInputType,
+  context: TypeGeneratorContext
+) {
+  if (!(contentModelSchemas as ContentModelSchemaFieldObject).nameInput) return
+
+  if (context.isPublic) {
+    typeCachePublic.push({contentModelSchemas: contentModelSchemas, graphQlType: graphQlType})
+  } else {
+    typeCachePrivate.push({contentModelSchemas: contentModelSchemas, graphQlType: graphQlType})
+  }
 }
 
 function generateInputType(
@@ -69,38 +104,67 @@ function generateInputType(
     case ContentModelSchemaTypes.list:
       type = GraphQLList(generateInputType(context, contentModelSchemas.contentType, name))
       break
-    case ContentModelSchemaTypes.union:
+    case ContentModelSchemaTypes.union: {
       // Let's evaluate and maybe switch to the new tagged type https://github.com/graphql/graphql-spec/pull/733
-      type = new GraphQLInputObjectType({
-        name,
-        fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-          accu[key] = generateFieldConfig(context, {...val, optional: true}, nameJoin(name, key))
-          return accu
-        }, {} as GraphQLInputFieldConfigMap)
-      })
-      break
-    case ContentModelSchemaTypes.enum:
-      type = getInputLeaf(
-        context,
-        contentModelSchemas,
-        new GraphQLEnumType({
-          name,
-          values: contentModelSchemas.values.reduce((accu, item) => {
-            accu[`${item.value}`] = {value: item.value, description: item.description}
+      const unionName = contentModelSchemas.nameInput || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = new GraphQLInputObjectType({
+          name: unionName,
+          fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
+            accu[key] = generateFieldConfig(
+              context,
+              {...val, optional: true},
+              nameJoin(unionName, key)
+            )
             return accu
-          }, {} as GraphQLEnumValueConfigMap)
+          }, {} as GraphQLInputFieldConfigMap)
         })
-      )
+        cacheSchema(contentModelSchemas, type, context)
+      }
       break
-    case ContentModelSchemaTypes.object:
-      type = new GraphQLInputObjectType({
-        name,
-        fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
-          accu[key] = generateFieldConfig(context, val, nameJoin(name, key))
-          return accu
-        }, {} as GraphQLInputFieldConfigMap)
-      })
+    }
+    case ContentModelSchemaTypes.enum: {
+      const enumName = contentModelSchemas.nameInput || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = getInputLeaf(
+          context,
+          contentModelSchemas,
+          new GraphQLEnumType({
+            name: enumName,
+            values: contentModelSchemas.values.reduce((accu, item) => {
+              accu[`${item.value}`] = {value: item.value, description: item.description}
+              return accu
+            }, {} as GraphQLEnumValueConfigMap)
+          })
+        )
+        cacheSchema(contentModelSchemas, type, context)
+      }
       break
+    }
+
+    case ContentModelSchemaTypes.object: {
+      const objectName = contentModelSchemas.nameInput || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = new GraphQLInputObjectType({
+          name: objectName,
+          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, val]) => {
+            accu[key] = generateFieldConfig(context, val, nameJoin(objectName, key))
+            return accu
+          }, {} as GraphQLInputFieldConfigMap)
+        })
+        cacheSchema(contentModelSchemas, type, context)
+      }
+      break
+    }
 
     case ContentModelSchemaTypes.richText:
       type = getInputLeaf(context, contentModelSchemas, GraphQLRichText)

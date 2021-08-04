@@ -30,6 +30,7 @@ import {hideBin} from 'yargs/helpers'
 import {contentModelArticle} from './models/modelArticle'
 import {contentModelA} from './models/modelA'
 import {contentModelB} from './models/modelB'
+import {contentModelC} from './models/modelC'
 import {GraphQLNonNull, GraphQLObjectType, GraphQLString} from 'graphql'
 import {contentModelAuthor} from './models/modelAuthor'
 import {contentModelMediaLibrary} from './models/modelMediaLibrary'
@@ -294,6 +295,7 @@ async function asyncMain() {
     contentModels: [
       contentModelA,
       contentModelB,
+      contentModelC,
       contentModelMediaLibrary,
       contentModelAuthor,
       contentModelArticle

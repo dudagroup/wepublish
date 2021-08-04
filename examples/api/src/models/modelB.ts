@@ -1,6 +1,7 @@
 import {ContentModel, ContentModelSchemaTypes} from '@dudagroup/api'
 import {MODEL_A} from './modelA'
 import {typeMediaLibrary} from './modelMediaLibrary'
+import {mySharedEnum, mySharedObject, mySharedUnion} from './sharedObject'
 
 export const contentModelB: ContentModel = {
   identifier: 'modelB',
@@ -164,6 +165,7 @@ export const contentModelB: ContentModel = {
         filterable: true,
         i18n: true
       },
+      myScharedEnum: mySharedEnum,
       myEnum: {
         type: ContentModelSchemaTypes.enum,
         filterable: true,
@@ -245,6 +247,7 @@ export const contentModelB: ContentModel = {
           }
         }
       },
+      mySharedUnion: mySharedUnion,
       myUnion: {
         type: ContentModelSchemaTypes.union,
         cases: {
@@ -264,7 +267,8 @@ export const contentModelB: ContentModel = {
                 type: ContentModelSchemaTypes.float
               }
             }
-          }
+          },
+          caseScharedObject: mySharedObject
         }
       },
       myOptionalUnion: {
@@ -314,6 +318,7 @@ export const contentModelB: ContentModel = {
           }
         }
       },
+      myScharedObject: mySharedObject,
       myObject: {
         type: ContentModelSchemaTypes.object,
         fields: {

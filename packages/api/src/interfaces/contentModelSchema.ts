@@ -6,19 +6,49 @@ export interface I18n<T = string> {
 
 export interface ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes
+  /**
+   * instruction returned for the graphql description field
+   */
   instructions?: string
+  /**
+   * some options which only do have an effect for the editor but not the api
+   */
   editor?: {
+    /**
+     * displayed alternative label for this field
+     */
     name?: I18n<string> | string
+    /**
+     * instructions displayed in the editor
+     */
     instructions?: I18n<string> | string
   }
+  /**
+   * whether this field is visible on the public api
+   */
   public?: boolean
+  /**
+   * graphql field can be null
+   */
   optional?: boolean
+  /**
+   * marks the graphql field as deprecated
+   */
   deprecationReason?: string
 }
 
 export interface ContentModelSchemaFieldLeaf extends ContentModelSchemaFieldBase {
+  /**
+   * determines if the field is multilanguage capable.
+   */
   i18n?: boolean
+  /**
+   * if true, the public api returns content of the default language if there is no content for the desired language set
+   */
   i18nFallbackToDefaultLanguage?: boolean
+  /**
+   * if true, the api provides filter and sort params for this field
+   */
   filterable?: boolean
 }
 
@@ -39,6 +69,9 @@ export enum ContentModelSchemaTypes {
 }
 export interface ContentModelSchemaFieldId extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.id
+  /**
+   * value used if a new record is created. The api also returns this value for records who do not have a value set eg. after adding a new field to a model.
+   */
   defaultValue?: string
 }
 
@@ -75,12 +108,20 @@ export type ContentModelSchemaFieldEnumValueConfigMap = {
 }
 
 export interface ContentModelSchemaFieldEnumValueConfig {
-  description?: string
   value?: string
+  description?: string
 }
 
 export interface ContentModelSchemaFieldEnum extends ContentModelSchemaFieldLeaf {
   type: ContentModelSchemaTypes.enum
+  /**
+   * name is optional but must be unique. If a name is set, the enum can be used in different models
+   */
+  name?: string
+  /**
+   * name is optional but must be unique. If a name is set, the object can be used in different models
+   */
+  nameInput?: string
   values: ContentModelSchemaFieldEnumValueConfig[]
   defaultValue?: number
 }
@@ -137,6 +178,9 @@ export interface ContentModelSchemaFieldRef extends ContentModelSchemaFieldLeaf 
 
 export interface ContentModelSchemaFieldList extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.list
+  /**
+   * type definition of the list element
+   */
   contentType: ContentModelSchemas
   editor?: {
     name?: I18n<string> | string
@@ -147,11 +191,33 @@ export interface ContentModelSchemaFieldList extends ContentModelSchemaFieldBase
 
 export interface ContentModelSchemaFieldObject extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.object
+  /**
+   * name is optional but must be unique. If a name is set, the object can be used in different models
+   */
+  name?: string
+  /**
+   * name is optional but must be unique. If a name is set, the object can be used in different models
+   */
+  nameInput?: string
+  /**
+   * object fields. At least one field needs to be defined
+   */
   fields: MapType<ContentModelSchemas>
 }
 
 export interface ContentModelSchemaFieldUnion extends ContentModelSchemaFieldBase {
   type: ContentModelSchemaTypes.union
+  /**
+   * name is optional but must be unique. If a name is set, the union can be used in different models
+   */
+  name?: string
+  /**
+   * name is optional but must be unique. If a name is set, the object can be used in different models
+   */
+  nameInput?: string
+  /**
+   * union cases. At least one case needs to be defined
+   */
   cases: MapType<ContentModelSchemaFieldObject>
 }
 

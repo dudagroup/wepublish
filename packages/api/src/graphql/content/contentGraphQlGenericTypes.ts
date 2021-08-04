@@ -24,6 +24,7 @@ import {createProxyingIsTypeOf} from '../../utility'
 import {
   ContentModelSchema,
   ContentModelSchemaFieldLeaf,
+  ContentModelSchemaFieldObject,
   ContentModelSchemaFieldRefTypeMap,
   ContentModelSchemas,
   ContentModelSchemaTypes
@@ -52,6 +53,40 @@ function getLeaf(
     return getI18nOutputType(graphQLType, context.language)
   }
   return graphQLType
+}
+
+const typeCachePublic: {
+  contentModelSchemas: ContentModelSchemas
+  graphQlType: GraphQLOutputType
+}[] = []
+const typeCachePrivate: {
+  contentModelSchemas: ContentModelSchemas
+  graphQlType: GraphQLOutputType
+}[] = []
+
+function getSchemaFromCache(
+  contentModelSchemas: ContentModelSchemas,
+  context: TypeGeneratorContext
+) {
+  if (context.isPublic) {
+    return typeCachePublic.find(s => Object.is(s.contentModelSchemas, contentModelSchemas))
+  } else {
+    return typeCachePrivate.find(s => Object.is(s.contentModelSchemas, contentModelSchemas))
+  }
+}
+
+function cacheSchema(
+  contentModelSchemas: ContentModelSchemas,
+  graphQlType: GraphQLOutputType,
+  context: TypeGeneratorContext
+) {
+  if (!(contentModelSchemas as ContentModelSchemaFieldObject).name) return
+
+  if (context.isPublic) {
+    typeCachePublic.push({contentModelSchemas: contentModelSchemas, graphQlType: graphQlType})
+  } else {
+    typeCachePrivate.push({contentModelSchemas: contentModelSchemas, graphQlType: graphQlType})
+  }
 }
 
 function generateType(
@@ -83,54 +118,78 @@ function generateType(
     case ContentModelSchemaTypes.list:
       type = GraphQLList(generateType(context, contentModelSchemas.contentType, name))
       break
-    case ContentModelSchemaTypes.union:
+    case ContentModelSchemaTypes.union: {
       // Let's evaluate and maybe switch to the new tagged type https://github.com/graphql/graphql-spec/pull/733
-      type = new GraphQLUnionType({
-        name,
-        types: Object.entries(contentModelSchemas.cases).map(([unionCase, val]) => {
-          const unionCaseName = nameJoin(name, unionCase)
-          return new GraphQLObjectType({
-            name: unionCaseName,
-            fields: {
-              [unionCase]: {
-                type: new GraphQLObjectType({
-                  name: nameJoin(unionCaseName, 'content'),
-                  fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
-                    accu[key] = generateFieldConfig(context, val, nameJoin(unionCaseName, key))
-                    return accu
-                  }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
-                })
-              }
-            },
-            isTypeOf: createProxyingIsTypeOf((value: any) => {
-              return Object.keys(value)[0] === unionCase
+      const unionName = contentModelSchemas.name || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = new GraphQLUnionType({
+          name: unionName,
+          types: Object.entries(contentModelSchemas.cases).map(([unionCase, val]) => {
+            const unionCaseName = nameJoin(unionName, unionCase)
+            return new GraphQLObjectType({
+              name: unionCaseName,
+              fields: {
+                [unionCase]: {
+                  type: new GraphQLObjectType({
+                    name: nameJoin(unionCaseName, 'content'),
+                    fields: Object.entries(val.fields).reduce((accu, [key, val]) => {
+                      accu[key] = generateFieldConfig(context, val, nameJoin(unionCaseName, key))
+                      return accu
+                    }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
+                  })
+                }
+              },
+              isTypeOf: createProxyingIsTypeOf((value: any) => {
+                return Object.keys(value)[0] === unionCase
+              })
             })
           })
         })
-      })
+        cacheSchema(contentModelSchemas, type, context)
+      }
       break
-    case ContentModelSchemaTypes.enum:
-      type = getLeaf(
-        context,
-        contentModelSchemas,
-        new GraphQLEnumType({
-          name,
-          values: contentModelSchemas.values.reduce((accu, item) => {
-            accu[`${item.value}`] = {value: item.value, description: item.description}
+    }
+    case ContentModelSchemaTypes.enum: {
+      const enumName = contentModelSchemas.name || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = getLeaf(
+          context,
+          contentModelSchemas,
+          new GraphQLEnumType({
+            name: enumName,
+            values: contentModelSchemas.values.reduce((accu, item) => {
+              accu[`${item.value}`] = {value: item.value, description: item.description}
+              return accu
+            }, {} as GraphQLEnumValueConfigMap)
+          })
+        )
+        cacheSchema(contentModelSchemas, type, context)
+      }
+      break
+    }
+    case ContentModelSchemaTypes.object: {
+      const objectName = contentModelSchemas.name || name
+      const schema = getSchemaFromCache(contentModelSchemas, context)
+      if (schema) {
+        type = schema.graphQlType
+      } else {
+        type = new GraphQLObjectType({
+          name: objectName,
+          fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
+            accu[key] = generateFieldConfig(context, modelSchema, nameJoin(objectName, key))
             return accu
-          }, {} as GraphQLEnumValueConfigMap)
+          }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
         })
-      )
+        cacheSchema(contentModelSchemas, type, context)
+      }
       break
-    case ContentModelSchemaTypes.object:
-      type = new GraphQLObjectType({
-        name,
-        fields: Object.entries(contentModelSchemas.fields).reduce((accu, [key, modelSchema]) => {
-          accu[key] = generateFieldConfig(context, modelSchema, nameJoin(name, key))
-          return accu
-        }, {} as GraphQLFieldConfigMap<unknown, Context, unknown>)
-      })
-      break
+    }
 
     case ContentModelSchemaTypes.richText:
       type = getLeaf(context, contentModelSchemas, GraphQLRichText)
