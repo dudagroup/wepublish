@@ -36,7 +36,8 @@ export function RefSelectPanel({onSelectRef, configs, refConfig}: RefSelectPanel
         configs={configs}
         type={currentType.type}
         scope={currentType.scope}
-        onSelectRef={onSelectRef}></ContentList>
+        onSelectRef={onSelectRef}
+        modal={true}></ContentList>
     )
   }
 

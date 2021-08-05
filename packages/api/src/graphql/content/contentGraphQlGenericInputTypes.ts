@@ -114,11 +114,8 @@ function generateInputType(
         type = new GraphQLInputObjectType({
           name: unionName,
           fields: Object.entries(contentModelSchemas.cases).reduce((accu, [key, val]) => {
-            accu[key] = generateFieldConfig(
-              context,
-              {...val, optional: true},
-              nameJoin(unionName, key)
-            )
+            val.optional = true // TODO contentModelSchemas schould not be changed here. Make it inmutable.
+            accu[key] = generateFieldConfig(context, val, nameJoin(unionName, key))
             return accu
           }, {} as GraphQLInputFieldConfigMap)
         })
@@ -171,12 +168,12 @@ function generateInputType(
       break
 
     case ContentModelSchemaTypes.reference:
-      contentModelSchemas.optional = true // TODO reconsider if reference must be optional
+      contentModelSchemas.optional = true // TODO reconsider if reference must be optional. contentModelSchemas schould not be changed here. Make it inmutable.
       type = getInputLeaf(context, contentModelSchemas, GraphQLReferenceInput)
       break
 
     case ContentModelSchemaTypes.media:
-      contentModelSchemas.optional = true // TODO reconsider if media must be optional
+      contentModelSchemas.optional = true // TODO reconsider if media must be optional. contentModelSchemas schould not be changed here. Make it inmutable.
       type = getInputLeaf(context, contentModelSchemas, GraphQLMediaInput)
       break
   }

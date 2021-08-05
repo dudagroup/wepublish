@@ -71,10 +71,19 @@ export interface ArticleEditorProps {
   readonly scope?: ReferenceScope
   readonly configs: Configs
   readonly currentContentConfig: ContentModelConfigMerged
+  readonly modal?: boolean
   onSelectRef?: (ref: Reference) => void
 }
 
-function ContentListView({type, configs, currentContentConfig, onSelectRef}: ArticleEditorProps) {
+function ContentListView({
+  type,
+  configs,
+  currentContentConfig,
+  onSelectRef,
+  modal
+}: ArticleEditorProps) {
+  const [filterState, setFilterState] = useState('')
+  const [pageState, setPageState] = useState(1)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
   const [currentContent, setCurrentContent] = useState<Content>()
@@ -86,8 +95,8 @@ function ContentListView({type, configs, currentContentConfig, onSelectRef}: Art
   const [selection, setSelection] = useState<{[key: number]: boolean}>({})
   const {current} = useRoute()
   const dispatch = useRouteDispatch()
-  const filter = current?.query?.filter || ''
-  const page = Number(current?.query?.page || '1')
+  const filter = modal ? filterState : current?.query?.filter || ''
+  const page = modal ? pageState : Number(current?.query?.page || '1')
   const [articles, setArticles] = useState<ContentListRefFragment[]>([])
   const [unpublishArticle, {loading: isUnpublishing}] = useUnpublishContentMutation()
   const [deleteContent, {loading: isDeleting}] = useMutation(
@@ -208,18 +217,28 @@ function ContentListView({type, configs, currentContentConfig, onSelectRef}: Art
             <Input
               value={filter}
               onChange={value => {
-                setQueryParam({
-                  filter: value,
-                  page: '1'
-                })
+                if (modal) {
+                  setFilterState(value)
+                  setPageState(1)
+                } else {
+                  setQueryParam({
+                    filter: value,
+                    page: '1'
+                  })
+                }
               }}
             />
             <InputGroup.Button
               onClick={() => {
-                setQueryParam({
-                  filter: '',
-                  page: '1'
-                })
+                if (modal) {
+                  setFilterState('')
+                  setPageState(1)
+                } else {
+                  setQueryParam({
+                    filter: '',
+                    page: '1'
+                  })
+                }
               }}>
               <Icon icon="close" />
             </InputGroup.Button>
@@ -366,9 +385,13 @@ function ContentListView({type, configs, currentContentConfig, onSelectRef}: Art
             displayLength={limit}
             total={data?.content._all.list.totalCount}
             onChangePage={page => {
-              setQueryParam({
-                page: String(page)
-              })
+              if (modal) {
+                setPageState(page)
+              } else {
+                setQueryParam({
+                  page: String(page)
+                })
+              }
             }}
             onChangeLength={limit => setLimit(limit)}
           />
@@ -502,7 +525,8 @@ function ContentListView({type, configs, currentContentConfig, onSelectRef}: Art
 export function ContentList({
   type,
   configs,
-  onSelectRef
+  onSelectRef,
+  modal
 }: Omit<ArticleEditorProps, 'currentContentConfig'>) {
   const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
@@ -514,6 +538,7 @@ export function ContentList({
         currentContentConfig={config}
         type={type}
         onSelectRef={onSelectRef}
+        modal={modal}
       />
     )
   }

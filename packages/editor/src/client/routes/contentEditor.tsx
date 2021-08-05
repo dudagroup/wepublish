@@ -145,7 +145,7 @@ function ContentEditorView({
     variables: {id: contentdId!}
   })
 
-  const isNotFound = data && !data?.content[type]?.read
+  const isNotFound = data?.content[type] && !data?.content[type]?.read
   const recordData: ContentBody = data?.content[type]?.read
 
   const isDisabled = isLoading || isCreating || isUpdating || isPublishing || isNotFound
