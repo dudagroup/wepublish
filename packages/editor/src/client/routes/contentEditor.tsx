@@ -27,6 +27,7 @@ import {Reference} from '../interfaces/referenceType'
 import {MapType} from '../interfaces/utilTypes'
 import LanguageControl from '../atoms/contentEdit/LanguageControl'
 import {ContentModelSchemaTypes} from '../interfaces/contentModelSchema'
+import {AVAILABLE_LANG, useStickyState} from '../base'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -67,6 +68,7 @@ function ContentEditorView({
   const dispatch = useRouteDispatch()
   const [langLaneL, setLangLaneL] = useState(configs.apiConfig.languages.languages[0]?.tag)
   const [langLaneR, setLangLaneR] = useState(configs.apiConfig.languages.languages[1]?.tag)
+  const [uiLanguage] = useStickyState(AVAILABLE_LANG[0].id, 'wepublish/language')
 
   const [createContent, {loading: isCreating, data: createData, error: createError}] = useMutation(
     getCreateMutation(configs, contentConfig)
@@ -369,7 +371,8 @@ function ContentEditorView({
         languagesConfig={configs.apiConfig.languages}
         dispatch={dispatcher}
         langLaneL={langLaneL}
-        langLaneR={langLaneR}></GenericContentView>
+        langLaneR={langLaneR}
+        langUi={uiLanguage}></GenericContentView>
     )
   }
 
@@ -401,6 +404,7 @@ function ContentEditorView({
         dispatch={customMetadataDispatcher}
         langLaneL={langLaneL}
         langLaneR={langLaneR}
+        langUi={uiLanguage}
         presentLanguageControl={true}></GenericContentView>
     )
   }

@@ -42,7 +42,9 @@ function BlockObjectItem({
         <FormGroup key={fieldname}>
           <div className="wep-label" style={labelStyle}>
             <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-            <Instructions instructions={model.editor?.instructions}></Instructions>
+            <Instructions
+              instructions={model.editor?.instructions}
+              currentLanguage={languageContext.langUi}></Instructions>
           </div>
           <Toggle
             size="sm"
@@ -65,7 +67,9 @@ function BlockObjectItem({
         <>
           <div className="wep-label" style={labelStyle}>
             <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-            <Instructions instructions={model.editor?.instructions}></Instructions>
+            <Instructions
+              instructions={model.editor?.instructions}
+              currentLanguage={languageContext.langUi}></Instructions>
           </div>
           <BlockAbstract
             configs={configs}
@@ -111,7 +115,9 @@ function BlockObjectItem({
         <FormGroup>
           <div className="wep-label" style={labelStyle}>
             <ControlLabel style={{display: 'inline-block'}}>{name}</ControlLabel>
-            <Instructions instructions={model.editor?.instructions}></Instructions>
+            <Instructions
+              instructions={model.editor?.instructions}
+              currentLanguage={languageContext.langUi}></Instructions>
           </div>
           <BlockAbstract
             configs={configs}

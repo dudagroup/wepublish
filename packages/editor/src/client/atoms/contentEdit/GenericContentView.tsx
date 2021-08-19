@@ -17,6 +17,7 @@ interface GenericContentViewProps {
   readonly configs: Configs
   readonly langLaneL?: string
   readonly langLaneR?: string
+  readonly langUi: string
   readonly presentLanguageControl?: boolean
 }
 
@@ -28,6 +29,7 @@ export function GenericContent({
   configs,
   langLaneL,
   langLaneR,
+  langUi,
   presentLanguageControl
 }: GenericContentViewProps) {
   const [langLane1, setLangLane1] = useState(languagesConfig.languages?.[0]?.tag)
@@ -59,7 +61,8 @@ export function GenericContent({
           languageContext={{
             langLane1: presentLanguageControl && langLane1 ? langLane1 : langLaneL || langLane1,
             langLane2: presentLanguageControl && langLane2 ? langLane2 : langLaneR || langLane2,
-            languagesConfig
+            languagesConfig,
+            langUi
           }}
           value={record}
           schemaPath={[]}></BlockObject>

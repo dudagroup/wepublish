@@ -14,6 +14,7 @@ export interface LanguageContext {
   readonly languagesConfig: LanguagesConfig
   readonly langLane1: string
   readonly langLane2: string
+  readonly langUi: string
 }
 
 export function BlockObject(

@@ -28,7 +28,11 @@ export const contentModelB: ContentModel = {
       myUrlString: {
         type: ContentModelSchemaTypes.string,
         editor: {
-          inputType: 'url'
+          inputType: 'url',
+          instructions: {
+            en: 'En instructions',
+            de: 'De instructions'
+          }
         }
       },
       myStringI18n: {

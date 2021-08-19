@@ -12,6 +12,7 @@ import {useTranslation} from 'react-i18next'
 import {Reference} from '../../interfaces/referenceType'
 
 export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
+  const {t} = useTranslation()
   if (
     props.model.contentType.type === ContentModelSchemaTypes.reference &&
     Object.keys(props.model.contentType.types).length === 1 &&
@@ -31,7 +32,6 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
 
   const {dispatch, model, languageContext, value, schemaPath} = props
   const childSchemaPath = [...schemaPath]
-  const {t} = useTranslation()
   const content = value.map((item, index, array) => {
     let buttonUp = null
     if (index !== 0) {
