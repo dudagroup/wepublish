@@ -185,7 +185,14 @@ export interface ContentModelSchemaFieldList extends ContentModelSchemaFieldBase
   editor?: {
     name?: I18n<string> | string
     instructions?: I18n<string> | string
+    /**
+     * contentType has to be type reference. Otherwise this flag is ignored
+     */
     presentReferenceListAsTagPicker?: boolean
+    /**
+     * contentType has to be type enum. Otherwise this flag is ignored
+     */
+    presentReferenceListAsCheckPicker?: boolean
   }
 }
 

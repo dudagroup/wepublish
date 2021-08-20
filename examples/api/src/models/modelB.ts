@@ -363,6 +363,30 @@ export const contentModelB: ContentModel = {
           presentReferenceListAsTagPicker: true
         }
       },
+      myMultipleChoice: {
+        type: ContentModelSchemaTypes.list,
+        contentType: {
+          type: ContentModelSchemaTypes.enum,
+          values: [
+            {
+              value: 'value_a',
+              description: 'value_a'
+            },
+            {
+              value: 'value_b',
+              description: 'value_b'
+            },
+            {
+              value: 'value_c',
+              description: 'value_c'
+            }
+          ],
+          filterable: true
+        },
+        editor: {
+          presentReferenceListAsCheckPicker: true
+        }
+      },
       myBlockList: {
         type: ContentModelSchemaTypes.list,
         contentType: {

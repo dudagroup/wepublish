@@ -10,6 +10,7 @@ import {generateEmptyContent} from '../../control/contentUtil'
 import BlockTags from './BlockTags'
 import {useTranslation} from 'react-i18next'
 import {Reference} from '../../interfaces/referenceType'
+import BlockPicker from './BlockPicker'
 
 export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList, unknown[]>) {
   const {t} = useTranslation()
@@ -20,6 +21,22 @@ export function BlockList(props: BlockAbstractProps<ContentModelSchemaFieldList,
   ) {
     return (
       <BlockTags
+        configs={props.configs}
+        dispatch={props.dispatch}
+        schemaPath={props.schemaPath}
+        value={props.value as Reference[]}
+        languageContext={props.languageContext}
+        model={props.model.contentType}
+      />
+    )
+  }
+
+  if (
+    props.model.contentType.type === ContentModelSchemaTypes.enum &&
+    props.model.editor?.presentReferenceListAsCheckPicker
+  ) {
+    return (
+      <BlockPicker
         configs={props.configs}
         dispatch={props.dispatch}
         schemaPath={props.schemaPath}
