@@ -360,7 +360,8 @@ function ContentEditorView({
       configs,
       contentConfig,
       langLaneL,
-      langLaneR
+      langLaneR,
+      uiLanguage
     )
   } else {
     content = (
@@ -392,7 +393,8 @@ function ContentEditorView({
       configs,
       contentConfig,
       langLaneL,
-      langLaneR
+      langLaneR,
+      uiLanguage
     )
   } else if (contentConfig.schema.meta && customMetadataDispatcher) {
     customMetadataView = (

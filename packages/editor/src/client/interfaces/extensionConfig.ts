@@ -54,7 +54,8 @@ export type getContentViewFunction = (
   configs: Configs,
   contentModelConfigMerged: ContentModelConfigMerged,
   langLaneL: string,
-  langLaneR: string
+  langLaneR: string,
+  langUi: string
 ) => JSX.Element
 
 export type getPreviewLinkFunction = (
@@ -72,7 +73,8 @@ export type getMetaViewFunction<M = any> = (
   configs: Configs,
   contentModelConfigMerged: ContentModelConfigMerged,
   langLaneL: string,
-  langLaneR: string
+  langLaneR: string,
+  langUi: string
 ) => JSX.Element
 
 export type ContentModelConfigMerged = ContentConfig & Partial<ContentModelExtension>
