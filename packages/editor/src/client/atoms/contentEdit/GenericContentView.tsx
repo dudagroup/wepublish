@@ -1,6 +1,7 @@
 import {ContentModelSchemas} from '@dudagroup/api'
 import {MapType} from '@dudagroup/api/lib/interfaces/utilTypes'
 import React, {memo, useState} from 'react'
+import {useTranslation} from 'react-i18next'
 import {Grid, Panel} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 import {ContentEditAction} from '../../control/contentReducer'
@@ -34,6 +35,7 @@ export function GenericContent({
 }: GenericContentViewProps) {
   const [langLane1, setLangLane1] = useState(languagesConfig.languages?.[0]?.tag)
   const [langLane2, setLangLane2] = useState(languagesConfig.languages?.[1]?.tag)
+  const {t} = useTranslation()
 
   let header = null
   if (presentLanguageControl && languagesConfig.languages.length >= 2) {
@@ -50,7 +52,7 @@ export function GenericContent({
   return (
     <Grid>
       {header}
-      <Panel bordered collapsible defaultExpanded header="Content">
+      <Panel bordered collapsible defaultExpanded header={t('content.panels.contentSectionTitle')}>
         <BlockObject
           configs={configs}
           dispatch={dispatch}

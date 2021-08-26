@@ -60,7 +60,7 @@ export type _Cmp_Article_Record = {
   slugI18n: I18n_String;
   isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
-  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
   content: _Cmp_Article_Record_Content;
   meta: _Cmp_Article_Record_Meta;
 };
@@ -105,7 +105,7 @@ export type _Cmp_Article_Record_Content_Blocks_ImageGallery = {
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Content = {
   __typename?: '_cmp_article_record_content_blocks_imageGallery_content';
-  images: Array<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>;
+  images: Array<Maybe<_Cmp_Article_Record_Content_Blocks_ImageGallery_Images>>;
 };
 
 export type _Cmp_Article_Record_Content_Blocks_ImageGallery_Images = {
@@ -305,7 +305,7 @@ export type _Cmp_Author_Record = {
   slugI18n: I18n_String;
   isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
-  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
   content: _Cmp_Author_Record_Content;
 };
 
@@ -367,7 +367,7 @@ export type _Cmp_MediaLibrary_Record = {
   slugI18n: I18n_String;
   isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
-  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
   content: _Cmp_MediaLibrary_Record_Content;
 };
 
@@ -426,7 +426,7 @@ export type _Cmp_ModelA_Record = {
   slugI18n: I18n_String;
   isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
-  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
   content: _Cmp_ModelA_Record_Content;
   meta: _Cmp_ModelA_Record_Meta;
 };
@@ -499,7 +499,7 @@ export type _Cmp_ModelB_Record = {
   slugI18n: I18n_String;
   isActiveI18n: I18n_Boolean;
   shared: Scalars['Boolean'];
-  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article>;
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
   content: _Cmp_ModelB_Record_Content;
 };
 
@@ -524,18 +524,22 @@ export type _Cmp_ModelB_Record_Content = {
   myDateTime: Scalars['DateTime'];
   myOptionalDateTime?: Maybe<Scalars['DateTime']>;
   myDateTimeI18n: I18n_DateTime;
+  myScharedEnum: MySharedEnum;
   myEnum: _Cmp_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmp_ModelB_Record_Content_MyEnumI18n;
   myOptionalEnum?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmp_ModelB_Record_Content_MyListNested>;
+  mySharedUnion: MySharedUnion;
   myUnion: _Cmp_ModelB_Record_Content_MyUnion;
   myOptionalUnion?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref__CmpRef_ModelA_MediaLibrary>;
   myRefI18n?: Maybe<I18n_Ref__CmpRef_ModelA_ModelB>;
+  myScharedObject?: Maybe<MySharedObject>;
   myObject: _Cmp_ModelB_Record_Content_MyObject;
   myOptionalObject?: Maybe<_Cmp_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref__CmpRef_ModelA>>;
+  myMultipleChoice: Array<_Cmp_ModelB_Record_Content_MyMultipleChoice>;
   myBlockList: Array<_Cmp_ModelB_Record_Content_MyBlockList>;
   myMedia?: Maybe<Media>;
   myMediaI18n?: Maybe<I18n_Media>;
@@ -590,6 +594,15 @@ export type _Cmp_ModelB_Record_Content_MyListNested_List = {
   nestedBar: I18n_String;
 };
 
+export enum _Cmp_ModelB_Record_Content_MyMultipleChoice {
+  /** value_a */
+  ValueA = 'value_a',
+  /** value_b */
+  ValueB = 'value_b',
+  /** value_c */
+  ValueC = 'value_c'
+}
+
 export type _Cmp_ModelB_Record_Content_MyObject = {
   __typename?: '_cmp_modelB_record_content_myObject';
   myFieldA: Scalars['String'];
@@ -633,7 +646,7 @@ export type _Cmp_ModelB_Record_Content_MyOptionalUnion_CaseB_Content = {
 
 export type _Cmp_ModelB_Record_Content_MyRef = _CmpRefCase_ModelA | _CmpRefCase_MediaLibrary;
 
-export type _Cmp_ModelB_Record_Content_MyUnion = _Cmp_ModelB_Record_Content_MyUnion_CaseA | _Cmp_ModelB_Record_Content_MyUnion_CaseB;
+export type _Cmp_ModelB_Record_Content_MyUnion = _Cmp_ModelB_Record_Content_MyUnion_CaseA | _Cmp_ModelB_Record_Content_MyUnion_CaseB | _Cmp_ModelB_Record_Content_MyUnion_CaseScharedObject;
 
 export type _Cmp_ModelB_Record_Content_MyUnion_CaseA = {
   __typename?: '_cmp_modelB_record_content_myUnion_caseA';
@@ -655,9 +668,75 @@ export type _Cmp_ModelB_Record_Content_MyUnion_CaseB_Content = {
   bar: Scalars['Float'];
 };
 
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseScharedObject = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseScharedObject';
+  caseScharedObject?: Maybe<_Cmp_ModelB_Record_Content_MyUnion_CaseScharedObject_Content>;
+};
+
+export type _Cmp_ModelB_Record_Content_MyUnion_CaseScharedObject_Content = {
+  __typename?: '_cmp_modelB_record_content_myUnion_caseScharedObject_content';
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
+};
+
 export type _Cmp_ModelBConnection = {
   __typename?: '_cmp_modelBConnection';
   nodes: Array<_Cmp_ModelB_Record>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type _Cmp_ModelC = {
+  __typename?: '_cmp_modelC';
+  read?: Maybe<_Cmp_ModelC_Record>;
+  list: _Cmp_ModelCConnection;
+};
+
+
+export type _Cmp_ModelCReadArgs = {
+  peerID?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
+};
+
+
+export type _Cmp_ModelCListArgs = {
+  after?: Maybe<Scalars['ID']>;
+  before?: Maybe<Scalars['ID']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+  filter?: Maybe<Filter_ModelC>;
+  sort?: Maybe<Sort_ModelC>;
+  order?: Maybe<SortOrder>;
+  language?: Maybe<Languages>;
+};
+
+export type _Cmp_ModelC_Record = {
+  __typename?: '_cmp_modelC_record';
+  id: Scalars['ID'];
+  contentType: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  modifiedAt: Scalars['DateTime'];
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
+  title: Scalars['String'];
+  slugI18n: I18n_String;
+  isActiveI18n: I18n_Boolean;
+  shared: Scalars['Boolean'];
+  richTextReferences: Array<Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article>;
+  content: _Cmp_ModelC_Record_Content;
+};
+
+export type _Cmp_ModelC_Record_Content = {
+  __typename?: '_cmp_modelC_record_content';
+  myScharedObject?: Maybe<MySharedObject>;
+  myScharedEnum: MySharedEnum;
+  mySharedUnion: MySharedUnion;
+};
+
+export type _Cmp_ModelCConnection = {
+  __typename?: '_cmp_modelCConnection';
+  nodes: Array<_Cmp_ModelC_Record>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int'];
 };
@@ -732,7 +811,7 @@ export type _Cmpi_Article_Record_Content_Blocks_Image = {
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery = {
-  images: Array<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>;
+  images: Array<Maybe<_Cmpi_Article_Record_Content_Blocks_ImageGallery_Images>>;
 };
 
 export type _Cmpi_Article_Record_Content_Blocks_ImageGallery_Images = {
@@ -1104,18 +1183,22 @@ export type _Cmpi_ModelB_Record_Content = {
   myDateTime: Scalars['DateTime'];
   myOptionalDateTime?: Maybe<Scalars['DateTime']>;
   myDateTimeI18n: I18n_DateTime_Input;
+  myScharedEnum: MySharedEnumInput;
   myEnum: _Cmpi_ModelB_Record_Content_MyEnum;
   myEnumI18n: I18n__Cmpi_ModelB_Record_Content_MyEnumI18n_Input;
   myOptionalEnum?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalEnum>;
   myList: Array<Scalars['String']>;
   myListNested: Array<_Cmpi_ModelB_Record_Content_MyListNested>;
+  mySharedUnion: MySharedUnionInput;
   myUnion: _Cmpi_ModelB_Record_Content_MyUnion;
   myOptionalUnion?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalUnion>;
   myRef?: Maybe<Ref_Input>;
   myRefI18n?: Maybe<I18n_Ref_Input_Input>;
+  myScharedObject?: Maybe<MySharedObjectInput>;
   myObject: _Cmpi_ModelB_Record_Content_MyObject;
   myOptionalObject?: Maybe<_Cmpi_ModelB_Record_Content_MyOptionalObject>;
   myTags: Array<Maybe<Ref_Input>>;
+  myMultipleChoice: Array<_Cmpi_ModelB_Record_Content_MyMultipleChoice>;
   myBlockList: Array<_Cmpi_ModelB_Record_Content_MyBlockList>;
   myMedia?: Maybe<Media_Input>;
   myMediaI18n?: Maybe<I18n_Media_Input_Input>;
@@ -1159,6 +1242,15 @@ export type _Cmpi_ModelB_Record_Content_MyListNested_List = {
   nestedBar: I18n_String_Input;
 };
 
+export enum _Cmpi_ModelB_Record_Content_MyMultipleChoice {
+  /** value_a */
+  ValueA = 'value_a',
+  /** value_b */
+  ValueB = 'value_b',
+  /** value_c */
+  ValueC = 'value_c'
+}
+
 export type _Cmpi_ModelB_Record_Content_MyObject = {
   myFieldA: Scalars['String'];
   myFieldAI18n: I18n_String_Input;
@@ -1192,6 +1284,7 @@ export type _Cmpi_ModelB_Record_Content_MyOptionalUnion_CaseB = {
 export type _Cmpi_ModelB_Record_Content_MyUnion = {
   caseA?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseA>;
   caseB?: Maybe<_Cmpi_ModelB_Record_Content_MyUnion_CaseB>;
+  caseScharedObject?: Maybe<MySharedObjectInput>;
 };
 
 export type _Cmpi_ModelB_Record_Content_MyUnion_CaseA = {
@@ -1219,7 +1312,66 @@ export type _Cmpi_ModelB_Record_Update = {
   content: _Cmpi_ModelB_Record_Content;
 };
 
-export type _CmpRef_Richtext_References = _CmpRefCase_ModelA | _CmpRefCase_ModelB | _CmpRefCase_MediaLibrary | _CmpRefCase_Author | _CmpRefCase_Article;
+export type _Cmpi_ModelC = {
+  __typename?: '_cmpi_modelC';
+  create: _Cmp_ModelC_Record;
+  update: _Cmp_ModelC_Record;
+  delete: Scalars['Boolean'];
+  publish?: Maybe<_Cmp_ModelC_Record>;
+  unpublish?: Maybe<_Cmp_ModelC_Record>;
+};
+
+
+export type _Cmpi_ModelCCreateArgs = {
+  input: _Cmpi_ModelC_Record_Create;
+};
+
+
+export type _Cmpi_ModelCUpdateArgs = {
+  input: _Cmpi_ModelC_Record_Update;
+};
+
+
+export type _Cmpi_ModelCDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type _Cmpi_ModelCPublishArgs = {
+  id: Scalars['ID'];
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  dePublicationDate?: Maybe<Scalars['DateTime']>;
+};
+
+
+export type _Cmpi_ModelCUnpublishArgs = {
+  id: Scalars['ID'];
+};
+
+export type _Cmpi_ModelC_Record_Content = {
+  myScharedObject?: Maybe<MySharedObjectInput>;
+  myScharedEnum: MySharedEnumInput;
+  mySharedUnion: MySharedUnionInput;
+};
+
+export type _Cmpi_ModelC_Record_Create = {
+  title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
+  shared: Scalars['Boolean'];
+  content: _Cmpi_ModelC_Record_Content;
+};
+
+export type _Cmpi_ModelC_Record_Update = {
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  slugI18n: I18n_String_Input;
+  isActiveI18n: I18n_Boolean_Input;
+  shared: Scalars['Boolean'];
+  content: _Cmpi_ModelC_Record_Content;
+};
+
+export type _CmpRef_Richtext_References = _CmpRefCase_ModelA | _CmpRefCase_ModelB | _CmpRefCase_ModelC | _CmpRefCase_MediaLibrary | _CmpRefCase_Author | _CmpRefCase_Article;
 
 export type _CmpRefCase_Article = {
   __typename?: '_cmpRefCase_article';
@@ -1244,6 +1396,11 @@ export type _CmpRefCase_ModelA = {
 export type _CmpRefCase_ModelB = {
   __typename?: '_cmpRefCase_modelB';
   modelB?: Maybe<_Cmp_ModelB_Record>;
+};
+
+export type _CmpRefCase_ModelC = {
+  __typename?: '_cmpRefCase_modelC';
+  modelC?: Maybe<_Cmp_ModelC_Record>;
 };
 
 export type All = {
@@ -1574,6 +1731,7 @@ export type Content = {
   __typename?: 'content';
   modelA: _Cmp_ModelA;
   modelB: _Cmp_ModelB;
+  modelC: _Cmp_ModelC;
   mediaLibrary: _Cmp_MediaLibrary;
   author: _Cmp_Author;
   article: _Cmp_Article;
@@ -1584,6 +1742,7 @@ export type Content_Mutations = {
   __typename?: 'content_mutations';
   modelA: _Cmpi_ModelA;
   modelB: _Cmpi_ModelB;
+  modelC: _Cmpi_ModelC;
   mediaLibrary: _Cmpi_MediaLibrary;
   author: _Cmpi_Author;
   article: _Cmpi_Article;
@@ -1633,6 +1792,7 @@ export enum ContentSort {
 export enum ContentTypeEnum {
   ModelA = 'modelA',
   ModelB = 'modelB',
+  ModelC = 'modelC',
   MediaLibrary = 'mediaLibrary',
   Author = 'author',
   Article = 'article'
@@ -1761,11 +1921,13 @@ export type Filter_ModelB = {
   content__myDateTime?: Maybe<FilterDate>;
   content__myOptionalDateTime?: Maybe<FilterDate>;
   i18n__content__myDateTimeI18n?: Maybe<FilterDate>;
+  content__myScharedEnum?: Maybe<Filter_ModelB_Content_MyScharedEnum>;
   content__myEnum?: Maybe<Filter_ModelB_Content_MyEnum>;
   i18n__content__myEnumI18n?: Maybe<Filter_ModelB_Content_MyEnumI18n>;
   content__myOptionalEnum?: Maybe<Filter_ModelB_Content_MyOptionalEnum>;
   content__myRef__recordId?: Maybe<FilterReference>;
   content__myTags__recordId?: Maybe<FilterReference>;
+  content__myMultipleChoice?: Maybe<Filter_ModelB_Content_MyMultipleChoice>;
 };
 
 export type Filter_ModelB_Content_MyEnum = {
@@ -1796,6 +1958,22 @@ export enum Filter_ModelB_Content_MyEnumI18n_Enum {
   Bar = 'bar'
 }
 
+export type Filter_ModelB_Content_MyMultipleChoice = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyMultipleChoice_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyMultipleChoice_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyMultipleChoice_Enum {
+  /** value_a */
+  ValueA = 'value_a',
+  /** value_b */
+  ValueB = 'value_b',
+  /** value_c */
+  ValueC = 'value_c'
+}
+
 export type Filter_ModelB_Content_MyOptionalEnum = {
   /** equal to */
   eq?: Maybe<Filter_ModelB_Content_MyOptionalEnum_Enum>;
@@ -1804,6 +1982,40 @@ export type Filter_ModelB_Content_MyOptionalEnum = {
 };
 
 export enum Filter_ModelB_Content_MyOptionalEnum_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type Filter_ModelB_Content_MyScharedEnum = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelB_Content_MyScharedEnum_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelB_Content_MyScharedEnum_Enum>;
+};
+
+export enum Filter_ModelB_Content_MyScharedEnum_Enum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type Filter_ModelC = {
+  title?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
+  content__myScharedEnum?: Maybe<Filter_ModelC_Content_MyScharedEnum>;
+};
+
+export type Filter_ModelC_Content_MyScharedEnum = {
+  /** equal to */
+  eq?: Maybe<Filter_ModelC_Content_MyScharedEnum_Enum>;
+  /** not equal to */
+  ne?: Maybe<Filter_ModelC_Content_MyScharedEnum_Enum>;
+};
+
+export enum Filter_ModelC_Content_MyScharedEnum_Enum {
   /** Foo */
   Foo = 'foo',
   /** Bar */
@@ -2654,6 +2866,78 @@ export type MutationRequestChangesOnCommentArgs = {
   rejectionReason: CommentRejectionReason;
 };
 
+export enum MySharedEnum {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export enum MySharedEnumInput {
+  /** Foo */
+  Foo = 'foo',
+  /** Bar */
+  Bar = 'bar'
+}
+
+export type MySharedObject = {
+  __typename?: 'mySharedObject';
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
+};
+
+export type MySharedObjectInput = {
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String_Input;
+};
+
+export type MySharedUnion = MySharedUnion_CaseA | MySharedUnion_CaseB | MySharedUnion_CaseShared;
+
+export type MySharedUnion_CaseA = {
+  __typename?: 'mySharedUnion_caseA';
+  caseA?: Maybe<MySharedUnion_CaseA_Content>;
+};
+
+export type MySharedUnion_CaseA_Content = {
+  __typename?: 'mySharedUnion_caseA_content';
+  foo: I18n_String;
+};
+
+export type MySharedUnion_CaseB = {
+  __typename?: 'mySharedUnion_caseB';
+  caseB?: Maybe<MySharedUnion_CaseB_Content>;
+};
+
+export type MySharedUnion_CaseB_Content = {
+  __typename?: 'mySharedUnion_caseB_content';
+  bar: Scalars['Float'];
+};
+
+export type MySharedUnion_CaseShared = {
+  __typename?: 'mySharedUnion_caseShared';
+  caseShared?: Maybe<MySharedUnion_CaseShared_Content>;
+};
+
+export type MySharedUnion_CaseShared_Content = {
+  __typename?: 'mySharedUnion_caseShared_content';
+  myFieldA: Scalars['String'];
+  myFieldAI18n: I18n_String;
+};
+
+export type MySharedUnionInput = {
+  caseA?: Maybe<MySharedUnionInput_CaseA>;
+  caseB?: Maybe<MySharedUnionInput_CaseB>;
+  caseShared?: Maybe<MySharedObjectInput>;
+};
+
+export type MySharedUnionInput_CaseA = {
+  foo: I18n_String_Input;
+};
+
+export type MySharedUnionInput_CaseB = {
+  bar: Scalars['Float'];
+};
+
 export type Navigation = {
   __typename?: 'Navigation';
   id: Scalars['ID'];
@@ -3259,8 +3543,8 @@ export type Ref__CmpRef_ModelA_ModelB = {
   peer?: Maybe<Peer>;
 };
 
-export type Ref__CmpRef_ModelA_ModelB_MediaLibrary_Author_Article = {
-  __typename?: 'ref__cmpRef_modelA_modelB_mediaLibrary_author_article';
+export type Ref__CmpRef_ModelA_ModelB_ModelC_MediaLibrary_Author_Article = {
+  __typename?: 'ref__cmpRef_modelA_modelB_modelC_mediaLibrary_author_article';
   recordId: Scalars['ID'];
   contentType: Scalars['ID'];
   peerId?: Maybe<Scalars['ID']>;
@@ -3347,9 +3631,19 @@ export enum Sort_ModelB {
   ContentMyDateTime = 'content__myDateTime',
   ContentMyOptionalDateTime = 'content__myOptionalDateTime',
   I18nContentMyDateTimeI18n = 'i18n__content__myDateTimeI18n',
+  ContentMyScharedEnum = 'content__myScharedEnum',
   ContentMyEnum = 'content__myEnum',
   I18nContentMyEnumI18n = 'i18n__content__myEnumI18n',
-  ContentMyOptionalEnum = 'content__myOptionalEnum'
+  ContentMyOptionalEnum = 'content__myOptionalEnum',
+  ContentMyMultipleChoice = 'content__myMultipleChoice'
+}
+
+export enum Sort_ModelC {
+  CreatedAt = 'createdAt',
+  ModifiedAt = 'modifiedAt',
+  PublicationDate = 'publicationDate',
+  DePublicationDate = 'dePublicationDate',
+  ContentMyScharedEnum = 'content__myScharedEnum'
 }
 
 export enum SortOrder {

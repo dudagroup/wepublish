@@ -1,10 +1,12 @@
 import React, {useRef} from 'react'
 import {IconButton, Whisper, Icon, Popover, Button} from 'rsuite'
 import marked from 'marked'
+import {useTranslation} from 'react-i18next'
 
 // eslint-disable-next-line react/display-name
 const Overlay = React.forwardRef(
   ({style, instructions, currentLanguage, key, onClose, ...rest}: any, ref) => {
+    const {t} = useTranslation()
     const styles = {
       ...style,
       background: '#fff',
@@ -28,7 +30,7 @@ const Overlay = React.forwardRef(
     return (
       <Popover {...rest} style={styles} ref={ref}>
         {instructionsWrapper}
-        <Button onClick={onClose}>close</Button>
+        <Button onClick={onClose}>{t('global.buttons.close')}</Button>
       </Popover>
     )
   }

@@ -1,15 +1,13 @@
 import React, {useState, useEffect, useCallback, useReducer} from 'react'
-import {Modal, Notification, Icon, IconButton, Drawer} from 'rsuite'
+import {Modal, Notification, Icon, IconButton, Drawer, ButtonToolbar, Button, Loader} from 'rsuite'
 import {RouteActionType} from '@karma.run/react'
-
-import {useRouteDispatch, IconButtonLink, ContentListRoute, ContentEditRoute} from '../route'
-
+import {useRouteDispatch, ContentEditRoute} from '../route'
 import {ContentMetadataPanel, DefaultMetadata} from '../panel/contentMetadataPanel'
 import {usePreviewContentQuery, usePublishContentMutation} from '../api'
 import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {useTranslation} from 'react-i18next'
 import {PublishContentPanel} from '../panel/contentPublishPanel'
-import {useMutation, useQuery} from '@apollo/client'
+import {useLazyQuery, useMutation} from '@apollo/client'
 import {
   getCreateMutation,
   getUpdateMutation,
@@ -137,15 +135,23 @@ function ContentEditorView({
     })
   }
 
-  const contentdId = id || createData?.content[type].create.id
-  const isNew = !id
-
-  const {data, loading: isLoading} = useQuery(getReadQuery(configs, contentConfig), {
-    skip: isNew,
+  const [fetch, {data, loading: isLoading}] = useLazyQuery(getReadQuery(configs, contentConfig), {
     errorPolicy: 'all',
-    fetchPolicy: 'no-cache',
-    variables: {id: contentdId!}
+    fetchPolicy: 'no-cache'
   })
+
+  const contentdId = id || data?.content?.[type]?.read?.id
+  const isNew = !contentdId
+
+  useEffect(() => {
+    if (contentdId) {
+      setCustomMetadata(intitialCustomMetadata)
+      setContentData(intitialContent)
+      fetch({
+        variables: {id: contentdId}
+      })
+    }
+  }, [contentdId])
 
   const isNotFound = data?.content[type] && !data?.content[type]?.read
   const recordData: ContentBody = data?.content[type]?.read
@@ -289,12 +295,10 @@ function ContentEditorView({
 
       const {data} = result
       if (data) {
-        if (onApply) {
-          onApply({
-            contentType: type,
-            recordId: data.content[type].create.id
-          })
-        } else {
+        await fetch({
+          variables: {id: data.content[type].create.id!}
+        })
+        if (!onApply) {
           dispatch({
             type: RouteActionType.ReplaceRoute,
             route: ContentEditRoute.create({type, id: data.content[type].create.id})
@@ -332,13 +336,15 @@ function ContentEditorView({
             dePublicationDate: dePublicationDate ? dePublicationDate.toISOString() : undefined
           }
         })
-      }
 
-      setChanged(false)
-      Notification.success({
-        title: t('articleEditor.overview.articlePublished'),
-        duration: 2000
-      })
+        await fetch({variables: {id: contentdId}})
+
+        setChanged(false)
+        Notification.success({
+          title: t('articleEditor.overview.articlePublished'),
+          duration: 2000
+        })
+      }
     }
   }
 
@@ -349,6 +355,10 @@ function ContentEditorView({
       })
     }
   }, [isNotFound])
+
+  if (isLoading) {
+    return <Loader center content="loading..." />
+  }
 
   let content = null
   if (contentConfig.getContentView) {
@@ -524,17 +534,64 @@ function ContentEditorView({
                       {t('articleEditor.overview.save')}
                     </IconButton>
 
-                    <IconButton
-                      style={{
-                        marginLeft: '20px'
-                      }}
-                      appearance="subtle"
-                      size={'lg'}
-                      icon={<Icon icon="file-upload" />}
-                      disabled={isDisabled}
-                      onClick={() => setPublishDialogOpen(true)}>
-                      {t('articleEditor.overview.publish')}
-                    </IconButton>
+                    {!!contentdId && (
+                      <IconButton
+                        style={{
+                          marginLeft: '20px'
+                        }}
+                        appearance="subtle"
+                        size={'lg'}
+                        icon={<Icon icon="file-upload" />}
+                        disabled={isDisabled}
+                        onClick={() => setPublishDialogOpen(true)}>
+                        {t('articleEditor.overview.publish')}
+                      </IconButton>
+                    )}
+
+                    {!!onApply && !!contentdId && (
+                      <IconButton
+                        size={'lg'}
+                        appearance="subtle"
+                        icon={<Icon icon="dot-circle-o" />}
+                        onClick={e => {
+                          e.preventDefault()
+                          if (!recordData?.publicationDate) {
+                            Notification.open({
+                              title: t('content.panels.contentNotPublishedYet'),
+                              duration: 200000,
+                              description: (
+                                <div>
+                                  <ButtonToolbar>
+                                    <Button
+                                      onClick={() => {
+                                        Notification.close()
+                                        setPublishDialogOpen(true)
+                                      }}>
+                                      {t('global.buttons.publish')}
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        onApply({
+                                          contentType: type,
+                                          recordId: contentdId
+                                        })
+                                      }}>
+                                      {t('content.panels.apply')}
+                                    </Button>
+                                  </ButtonToolbar>
+                                </div>
+                              )
+                            })
+                          } else {
+                            onApply({
+                              contentType: type,
+                              recordId: contentdId
+                            })
+                          }
+                        }}>
+                        {t('content.panels.apply')}
+                      </IconButton>
+                    )}
                   </>
                 )}
               </div>
@@ -638,6 +695,7 @@ export function ContentEditor({
   onBack,
   onApply
 }: Omit<ArticleEditorProps, 'contentConfig'>) {
+  const {t} = useTranslation()
   const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
@@ -655,5 +713,5 @@ export function ContentEditor({
     )
   }
 
-  return <h1>Content Type {type} not supported</h1>
+  return <h1>{t('content.panels.errorUnsuportedContentType', {type: type})}</h1>
 }

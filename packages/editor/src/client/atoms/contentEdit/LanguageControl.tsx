@@ -1,4 +1,5 @@
 import React, {useMemo} from 'react'
+import {useTranslation} from 'react-i18next'
 import {Button, Col, Icon, Row, SelectPicker} from 'rsuite'
 import {LanguagesConfig} from '../../api'
 
@@ -17,17 +18,18 @@ export default function LanguageControl({
   setLangLaneL,
   setLangLaneR
 }: LanguageControlProps) {
+  const {t} = useTranslation()
   const languages = languagesConfig.languages.map(v => {
-    const isDefaultLangFlag = languagesConfig.defaultLanguageTag === v.tag ? ' (default)' : ''
+    const isDefaultLangFlag =
+      languagesConfig.defaultLanguageTag === v.tag ? ` (${t('content.panels.default')})` : ''
     return {
       label: v.tag + isDefaultLangFlag,
       value: v.tag
     }
   })
 
-  let header = null
-  if (languagesConfig.languages.length >= 2) {
-    header = useMemo(() => {
+  const header = useMemo(() => {
+    if (languagesConfig.languages.length >= 2) {
       return (
         <Row className="show-grid">
           <Col xs={14}>
@@ -37,7 +39,6 @@ export default function LanguageControl({
               value={langLaneL}
               appearance="subtle"
               onChange={setLangLaneL}
-              style={{width: 120}}
             />
           </Col>
           <Col xs={1} style={{textAlign: 'center'}}>
@@ -60,13 +61,13 @@ export default function LanguageControl({
               value={langLaneR}
               appearance="subtle"
               onChange={setLangLaneR}
-              style={{width: 120}}
             />
           </Col>
         </Row>
       )
-    }, [langLaneL, langLaneR])
-  }
+    }
+    return null
+  }, [langLaneL, langLaneR])
 
   return header
 }

@@ -29,6 +29,10 @@ export const contentModelB: ContentModel = {
         type: ContentModelSchemaTypes.string,
         editor: {
           inputType: 'url',
+          name: {
+            de: 'url de',
+            en: 'url en'
+          },
           instructions: {
             en: 'En instructions',
             de: 'De instructions'

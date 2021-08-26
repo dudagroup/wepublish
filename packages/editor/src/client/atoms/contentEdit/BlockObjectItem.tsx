@@ -33,7 +33,17 @@ function BlockObjectItem({
   const langLane1 = languageContext.langLane1
   const langLane2 = languageContext.langLane2
 
-  const name = model.editor?.name || fieldname
+  console.log('v[langLane1]', v, langLane1)
+
+  let name = fieldname
+  if (model.editor?.name) {
+    if (typeof model.editor?.name === 'string') {
+      name = model.editor.name
+    } else if (model.editor?.name[languageContext.langUi]) {
+      name = model.editor.name[languageContext.langUi]
+    }
+  }
+
   const childSchemaPath = [...schemaPath, fieldname]
 
   if ((model as ContentModelSchemaFieldLeaf).i18n) {

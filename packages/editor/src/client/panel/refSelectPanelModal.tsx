@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React from 'react'
 import {useTranslation} from 'react-i18next'
 import {Button, Drawer} from 'rsuite'
@@ -9,7 +8,7 @@ export function RefSelectDrawer(props: RefSelectPanelProps) {
   return (
     <>
       <Drawer.Header onHide={() => props.onClose?.()}>
-        <Drawer.Title>Choose a reference</Drawer.Title>
+        <Drawer.Title>{t('content.panels.chooseReference')}</Drawer.Title>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -18,7 +17,7 @@ export function RefSelectDrawer(props: RefSelectPanelProps) {
 
       <Drawer.Footer>
         <Button style={{marginBottom: 10}} onClick={() => props.onClose?.()}>
-          {t('articleEditor.panels.close')}
+          {t('global.buttons.close')}
         </Button>
       </Drawer.Footer>
     </>

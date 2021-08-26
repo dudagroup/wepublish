@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React, {
   ReactNode,
   forwardRef,
@@ -71,6 +70,7 @@ export interface ToolbarButtonProps extends BaseToolbarButtonProps {
   readonly children?: ReactNode
 }
 
+// eslint-disable-next-line react/display-name
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
   ({active, children, ...props}, ref) => {
     return (
@@ -118,6 +118,7 @@ export interface SubMenuButtonProps extends ToolbarIconButtonProps {
   readonly format?: Format
 }
 
+// eslint-disable-next-line react/display-name
 export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   ({children, icon, format}, ref) => {
     // The Submenu buttons provides some local context to it's children.
@@ -168,6 +169,7 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   }
 )
 
+// eslint-disable-next-line react/display-name
 export const SubMenuDrawerButton = forwardRef<PopoverProps, SubMenuButtonProps>(
   ({children, icon, format}, ref) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)

@@ -362,7 +362,7 @@ function ContentListView({
               }
               setSelection(s)
             }}>
-            Check all
+            {selectionAll ? t('global.buttons.checkAll') : t('global.buttons.uncheckAll')}
           </Checkbox>
           <Button
             appearance="link"
@@ -371,7 +371,7 @@ function ContentListView({
               setConfirmAction(ConfirmAction.UnpublishAll)
               setConfirmationDialogOpen(true)
             }}>
-            Unpublish
+            {t('global.buttons.unpublish')}
           </Button>
           {/* <Button appearance="link" color="red">
             Delete
@@ -528,6 +528,7 @@ export function ContentList({
   onSelectRef,
   modal
 }: Omit<ArticleEditorProps, 'currentContentConfig'>) {
+  const {t} = useTranslation()
   const config = configs?.contentModelExtensionMerged.find(config => {
     return config.identifier === type
   })
@@ -543,5 +544,5 @@ export function ContentList({
     )
   }
 
-  return <h1>Content Type {type} not supported</h1>
+  return <h1>{t('content.panels.errorUnsuportedContentType', {type: type})}</h1>
 }

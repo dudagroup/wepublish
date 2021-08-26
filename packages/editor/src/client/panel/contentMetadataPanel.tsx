@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React from 'react'
 import {
   ControlLabel,
@@ -102,7 +101,7 @@ export function ContentMetadataPanel({
   })
 
   return (
-    <Panel collapsible defaultExpanded header="Internal title, URL & Peering">
+    <Panel collapsible defaultExpanded header={t('content.panels.defaultSectionTitle')}>
       <Form fluid>
         <FormGroup>
           <ControlLabel>{t('content.overview.internalTitle')}</ControlLabel>
@@ -118,7 +117,11 @@ export function ContentMetadataPanel({
           <I18nWrapper lane1={componentLane1} lane2={componentLane2} />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{`Is content for language "${langLanes[0]}" active`}</ControlLabel>
+          <ControlLabel>
+            {t('content.panels.isContentForLanguageActive', {
+              lang: langLanes[0]
+            })}
+          </ControlLabel>
           <I18nWrapper
             lane1={
               <Toggle

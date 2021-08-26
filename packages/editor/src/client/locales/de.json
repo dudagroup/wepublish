@@ -17,7 +17,10 @@
         "yes": "Ja",
         "no": "Nein",
         "enabled": "aktiv",
-        "disabled": "inaktiv"
+        "disabled": "inaktiv",
+        "checkAll": "Alles auswählen",
+        "uncheckAll": "Alles abwählen",
+        "referenceTo": "Referenz zu"
       }
     },
     "content": {
@@ -42,6 +45,8 @@
         "published": "Veröffentlicht"
       },
       "panels": {
+        "defaultSectionTitle": "Interner Titel, URL & Peering",
+        "contentSectionTitle": "Inhalt",
         "cancel": "Abbrechen",
         "close": "Schliessen",
         "delete": "Löschen",
@@ -55,7 +60,13 @@
         "lead": "Lead",
         "createdAt": "Erstellt am",
         "updatedAt": "Bearbeitet am",
-        "publishedAt": "Veröffentlicht am"
+        "publishedAt": "Veröffentlicht am",
+        "chooseReference": "Wähle eine Referenz",
+        "default": "standard",
+        "apply": "Übernehmen",
+        "contentNotPublishedYet": "Der Inhalt ist noch nicht Veröffentlicht",
+        "isContentForLanguageActive": "Inhalt für die Sprache '{{lang}}' aktiv",
+        "errorUnsuportedContentType": "Es existiert kein Inhaltstype '{{type}}'"
       }
     },
     "articles": {

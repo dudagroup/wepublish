@@ -1,6 +1,5 @@
 import React from 'react'
 import {hot} from 'react-hot-loader/root'
-
 // import 'rsuite/lib/styles/index.less'
 
 import {useRoute, RouteType, Route} from './route'

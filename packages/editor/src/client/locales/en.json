@@ -17,7 +17,10 @@
         "yes": "Yes",
         "no": "No",
         "enabled": "Enabled",
-        "disabled": "Disabled"
+        "disabled": "Disabled",
+        "checkAll": "Check all",
+        "uncheckAll": "Uncheck all",
+        "referenceTo": "Reference to"
       }
     },
     "content": {
@@ -42,6 +45,8 @@
         "published": "Published"
       },
       "panels": {
+        "defaultSectionTitle": "Internal title, URL & Peering",
+        "contentSectionTitle": "Content",
         "cancel": "Cancel",
         "close": "Close",
         "delete": "Delete",
@@ -55,7 +60,13 @@
         "lead": "Lead",
         "createdAt": "Created At",
         "updatedAt": "Updated At",
-        "publishedAt": "Published At"
+        "publishedAt": "Published At",
+        "chooseReference": "Pick a reference",
+        "default": "default",
+        "apply": "Apply",
+        "contentNotPublishedYet": "Content ist not published yet",
+        "isContentForLanguageActive": "Is content for language '{{lang}}' active",
+        "errorUnsuportedContentType": "There is no content type '{{type}}'"
       }
     },
     "articles": {
